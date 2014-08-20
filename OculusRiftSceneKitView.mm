@@ -86,13 +86,8 @@ NSString *const kOCVRLensCorrectionFragmentShaderString = SHADER_STRING
     CGFloat redBackgroundComponent, blueBackgroundComponent, greenBackgroundComponent, alphaBackgroundComponent;
 }
 
-- (void)commonInit;
 - (void)setupPixelFormat;
-- (void)setupOpenGLContext;
-- (void)setupBufferWithTexture:(GLuint*)texture
-                   frameBuffer:(GLuint*)frameBuffer
-                   depthBuffer:(GLuint*)depthBuffer;
-- (void)configureDisplayProgram;
+- (void)commonInit;
 - (void)renderStereoscopicScene;
 
 @end
@@ -119,15 +114,9 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 - (id)initWithFrame:(CGRect)frame
 {
     [self setupPixelFormat];
-    
     self = [super initWithFrame:frame pixelFormat:[self pixelFormat]];
-    if (self == nil)
-    {
-        NSLog(@"FATAL ERROR: OpenGL pixel format not supported");
-        NSLog(@"%@", [self pixelFormat]);
-        // TODO: user-friendly error handling
-        exit(0);
-    }
+    NSAssert(self != nil, @"OpenGL pixel format not supported.");
+    // TODO: user-friendly error handling
     
     [self commonInit];
     return self;
@@ -141,6 +130,21 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 	return self;
 }
 
+- (void)setupPixelFormat
+{
+    NSOpenGLPixelFormatAttribute pixelFormatAttributes[] = {
+        NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersionLegacy,
+        NSOpenGLPFADoubleBuffer,
+        NSOpenGLPFANoRecovery,
+        NSOpenGLPFAAccelerated,
+        NSOpenGLPFADepthSize, 24,
+        0
+    };
+    [self setPixelFormat:[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes]];
+    // TODO: fallback to an easier format if this one isn't available
+    // caller deals with error handling
+}
+
 - (void)commonInit;
 {
     // initialize hardware
@@ -148,18 +152,84 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     _interpupillaryDistance = 64.0;
     
     // initialize OpenGL context
-    [self setupPixelFormat];
-    [self setupOpenGLContext];
-    [[self openGLContext] makeCurrentContext];
+    [self setOpenGLContext:[[NSOpenGLContext alloc] initWithFormat:[self pixelFormat] shareContext:nil]];
+    NSAssert([self openGLContext] != nil, @"Unable to create an OpenGL context.");
+    // TODO: user-friendly error handling
+    
+    GLint swap = 0;
+    [[self openGLContext] setValues:&swap forParameter:NSOpenGLCPSwapInterval];
+    
+    [[self openGLContext] makeCurrentContext];  // TODO: is this necessary? it was just created
     
     // create storage space for OpenGL textures
     glActiveTexture(GL_TEXTURE0);
-    [self setupBufferWithTexture:&leftEyeTexture frameBuffer:&leftEyeFramebuffer depthBuffer:&leftEyeDepthBuffer];
-    [self setupBufferWithTexture:&rightEyeTexture frameBuffer:&rightEyeFramebuffer depthBuffer:&rightEyeDepthBuffer];
+    
+    void (^setupBufferWithTexture)(GLuint*, GLuint*, GLuint*) = ^(GLuint* texture, GLuint* frameBuffer, GLuint* depthBuffer)
+    {
+        glGenTextures(1, texture);
+        glBindTexture(GL_TEXTURE_2D, *texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        
+        glGenFramebuffers(1, frameBuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, *frameBuffer);
+        
+        glGenRenderbuffers(1, depthBuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, *depthBuffer);
+        
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, EYE_RENDER_RESOLUTION_X, EYE_RENDER_RESOLUTION_Y);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, *depthBuffer);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, EYE_RENDER_RESOLUTION_X, EYE_RENDER_RESOLUTION_Y, 0, GL_BGRA, GL_UNSIGNED_BYTE, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *texture, 0);
+        
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        NSAssert(status == GL_FRAMEBUFFER_COMPLETE, @"Incomplete eye FBO: %d", status);
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
+    };
+    setupBufferWithTexture(&leftEyeTexture, &leftEyeFramebuffer, &leftEyeDepthBuffer);
+    setupBufferWithTexture(&rightEyeTexture, &rightEyeFramebuffer, &rightEyeDepthBuffer);
+    
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
     // connect shaders
-    [self configureDisplayProgram];
+    displayProgram = [[GLProgram alloc] initWithVertexShaderString:kOCVRVertexShaderString
+                                              fragmentShaderString:kOCVRLensCorrectionFragmentShaderString];
+    
+    [displayProgram addAttribute:@"position"];
+    [displayProgram addAttribute:@"inputTextureCoordinate"];
+    
+    if (![displayProgram link])
+    {
+        NSString *progLog = [displayProgram programLog];
+        NSString *fragLog = [displayProgram fragmentShaderLog];
+        NSString *vertLog = [displayProgram vertexShaderLog];
+        
+        NSLog(@"Program link log: %@", progLog);
+        NSLog(@"Fragment shader compile log: %@", fragLog);
+        NSLog(@"Vertex shader compile log: %@", vertLog);
+        
+        displayProgram = nil;
+        NSAssert(NO, @"Filter shader link failed");
+    }
+    
+    displayPositionAttribute = [displayProgram attributeIndex:@"position"];
+    displayTextureCoordinateAttribute = [displayProgram attributeIndex:@"inputTextureCoordinate"];
+    displayInputTextureUniform = [displayProgram uniformIndex:@"inputImageTexture"];
+    
+    screenCenterUniform = [displayProgram uniformIndex:@"ScreenCenter"];
+    scaleUniform = [displayProgram uniformIndex:@"Scale"];
+    scaleInUniform = [displayProgram uniformIndex:@"ScaleIn"];
+    hmdWarpParamUniform = [displayProgram uniformIndex:@"HmdWarpParam"];
+    lensCenterUniform = [displayProgram uniformIndex:@"LensCenter"];
+    
+    [displayProgram use];
+    
+    glEnableVertexAttribArray(displayPositionAttribute);
+    glEnableVertexAttribArray(displayTextureCoordinateAttribute);
     
     // create a renderer for each eye
     SCNRenderer *(^makeEyeRenderer)() = ^
@@ -218,100 +288,6 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     [newScene linkNodeToHeadRotation:rightEyeRenderer.pointOfView];
     
     CVDisplayLinkStart(displayLink);
-}
-
-- (void)setupPixelFormat
-{
-    NSOpenGLPixelFormatAttribute pixelFormatAttributes[] = {
-        NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersionLegacy,
-        NSOpenGLPFADoubleBuffer,
-        NSOpenGLPFANoRecovery,
-        NSOpenGLPFAAccelerated,
-        NSOpenGLPFADepthSize, 24,
-        0
-    };
-    NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes];
-	if (pixelFormat == nil)
-	{
-		NSLog(@"Error: No appropriate pixel format found");
-	}
-    [self setPixelFormat:pixelFormat];
-}
-
-- (void)setupOpenGLContext
-{
-    [self setOpenGLContext:[[NSOpenGLContext alloc] initWithFormat:[self pixelFormat] shareContext:nil]];
-    NSAssert([self openGLContext] != nil, @"Unable to create an OpenGL context.");
-    
-    GLint swap = 0;
-    [[self openGLContext] setValues:&swap forParameter:NSOpenGLCPSwapInterval];
-}
-
-- (void)setupBufferWithTexture:(GLuint*)texture
-                   frameBuffer:(GLuint*)frameBuffer
-                   depthBuffer:(GLuint*)depthBuffer
-{
-    glGenTextures(1, texture);
-    glBindTexture(GL_TEXTURE_2D, *texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
-    glGenFramebuffers(1, frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, *frameBuffer);
-    
-    glGenRenderbuffers(1, depthBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, *depthBuffer);
-    
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, EYE_RENDER_RESOLUTION_X, EYE_RENDER_RESOLUTION_Y);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, *depthBuffer);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, EYE_RENDER_RESOLUTION_X, EYE_RENDER_RESOLUTION_Y, 0, GL_BGRA, GL_UNSIGNED_BYTE, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *texture, 0);
-    
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    NSAssert(status == GL_FRAMEBUFFER_COMPLETE, @"Incomplete eye FBO: %d", status);
-    
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-- (void)configureDisplayProgram;
-{
-    displayProgram = [[GLProgram alloc] initWithVertexShaderString:kOCVRVertexShaderString
-                                              fragmentShaderString:kOCVRLensCorrectionFragmentShaderString];
-    
-    [displayProgram addAttribute:@"position"];
-    [displayProgram addAttribute:@"inputTextureCoordinate"];
-    
-    if (![displayProgram link])
-    {
-        NSString *progLog = [displayProgram programLog];
-        NSString *fragLog = [displayProgram fragmentShaderLog];
-        NSString *vertLog = [displayProgram vertexShaderLog];
-        
-        NSLog(@"Program link log: %@", progLog);
-        NSLog(@"Fragment shader compile log: %@", fragLog);
-        NSLog(@"Vertex shader compile log: %@", vertLog);
-        
-        displayProgram = nil;
-        NSAssert(NO, @"Filter shader link failed");
-    }
-    
-    displayPositionAttribute = [displayProgram attributeIndex:@"position"];
-    displayTextureCoordinateAttribute = [displayProgram attributeIndex:@"inputTextureCoordinate"];
-    displayInputTextureUniform = [displayProgram uniformIndex:@"inputImageTexture"];
-    
-    screenCenterUniform = [displayProgram uniformIndex:@"ScreenCenter"];
-    scaleUniform = [displayProgram uniformIndex:@"Scale"];
-    scaleInUniform = [displayProgram uniformIndex:@"ScaleIn"];
-    hmdWarpParamUniform = [displayProgram uniformIndex:@"HmdWarpParam"];
-    lensCenterUniform = [displayProgram uniformIndex:@"LensCenter"];
-    
-    [displayProgram use];
-    
-    glEnableVertexAttribArray(displayPositionAttribute);
-    glEnableVertexAttribArray(displayTextureCoordinateAttribute);
 }
 
 - (void)renderStereoscopicScene;

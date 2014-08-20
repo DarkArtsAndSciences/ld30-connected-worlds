@@ -1,13 +1,22 @@
 OculusRiftSceneKit
 ==================
 
-Brad Larson
+Forked from [OculusRiftSceneKit](http://github.com/BradLarson/OculusRiftSceneKit) by [Brad Larson](http://twitter.com/bradlarson) / [Sunset Lake Software](http://www.sunsetlakesoftware.com)
 
-http://www.sunsetlakesoftware.com
+Updates:
+    The OculusSceneKitTest example works. The other two have not been tested.
+    Updated OculusRift SDK to 0.4.1.
+    Moved scene initialization out of app delegate and into its own class.
 
-[@bradlarson](http://twitter.com/bradlarson)
+Known Issues:
+    Build settings assume LibOVR is at /Applications/Oculus/SDK/LibOVR
+    The distortion shader is not updated for the new SDK and is missing chromatic aberration.
+    The other two examples probably need Scene.h and .m from OculusSceneKitTest.
+    No mouse/keyboard input.
 
-contact@sunsetlakesoftware.com
+Original description by Brad Larson below:
+
+---
 
 ## Overview ##
 
