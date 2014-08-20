@@ -1,4 +1,3 @@
-#import <Cocoa/Cocoa.h>
 #import "OculusRiftSceneKitView.h"
 
 @interface SLSAppDelegate : NSObject <NSApplicationDelegate>

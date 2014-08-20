@@ -1,191 +1,84 @@
 #import "OculusRiftDevice.h"
-#include "OVR.h"
-
-@interface OculusRiftDevice()
-{
-    OVR::DeviceManager  *pManager;
-    OVR::SensorDevice   *pSensor;
-    OVR::HMDDevice      *pHMD;
-    OVR::SensorFusion        SFusion;
-    OVR::HMDInfo        HMDInfo;
-    
-    // Last update seconds, used for move speed timing.
-    double              LastUpdate;
-    OVR::UInt64         StartupTicks;
-    
-    // Position and look. The following apply:
-    OVR::Vector3f            EyePos;
-    float               EyeYaw;         // Rotation around Y, CCW positive when looking at RHS (X,Z) plane.
-    float               EyePitch;       // Pitch. If sensor is plugged in, only read from sensor.
-    float               EyeRoll;        // Roll, only accessible from Sensor.
-    float               LastSensorYaw;  // Stores previous Yaw value from to support computing delta.
-}
-
-- (void)setupHMD;
-
-@end
 
 @implementation OculusRiftDevice
 
-#pragma mark -
-#pragma mark Initialization and teardown
+@synthesize hmd;  // ovrHmd_Create(0) or ovrHmd_CreateDebug(ovrHmd_DK2)
+@synthesize isDebugHmd;
 
 - (id)init
 {
-    if (!(self = [super init]))
-    {
-		return nil;
-    }
+    if (!(self = [super init])) return nil;
     
-    OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
-
-    [self setupHMD];
+    // initialize the SDK
+    ovr_Initialize();
+    
+    // initialize the HMD
+    hmd = ovrHmd_Create(0);
+    if ((isDebugHmd = (hmd == nil)))
+    {
+        NSLog(@"WARNING: no HMD detected, faking it");
+        hmd = ovrHmd_CreateDebug(ovrHmd_DK2);
+    }
+    NSLog(@"using HMD: %s %s", hmd->ProductName, hmd->SerialNumber);
+    
+    [self configureSensor];
     
     return self;
 }
 
-- (void)setupHMD;
+- (void)configureSensor
 {
-    pManager = OVR::DeviceManager::Create();
-    
-	// We'll handle it's messages in this case.
-//	pManager->SetMessageHandler(this);
-    
-    CFOptionFlags detectionResult;
-    const char* detectionMessage;
-    
-    do
-    {
-        // Release Sensor/HMD in case this is a retry.
-        delete(pSensor);
-        delete(pHMD);
-        
-        pHMD  = pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
-        if (pHMD)
-        {
-            pSensor = pHMD->GetSensor();
-            
-            // This will initialize HMDInfo with information about configured IPD,
-            // screen size and other variables needed for correct projection.
-            // We pass HMD DisplayDeviceName into the renderer to select the
-            // correct monitor in full-screen mode.
-            if (pHMD->GetDeviceInfo(&HMDInfo))
-            {
-//                RenderParams.MonitorName = HMDInfo.DisplayDeviceName;
-//                RenderParams.DisplayId = HMDInfo.DisplayId;
-//                SConfig.SetHMDInfo(HMDInfo);
-            }
-        }
-        else
-        {
-            // If we didn't detect an HMD, try to create the sensor directly.
-            // This is useful for debugging sensor interaction; it is not needed in
-            // a shipping app.
-            pSensor = pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
-        }
-        
-        
-        // If there was a problem detecting the Rift, display appropriate message.
-        detectionResult  = kCFUserNotificationAlternateResponse;
-        
-        if (!pHMD && !pSensor)
-            detectionMessage = "Oculus Rift not detected.";
-        else if (!pHMD)
-            detectionMessage = "Oculus Sensor detected; HMD Display not detected.";
-        else if (!pSensor)
-            detectionMessage = "Oculus HMD Display detected; Sensor not detected.";
-        else if (HMDInfo.DisplayDeviceName[0] == '\0')
-            detectionMessage = "Oculus Sensor detected; HMD display EDID not detected.";
-        else
-            detectionMessage = 0;
-        
-        if (detectionMessage)
-        {
-            OVR::String messageText(detectionMessage);
-            messageText += "\n\n"
-            "Press 'Try Again' to run retry detection.\n"
-            "Press 'Continue' to run full-screen anyway.";
-            
-            CFStringRef headerStrRef  = CFStringCreateWithCString(NULL, "Oculus Rift Detection", kCFStringEncodingMacRoman);
-            CFStringRef messageStrRef = CFStringCreateWithCString(NULL, messageText, kCFStringEncodingMacRoman);
-            
-            //launch the message box
-            CFUserNotificationDisplayAlert(0,
-                                           kCFUserNotificationNoteAlertLevel,
-                                           NULL, NULL, NULL,
-                                           headerStrRef, // header text
-                                           messageStrRef, // message text
-                                           CFSTR("Try again"),
-                                           CFSTR("Continue"),
-                                           CFSTR("Cancel"),
-                                           &detectionResult);
-            
-            //Clean up the strings
-            CFRelease(headerStrRef);
-            CFRelease(messageStrRef);
-            
-            if (detectionResult == kCFUserNotificationCancelResponse ||
-                detectionResult == kCFUserNotificationOtherResponse)
-                return;
-//                return 1;
-        }
-        
-    } while (detectionResult != kCFUserNotificationAlternateResponse);
-    
-    
-//    if (HMDInfo.HResolution > 0)
-//    {
-//        Width  = HMDInfo.HResolution;
-//        Height = HMDInfo.VResolution;
-//    }
-    
-    if (pSensor)
-    {
-        // We need to attach sensor to SensorFusion object for it to receive
-        // body frame messages and update orientation. SFusion.GetOrientation()
-        // is used in OnIdle() to orient the view.
-        SFusion.AttachToSensor(pSensor);
-//        SFusion.SetDelegateMessageHandler(this);
-//		SFusion.SetPredictionEnabled(true);
-    }
+    // default: request all DK2 capabilities, but don't require them at startup
+    // FUTURE: on new hardware, add its capabilities here
+    unsigned int request = ovrTrackingCap_Orientation
+    | ovrTrackingCap_MagYawCorrection
+    | ovrTrackingCap_Position;
+    unsigned int require = 0;
+    [self configureSensorWithRequest:request andRequire:require];
+}
+- (void)configureSensorWithRequest:(unsigned int)request
+                        andRequire:(unsigned int)require
+{
+    if (!ovrHmd_ConfigureTracking(hmd, request, require))
+        NSLog(@"ERROR: no HMD with required caps %d", require);
+    // TODO: error handling?
 }
 
-#pragma mark -
-#pragma mark Current status extraction
-
-- (SCNVector3)currentHeadRotationAngles;
+- (ovrTrackingState)getTrackingState
 {
-    if (pSensor)
-    {
-        OVR::Quatf    hmdOrient = SFusion.GetOrientation();
-        float    yaw = 0.0f;
-        
-        hmdOrient.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &EyePitch, &EyeRoll);
-        
-        EyeYaw += (yaw - LastSensorYaw);
-        LastSensorYaw = yaw;
-    }
-    
-    if (!pSensor)
-    {
-        const float maxPitch = ((3.1415f/2)*0.98f);
-        if (EyePitch > maxPitch)
-            EyePitch = maxPitch;
-        if (EyePitch < -maxPitch)
-            EyePitch = -maxPitch;
-    }
-
-    return SCNVector3Make(EyeYaw, EyePitch, EyeRoll);
+    return ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds());
 }
 
-- (CATransform3D)currentHeadTransform;
+- (CATransform3D)getHeadTransform
 {
-    SCNVector3 currentHeadRotationAngles = [self currentHeadRotationAngles];
+    // check for sensor data
+    ovrTrackingState ts = [self getTrackingState];
+    bool isTrackingHeadPose = ts.StatusFlags & (ovrStatus_OrientationTracked | ovrStatus_PositionTracked);
+    if (!isTrackingHeadPose)
+    {
+        // TODO: popup warning for HMD out of camera range / unplugged
+        return CATransform3DMakeRotation(0, 0, 0, 0);
+    }
     
-    CATransform3D rotation1 = CATransform3DMakeRotation(currentHeadRotationAngles.x, 0.0f, 1.0f, 0.0f);
-    rotation1 = CATransform3DRotate(rotation1, currentHeadRotationAngles.y, 1.0, 0.0, 0.0);
-    rotation1 = CATransform3DRotate(rotation1, currentHeadRotationAngles.z, 0.0, 0.0, 1.0);
-    return rotation1;
+    // get the head's rotation x,y,z
+    float x, y, z;
+    Posef pose = ts.HeadPose.ThePose;
+    pose.Rotation.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&x, &y, &z);
+    
+    // convert the rotation to a transformation
+    CATransform3D transform = CATransform3DMakeRotation(x, 0.0f, 1.0f, 0.0f);
+    transform = CATransform3DRotate(transform, y, 1.0, 0.0, 0.0);
+    transform = CATransform3DRotate(transform, z, 0.0, 0.0, 1.0);
+    
+    return transform;
+}
+
+- (void)shutdown
+{
+    if (hmd)
+        ovrHmd_Destroy(hmd);
+    
+    ovr_Shutdown();
 }
 
 @end

@@ -1,9 +1,12 @@
-#import <Foundation/Foundation.h>
-#import <SceneKit/SceneKit.h>
+#include "OVR.h"
+using namespace OVR;
 
 @interface OculusRiftDevice : NSObject
 
-- (SCNVector3)currentHeadRotationAngles;
-- (CATransform3D)currentHeadTransform;
+@property (assign, readonly) ovrHmd hmd;
+@property (assign, readonly) bool   isDebugHmd;
+
+- (CATransform3D)getHeadTransform;
+- (void)shutdown;
 
 @end
