@@ -49,7 +49,7 @@
     return ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds());
 }
 
-- (CATransform3D)getHeadTransform
+- (void)getHeadRotationX:(float*)x Y:(float*)y Z:(float*)z
 {
     // check for sensor data
     ovrTrackingState ts = [self getTrackingState];
@@ -57,20 +57,14 @@
     if (!isTrackingHeadPose)
     {
         // TODO: popup warning for HMD out of camera range / unplugged
-        return CATransform3DMakeRotation(0, 0, 0, 0);
+        //return CATransform3DMakeRotation(0, 0, 0, 0);
+        *x = *y = *z = 0;  // TODO: what's the actual starting value?
+        return;
     }
     
-    // get the head's rotation x,y,z
-    float x, y, z;
+    // fill x,y,z with converted sensor data
     Posef pose = ts.HeadPose.ThePose;
-    pose.Rotation.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&x, &y, &z);
-    
-    // convert the rotation to a transformation
-    CATransform3D transform = CATransform3DMakeRotation(x, 0.0f, 1.0f, 0.0f);
-    transform = CATransform3DRotate(transform, y, 1.0, 0.0, 0.0);
-    transform = CATransform3DRotate(transform, z, 0.0, 0.0, 1.0);
-    
-    return transform;
+    pose.Rotation.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(x, y, z);
 }
 
 - (void)shutdown

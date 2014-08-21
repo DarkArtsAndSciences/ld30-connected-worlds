@@ -31,6 +31,7 @@
     [_window setHidesOnDeactivate:NO];                  // do NOT autohide when not front app
     [_window setMovable:NO];                            // not movable
     [_window setFrame:windowRect display:YES];          // window size and autoredraw subviews
+	[_window setAcceptsMouseMovedEvents:YES];
     [_window setContentView:self.oculusView];           // connect the view renderer
     [_window makeKeyAndOrderFront:self];                // show the window
     
@@ -42,30 +43,5 @@
     // TODO: settings for standard window, used by default if no HMD detected
     NSLog(@"setup windowed mode");
 }
-
-- (IBAction)increaseIPD:(id)sender;
-{
-    self.oculusView.interpupillaryDistance = self.oculusView.interpupillaryDistance + 2.0;
-}
-
-- (IBAction)decreaseIPD:(id)sender;
-{
-    self.oculusView.interpupillaryDistance = self.oculusView.interpupillaryDistance - 2.0;
-}
-
-/* TODO: move these into Scene and connect to WASD instead of menu
-- (IBAction)increaseDistance:(id)sender;
-{
-    SCNVector3 currentLocation = scene.headLocation;
-    currentLocation.z = currentLocation.z - 50.0;
-    scene.headLocation = currentLocation;
-}
-
-- (IBAction)decreaseDistance:(id)sender;
-{
-    SCNVector3 currentLocation = scene.headLocation;
-    currentLocation.z = currentLocation.z + 50.0;
-    scene.headLocation = currentLocation;
-}*/
 
 @end

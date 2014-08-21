@@ -3,16 +3,18 @@
 @implementation Scene
 {
     SCNNode *headRotationNode, *headPositionNode;
-    CGFloat roomSize, avatarHeight;
+    float hrx, hry, hrz;  // head rotation angles in radians
+    
+    CGFloat roomSize, avatarHeight, avatarSpeed;
     
     // TODO: move demo into subclass
     CGFloat podiumRadius, podiumHeight, podiumGap;
     SCNVector3 podiumPosition;
     
+    BOOL isMoving;
 }
 
 @synthesize headPosition;
-@synthesize headRotation;
 
 - (id)init
 {
@@ -23,6 +25,7 @@
     headRotationNode = [SCNNode node];
     [headPositionNode addChildNode:headRotationNode];
     [self.rootNode    addChildNode:headPositionNode];
+    isMoving = NO;
     
     // TODO: move demo into subclass
     [self initHolodeckWithRoomSize:1200 andAvatarHeight:1200/3.5];
@@ -30,16 +33,65 @@
     return self;
 }
 
-- (SCNVector3)   headPosition { return headPositionNode.position; }
-- (CATransform3D)headRotation { return headRotationNode.transform; }
+// In-scene head position and rotation
 
-- (void)setHeadPosition:(SCNVector3)   position { headPositionNode.position = position; }
-- (void)setHeadRotation:(CATransform3D)rotation { headRotationNode.transform = rotation; }
+- (SCNVector3) headPosition { return headPositionNode.position; }  // position is public, node is private
+- (void)setHeadPosition:(SCNVector3) position { headPositionNode.position = position; }
+
+- (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z
+{
+    hrx = x;
+    hry = y;
+    hrz = z;
+    
+    CATransform3D transform    =      CATransform3DMakeRotation(x, 0, 1, 0);
+    transform                  = CATransform3DRotate(transform, y, 1, 0, 0);
+    headRotationNode.transform = CATransform3DRotate(transform, z, 0, 0, 1);
+}
 
 - (void)linkNodeToHeadPosition:(SCNNode*)node { [headPositionNode addChildNode:node]; }
 - (void)linkNodeToHeadRotation:(SCNNode*)node { [headRotationNode addChildNode:node]; }
 
-// Add a spotlight that automatically points wherever the user looks
+// Avatar movement
+
+- (void)startMoving { isMoving = YES; }
+- (void)stopMoving { isMoving = NO; }
+
+- (void)tick:(const CVTimeStamp *)timeStamp
+{
+    if (isMoving)
+        [self moveForward];
+}
+
+- (void)moveForward { [self move2Direction: Vector3f(0,0,-1)]; }
+- (void)moveBackward { [self move2Direction: Vector3f(0,0,1)]; }
+- (BOOL)move2Direction:(Vector3f)direction
+{
+    return [self move2Direction:direction distance:avatarSpeed facing:hrx];
+}
+- (BOOL)move2Direction:(Vector3f)direction  // in avatar space
+              distance:(float)distance
+                facing:(float)facing  // x rotation (yaw) in world space
+{
+    //NSLog(@"head position: %.2fx %.2fy %.2fz, moving %.2f radians * %.2f meters", self.headPosition.x, self.headPosition.y, self.headPosition.z, hrx, distance);
+    
+    Vector3f position = Vector3f(headPositionNode.position.x,
+                                 headPositionNode.position.y,
+                                 headPositionNode.position.z);
+    
+    Matrix4f rotate = Matrix4f::RotationY(facing);
+    position += rotate.Transform(direction) * distance;
+
+    headPositionNode.position = SCNVector3Make(position.x, position.y, position.z);
+    
+    //NSLog(@" new position: %.2fx %.2fy %.2fz", self.headPosition.x, self.headPosition.y, self.headPosition.z);
+    // TODO: error handling, return NO if move failed
+    return YES;
+} // TODO: 3D version (flying instead of walking)
+
+// Convenience functions for creating lights and objects
+
+// Add a spotlight that automatically points wherever the user looks.
 - (SCNLight*)addAvatarSpotlight
 {
 	SCNLight *avatarLight = [SCNLight light];
@@ -53,7 +105,7 @@
     
     return avatarLight; // caller can set light color, etc.
 }
-// Add an omnilight that automatically follows the user
+// Add an omnilight that automatically follows the user.
 - (SCNLight*)addAvatarOmnilight
 {
 	SCNLight *avatarLight = [SCNLight light];
@@ -117,8 +169,10 @@
     podiumPosition = SCNVector3Make(0.0, -size/2, -size/4);
     
     avatarHeight = height;
+    avatarSpeed  = 1;
     self.headPosition = SCNVector3Make(0.0, height - size/2, 0.0);
     SCNLight *avatarLight = [self addAvatarSpotlight];
+    avatarLight.color = [NSColor colorWithDeviceRed:1.0 green:0.98 blue:0.5 alpha:1.0];
     //avatarLight.color = [NSColor redColor];  // seeing red
     //avatarLight.gobo.contents = [NSImage imageNamed:@"Holodeck"];  // TODO: better image
     

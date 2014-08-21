@@ -522,6 +522,7 @@
 				F4009BD419A42D6B0047E715 /* Libraries */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		BCAA76A817B5DF3200E25C2A /* Products */ = {
 			isa = PBXGroup;
@@ -1272,9 +1273,9 @@
 		BCAA769F17B5DF3200E25C2A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = SLS;
+				CLASSPREFIX = "";
 				LastUpgradeCheck = 0510;
-				ORGANIZATIONNAME = "Sunset Lake Software LLC";
+				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = BCAA76A217B5DF3200E25C2A /* Build configuration list for PBXProject "OculusSceneKitTest" */;
 			compatibilityVersion = "Xcode 3.2";
