@@ -64,7 +64,6 @@ NSString *const kOCVRLensCorrectionFragmentShaderString = SHADER_STRING
 
 @interface OculusRiftSceneKitView()
 {
-	//Scene *scene;
 	OculusRiftDevice *oculusRiftDevice;
 	CGFloat interpupillaryDistance;
 	
@@ -247,7 +246,13 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     CVDisplayLinkSetOutputCallback(displayLink, renderCallback, (__bridge void *)self);
     
     // create scene, including user's avatar / head node
-    [self setScene:[Scene scene]];
+	NSString *defaultSceneName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Default scene"];
+	NSAssert(defaultSceneName != nil, @"No default scene name in Info.plist.");
+	
+	Class defaultSceneClass = NSClassFromString(defaultSceneName);
+	NSAssert(defaultSceneClass != nil, @"No class for default scene named %@ in Info.plist.", defaultSceneName);
+	
+	[self setScene:[defaultSceneClass scene]];
 }
 
 - (void)setScene:(Scene *)newScene
@@ -260,10 +265,8 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     glUniform4f(hmdWarpParamUniform, 1.0, 0.22, 0.24, 0.0);
     
 	[Scene setCurrentScene:newScene];
-    //scene = newScene;
     leftEyeRenderer.scene = newScene;
     rightEyeRenderer.scene = newScene;
-	//((MainWindow *)_window).scene = newScene;
     
     // create cameras
     SCNNode *(^addNodeforEye)(int) = ^(int eye)

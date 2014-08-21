@@ -1,8 +1,7 @@
 #import "MainWindow.h"
+#import "Scene.h"
 
 @implementation MainWindow
-
-@synthesize scene;
 
 - (id)initWithContentRect:(NSRect)contentRect
 				styleMask:(NSUInteger)aStyle

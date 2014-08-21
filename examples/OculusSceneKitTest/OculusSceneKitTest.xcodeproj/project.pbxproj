@@ -25,6 +25,7 @@
 		F4009BD519A42DEC0047E715 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40098B019A42D620047E715 /* libovr.a */; };
 		F4009BD819A430890047E715 /* Scene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4009BD719A430890047E715 /* Scene.mm */; };
 		F40640AA19A60F5F00B4F00C /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = F40640A919A60F5F00B4F00C /* MainWindow.mm */; };
+		F4E0C71E19A689A5000C6F95 /* HolodeckScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0C71D19A689A5000C6F95 /* HolodeckScene.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -494,6 +495,8 @@
 		F4009BD719A430890047E715 /* Scene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Scene.mm; sourceTree = "<group>"; };
 		F40640A819A60F5F00B4F00C /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = ../../../MainWindow.h; sourceTree = "<group>"; };
 		F40640A919A60F5F00B4F00C /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindow.mm; path = ../../../MainWindow.mm; sourceTree = "<group>"; };
+		F4E0C71C19A689A5000C6F95 /* HolodeckScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HolodeckScene.h; sourceTree = "<group>"; };
+		F4E0C71D19A689A5000C6F95 /* HolodeckScene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HolodeckScene.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -564,6 +567,8 @@
 			children = (
 				F4009BD619A430890047E715 /* Scene.h */,
 				F4009BD719A430890047E715 /* Scene.mm */,
+				F4E0C71C19A689A5000C6F95 /* HolodeckScene.h */,
+				F4E0C71D19A689A5000C6F95 /* HolodeckScene.mm */,
 				F40640A819A60F5F00B4F00C /* MainWindow.h */,
 				F40640A919A60F5F00B4F00C /* MainWindow.mm */,
 				BCAA76BC17B5DF3200E25C2A /* SLSAppDelegate.h */,
@@ -1335,6 +1340,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4009BD819A430890047E715 /* Scene.mm in Sources */,
+				F4E0C71E19A689A5000C6F95 /* HolodeckScene.mm in Sources */,
 				BCAA76B717B5DF3200E25C2A /* main.m in Sources */,
 				BCAA76BE17B5DF3200E25C2A /* SLSAppDelegate.mm in Sources */,
 				BC6C083817B6D2A500A20AD6 /* OculusRiftSceneKitView.mm in Sources */,
