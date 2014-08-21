@@ -64,7 +64,7 @@ NSString *const kOCVRLensCorrectionFragmentShaderString = SHADER_STRING
 
 @interface OculusRiftSceneKitView()
 {
-	OculusRiftDevice *oculusRiftDevice;
+	//OculusRiftDevice *oculusRiftDevice;
 	CGFloat interpupillaryDistance;
 	
     SCNRenderer *leftEyeRenderer, *rightEyeRenderer;
@@ -147,7 +147,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 - (void)commonInit
 {
     // initialize hardware
-    oculusRiftDevice = [[OculusRiftDevice alloc] init];
+    [OculusRiftDevice getDevice];
     interpupillaryDistance = 64.0;
     
     // initialize OpenGL context
@@ -379,7 +379,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
         [[Scene currentScene] tick:timeStamp];
         
         float x, y, z;
-        [oculusRiftDevice getHeadRotationX:&x Y:&y Z:&z]; // update camera pose
+        [[OculusRiftDevice getDevice] getHeadRotationX:&x Y:&y Z:&z]; // update camera pose
         [[Scene currentScene] setHeadRotationX:x Y:y Z:z];
         
         [[self openGLContext] makeCurrentContext];
@@ -394,7 +394,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
 - (void)dealloc
 {
-    [oculusRiftDevice shutdown];
+    [[OculusRiftDevice getDevice] shutdown];
     
     glDeleteFramebuffers(1, &leftEyeFramebuffer);
     glDeleteRenderbuffers(1, &leftEyeDepthBuffer);

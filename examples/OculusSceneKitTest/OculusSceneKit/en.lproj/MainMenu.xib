@@ -653,7 +653,6 @@
         <window title="OpenGL + Scene Kit" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" animationBehavior="default" id="371" customClass="MainWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="640" height="480"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="372">
@@ -670,7 +669,7 @@
                 <outlet property="initialFirstResponder" destination="536" id="xnJ-W5-yDQ"/>
             </connections>
         </window>
-        <customObject id="494" customClass="SLSAppDelegate">
+        <customObject id="494" customClass="AppDelegate">
             <connections>
                 <outlet property="oculusView" destination="536" id="547"/>
                 <outlet property="window" destination="371" id="532"/>

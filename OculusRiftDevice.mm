@@ -26,6 +26,17 @@
     return self;
 }
 
++ (id)getDevice
+{
+	static OculusRiftDevice *device = nil;
+	@synchronized(self)
+	{
+        if (device == nil)
+            device = [[self alloc] init];
+    }
+	return device;
+}
+
 - (void)configureSensor
 {
     // default: request all DK2 capabilities, but don't require them at startup

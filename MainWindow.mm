@@ -1,5 +1,6 @@
 #import "MainWindow.h"
 #import "Scene.h"
+#import "OculusRiftDevice.h"
 
 @implementation MainWindow
 
@@ -8,32 +9,33 @@
 				  backing:(NSBackingStoreType)bufferingType
 					defer:(BOOL)flag
 {
+	
+	// if debug HMD, use windowed mode
+	BOOL isFullscreen = ![[OculusRiftDevice getDevice] isDebugHmd];
+	if (isFullscreen)
+	{
+		NSLog(@"HMD detected, using fullscreen mode");
+		aStyle = aStyle & NSBorderlessWindowMask; // no window chrome
+		bufferingType = NSBackingStoreBuffered;   // buffered
+	}
     self = [super initWithContentRect:contentRect
-							styleMask:aStyle & NSBorderlessWindowMask
-							  backing:NSBackingStoreBuffered
+							styleMask:aStyle
+							  backing:bufferingType
 								defer:flag];
-    
-    if (self) {
-		// get the screen size
+    if (!self) return nil;
+	
+	if (isFullscreen)
+	{
 		// FUTURE: This assumes the HMD is the main screen, because the v0.4.1 Mac drivers don't support anything else.
 		NSRect screenRect = [[NSScreen mainScreen] frame];
 		NSRect windowRect = NSMakeRect(0.0, 0.0, screenRect.size.width, screenRect.size.height);
-		[self setFrame:windowRect display:YES];          // window size and autoredraw subviews
-		
-		// configure window
-		//[self setStyleMask:NSBorderlessWindowMask];      // no window chrome
-		//[self setBackingType:NSBackingStoreBuffered];    // buffered
-		[self setLevel:NSMainMenuWindowLevel+1];         // above the menu bar
-		[self setHidesOnDeactivate:NO];                  // do NOT autohide when not front app
-		[self setMovable:NO];                            // not movable
-		//[self toggleFullScreen:nil];                   // optional: use own Space (10.7+)
-		
-		//[self setAcceptsMouseMovedEvents:YES];
-		//[self setIgnoresMouseEvents:NO];
-		
-		[self makeKeyAndOrderFront:self];                // show the window
-    }
-    
+		[self setFrame:windowRect display:YES];		// window size and autoredraw subviews
+		[self setLevel:NSMainMenuWindowLevel+1];	// above the menu bar
+	}
+	[self setHidesOnDeactivate:NO];					// do NOT autohide when not front app
+	//[self setMovable:NO];							// not movable
+	//[self toggleFullScreen:nil];					// use own Space (10.7+)
+	[self makeKeyAndOrderFront:self];				// show the window
     return self;
 }
 

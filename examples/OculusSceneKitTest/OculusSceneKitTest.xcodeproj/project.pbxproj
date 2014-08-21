@@ -14,7 +14,7 @@
 		BCAA76B517B5DF3200E25C2A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BCAA76B317B5DF3200E25C2A /* InfoPlist.strings */; };
 		BCAA76B717B5DF3200E25C2A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BCAA76B617B5DF3200E25C2A /* main.m */; };
 		BCAA76BB17B5DF3200E25C2A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = BCAA76B917B5DF3200E25C2A /* Credits.rtf */; };
-		BCAA76BE17B5DF3200E25C2A /* SLSAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA76BD17B5DF3200E25C2A /* SLSAppDelegate.mm */; };
+		BCAA76BE17B5DF3200E25C2A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA76BD17B5DF3200E25C2A /* AppDelegate.mm */; };
 		BCAA76C117B5DF3200E25C2A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BCAA76BF17B5DF3200E25C2A /* MainMenu.xib */; };
 		BCAA76C817B5DF5700E25C2A /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCAA76C717B5DF5700E25C2A /* SceneKit.framework */; };
 		BCAA76CA17B5DF6500E25C2A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCAA76C917B5DF6500E25C2A /* QuartzCore.framework */; };
@@ -54,8 +54,8 @@
 		BCAA76B617B5DF3200E25C2A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BCAA76B817B5DF3200E25C2A /* OculusSceneKitTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OculusSceneKitTest-Prefix.pch"; sourceTree = "<group>"; };
 		BCAA76BA17B5DF3200E25C2A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		BCAA76BC17B5DF3200E25C2A /* SLSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLSAppDelegate.h; sourceTree = "<group>"; };
-		BCAA76BD17B5DF3200E25C2A /* SLSAppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SLSAppDelegate.mm; sourceTree = "<group>"; };
+		BCAA76BC17B5DF3200E25C2A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		BCAA76BD17B5DF3200E25C2A /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		BCAA76C017B5DF3200E25C2A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		BCAA76C717B5DF5700E25C2A /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
 		BCAA76C917B5DF6500E25C2A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -571,8 +571,8 @@
 				F4E0C71D19A689A5000C6F95 /* HolodeckScene.mm */,
 				F40640A819A60F5F00B4F00C /* MainWindow.h */,
 				F40640A919A60F5F00B4F00C /* MainWindow.mm */,
-				BCAA76BC17B5DF3200E25C2A /* SLSAppDelegate.h */,
-				BCAA76BD17B5DF3200E25C2A /* SLSAppDelegate.mm */,
+				BCAA76BC17B5DF3200E25C2A /* AppDelegate.h */,
+				BCAA76BD17B5DF3200E25C2A /* AppDelegate.mm */,
 				BCD6160C17BB2E5C005535A1 /* OculusRiftDevice.h */,
 				BCD6160D17BB2E5C005535A1 /* OculusRiftDevice.mm */,
 				BC6C083617B6D1AD00A20AD6 /* OculusRiftSceneKitView.h */,
@@ -1342,7 +1342,7 @@
 				F4009BD819A430890047E715 /* Scene.mm in Sources */,
 				F4E0C71E19A689A5000C6F95 /* HolodeckScene.mm in Sources */,
 				BCAA76B717B5DF3200E25C2A /* main.m in Sources */,
-				BCAA76BE17B5DF3200E25C2A /* SLSAppDelegate.mm in Sources */,
+				BCAA76BE17B5DF3200E25C2A /* AppDelegate.mm in Sources */,
 				BC6C083817B6D2A500A20AD6 /* OculusRiftSceneKitView.mm in Sources */,
 				F40640AA19A60F5F00B4F00C /* MainWindow.mm in Sources */,
 				BC6C083B17B6E58E00A20AD6 /* GLProgram.m in Sources */,
