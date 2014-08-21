@@ -5,6 +5,7 @@
 
 #import "OculusRiftDevice.h"
 #import "Scene.h"
+#import "MainWindow.h"
 
 @interface OculusRiftSceneKitView : NSOpenGLView <SCNSceneRendererDelegate>
 

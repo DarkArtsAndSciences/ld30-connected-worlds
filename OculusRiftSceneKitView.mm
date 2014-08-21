@@ -64,7 +64,7 @@ NSString *const kOCVRLensCorrectionFragmentShaderString = SHADER_STRING
 
 @interface OculusRiftSceneKitView()
 {
-	Scene *scene;
+	//Scene *scene;
 	OculusRiftDevice *oculusRiftDevice;
 	CGFloat interpupillaryDistance;
 	
@@ -259,9 +259,11 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     
     glUniform4f(hmdWarpParamUniform, 1.0, 0.22, 0.24, 0.0);
     
-    scene = newScene;
+	[Scene setCurrentScene:newScene];
+    //scene = newScene;
     leftEyeRenderer.scene = newScene;
     rightEyeRenderer.scene = newScene;
+	//((MainWindow *)_window).scene = newScene;
     
     // create cameras
     SCNNode *(^addNodeforEye)(int) = ^(int eye)
@@ -371,11 +373,11 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 {
     // use a background queue to avoid blocking the main thread
     dispatch_async(dispatch_get_main_queue(), ^{
-        [scene tick:timeStamp];
+        [[Scene currentScene] tick:timeStamp];
         
         float x, y, z;
         [oculusRiftDevice getHeadRotationX:&x Y:&y Z:&z]; // update camera pose
-        [scene setHeadRotationX:x Y:y Z:z];
+        [[Scene currentScene] setHeadRotationX:x Y:y Z:z];
         
         [[self openGLContext] makeCurrentContext];
         [leftEyeRenderer render];
@@ -467,45 +469,6 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     interpupillaryDistance = ipd;
     leftEyeCameraNode.transform = [self getCameraTranslationForEye:LEFT];
     rightEyeCameraNode.transform = [self getCameraTranslationForEye:RIGHT];
-}
-
-#pragma mark -
-#pragma mark Input handling
-
-- (BOOL)acceptsFirstResponder { return YES; }  // respond to keys and menu items
-- (BOOL)becomeFirstResponder  { return YES; }
-- (BOOL)resignFirstResponder  { return YES; }
-- (BOOL)canBecomeKeyView      { return YES; }
-
-- (void)mouseDown:(NSEvent *)theEvent
-{
-    //NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    //NSLog(@"mouse down: #%ld %.fx,%.fy", (long)theEvent.buttonNumber, round(point.x), round(point.y));
-    [scene startMoving];
-}
-
-- (void)mouseDragged:(NSEvent *)theEvent
-{
-    NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    NSLog(@"mouse dragged: #%ld %.fx,%.fy", (long)theEvent.buttonNumber, round(point.x), round(point.y));
-}
-
-- (void)mouseUp:(NSEvent *)theEvent
-{
-    //NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    //NSLog(@"mouse up: #%ld %.fx,%.fy", (long)theEvent.buttonNumber, round(point.x), round(point.y));
-    [scene stopMoving];
-}
-
-// TODO: these only work after the first mouse click, and not on borderless (fullscreen) windows.
-- (void)keyDown:(NSEvent *)theEvent
-{
-    NSLog(@"key down: %d", [theEvent keyCode]);
-}
-
-- (void)keyUp:(NSEvent *)theEvent
-{
-    NSLog(@"key up: %d", [theEvent keyCode]);
 }
 
 @end

@@ -5,9 +5,10 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // TODO: if debug HMD, use windowed mode
-    [self setupFullscreenMode];
+    //[self setupFullscreenMode];
+	[_window setContentView:self.oculusView];           // connect the view renderer
 }
-
+/*
 - (void)setupFullscreenMode
 {
     // used by default if an HMD is detected at startup
@@ -42,6 +43,6 @@
 {
     // TODO: settings for standard window, used by default if no HMD detected
     NSLog(@"setup windowed mode");
-}
+}*/
 
 @end

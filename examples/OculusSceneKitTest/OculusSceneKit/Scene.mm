@@ -33,6 +33,25 @@
     return self;
 }
 
+static Scene *currentScene = nil;
++ (id)currentScene
+{
+	@synchronized(self)
+	{
+        if (currentScene == nil)
+            currentScene = [[self alloc] init];
+    }
+	return currentScene;
+}
++ (void)setCurrentScene:(Scene*)scene
+{
+	//NSLog(@"current scene: %@", scene);
+	@synchronized(self)
+	{
+		currentScene = scene;
+    }
+}
+
 // In-scene head position and rotation
 
 - (SCNVector3) headPosition { return headPositionNode.position; }  // position is public, node is private

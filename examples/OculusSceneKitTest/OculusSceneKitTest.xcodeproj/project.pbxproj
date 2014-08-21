@@ -24,6 +24,7 @@
 		BCD6162617BB38FB005535A1 /* OculusRiftDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD6160D17BB2E5C005535A1 /* OculusRiftDevice.mm */; settings = {COMPILER_FLAGS = "-fno-rtti"; }; };
 		F4009BD519A42DEC0047E715 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40098B019A42D620047E715 /* libovr.a */; };
 		F4009BD819A430890047E715 /* Scene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4009BD719A430890047E715 /* Scene.mm */; };
+		F40640AA19A60F5F00B4F00C /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = F40640A919A60F5F00B4F00C /* MainWindow.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -491,6 +492,8 @@
 		F4009A6E19A42D630047E715 /* Util_Render_Stereo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util_Render_Stereo.h; sourceTree = "<group>"; };
 		F4009BD619A430890047E715 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		F4009BD719A430890047E715 /* Scene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Scene.mm; sourceTree = "<group>"; };
+		F40640A819A60F5F00B4F00C /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = ../../../MainWindow.h; sourceTree = "<group>"; };
+		F40640A919A60F5F00B4F00C /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindow.mm; path = ../../../MainWindow.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -561,6 +564,8 @@
 			children = (
 				F4009BD619A430890047E715 /* Scene.h */,
 				F4009BD719A430890047E715 /* Scene.mm */,
+				F40640A819A60F5F00B4F00C /* MainWindow.h */,
+				F40640A919A60F5F00B4F00C /* MainWindow.mm */,
 				BCAA76BC17B5DF3200E25C2A /* SLSAppDelegate.h */,
 				BCAA76BD17B5DF3200E25C2A /* SLSAppDelegate.mm */,
 				BCD6160C17BB2E5C005535A1 /* OculusRiftDevice.h */,
@@ -575,7 +580,6 @@
 		BCAA76B117B5DF3200E25C2A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				BCAA76BF17B5DF3200E25C2A /* MainMenu.xib */,
 				BCAA76B217B5DF3200E25C2A /* OculusSceneKitTest-Info.plist */,
 				BCAA76B317B5DF3200E25C2A /* InfoPlist.strings */,
 				BCAA76B617B5DF3200E25C2A /* main.m */,
@@ -589,6 +593,7 @@
 		F40098A719A42B860047E715 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				BCAA76BF17B5DF3200E25C2A /* MainMenu.xib */,
 				BCD6160A17BB274E005535A1 /* Holodeck.png */,
 			);
 			name = Assets;
@@ -1333,6 +1338,7 @@
 				BCAA76B717B5DF3200E25C2A /* main.m in Sources */,
 				BCAA76BE17B5DF3200E25C2A /* SLSAppDelegate.mm in Sources */,
 				BC6C083817B6D2A500A20AD6 /* OculusRiftSceneKitView.mm in Sources */,
+				F40640AA19A60F5F00B4F00C /* MainWindow.mm in Sources */,
 				BC6C083B17B6E58E00A20AD6 /* GLProgram.m in Sources */,
 				BCD6162617BB38FB005535A1 /* OculusRiftDevice.mm in Sources */,
 			);
@@ -1363,6 +1369,7 @@
 				BCAA76C017B5DF3200E25C2A /* en */,
 			);
 			name = MainMenu.xib;
+			path = OculusSceneKit;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
