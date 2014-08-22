@@ -25,6 +25,7 @@
 		F4009BD519A42DEC0047E715 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40098B019A42D620047E715 /* libovr.a */; };
 		F4009BD819A430890047E715 /* Scene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4009BD719A430890047E715 /* Scene.mm */; };
 		F40640AA19A60F5F00B4F00C /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = F40640A919A60F5F00B4F00C /* MainWindow.mm */; };
+		F44DDD3D19A6AC5F0060C3EB /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD3C19A6AC5F0060C3EB /* README.md */; };
 		F4E0C71E19A689A5000C6F95 /* HolodeckScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0C71D19A689A5000C6F95 /* HolodeckScene.mm */; };
 /* End PBXBuildFile section */
 
@@ -49,10 +50,10 @@
 		BCAA76AD17B5DF3200E25C2A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		BCAA76AE17B5DF3200E25C2A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		BCAA76AF17B5DF3200E25C2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		BCAA76B217B5DF3200E25C2A /* OculusSceneKitTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OculusSceneKitTest-Info.plist"; sourceTree = "<group>"; };
+		BCAA76B217B5DF3200E25C2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = OculusSceneKit/Info.plist; sourceTree = "<group>"; };
 		BCAA76B417B5DF3200E25C2A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BCAA76B617B5DF3200E25C2A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		BCAA76B817B5DF3200E25C2A /* OculusSceneKitTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OculusSceneKitTest-Prefix.pch"; sourceTree = "<group>"; };
+		BCAA76B817B5DF3200E25C2A /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		BCAA76BA17B5DF3200E25C2A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		BCAA76BC17B5DF3200E25C2A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BCAA76BD17B5DF3200E25C2A /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -495,6 +496,7 @@
 		F4009BD719A430890047E715 /* Scene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Scene.mm; sourceTree = "<group>"; };
 		F40640A819A60F5F00B4F00C /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = ../../../MainWindow.h; sourceTree = "<group>"; };
 		F40640A919A60F5F00B4F00C /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindow.mm; path = ../../../MainWindow.mm; sourceTree = "<group>"; };
+		F44DDD3C19A6AC5F0060C3EB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = OculusSceneKit/README.md; sourceTree = "<group>"; };
 		F4E0C71C19A689A5000C6F95 /* HolodeckScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HolodeckScene.h; sourceTree = "<group>"; };
 		F4E0C71D19A689A5000C6F95 /* HolodeckScene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HolodeckScene.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -585,10 +587,9 @@
 		BCAA76B117B5DF3200E25C2A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				BCAA76B217B5DF3200E25C2A /* OculusSceneKitTest-Info.plist */,
 				BCAA76B317B5DF3200E25C2A /* InfoPlist.strings */,
 				BCAA76B617B5DF3200E25C2A /* main.m */,
-				BCAA76B817B5DF3200E25C2A /* OculusSceneKitTest-Prefix.pch */,
+				BCAA76B817B5DF3200E25C2A /* Prefix.pch */,
 				BCAA76B917B5DF3200E25C2A /* Credits.rtf */,
 			);
 			name = "Supporting Files";
@@ -598,6 +599,8 @@
 		F40098A719A42B860047E715 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F44DDD3C19A6AC5F0060C3EB /* README.md */,
+				BCAA76B217B5DF3200E25C2A /* Info.plist */,
 				BCAA76BF17B5DF3200E25C2A /* MainMenu.xib */,
 				BCD6160A17BB274E005535A1 /* Holodeck.png */,
 			);
@@ -1327,6 +1330,7 @@
 			files = (
 				BCAA76B517B5DF3200E25C2A /* InfoPlist.strings in Resources */,
 				BCAA76BB17B5DF3200E25C2A /* Credits.rtf in Resources */,
+				F44DDD3D19A6AC5F0060C3EB /* README.md in Resources */,
 				BCAA76C117B5DF3200E25C2A /* MainMenu.xib in Resources */,
 				BCD6160B17BB2875005535A1 /* Holodeck.png in Resources */,
 			);
@@ -1443,14 +1447,14 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OculusSceneKit/OculusSceneKitTest-Prefix.pch";
+				GCC_PREFIX_HEADER = OculusSceneKit/Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Src",
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Include",
 				);
-				INFOPLIST_FILE = "OculusSceneKit/OculusSceneKitTest-Info.plist";
+				INFOPLIST_FILE = OculusSceneKit/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Lib/Mac/Debug",
@@ -1465,14 +1469,14 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "OculusSceneKit/OculusSceneKitTest-Prefix.pch";
+				GCC_PREFIX_HEADER = OculusSceneKit/Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Src",
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Include",
 				);
-				INFOPLIST_FILE = "OculusSceneKit/OculusSceneKitTest-Info.plist";
+				INFOPLIST_FILE = OculusSceneKit/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Lib/Mac/Release",
