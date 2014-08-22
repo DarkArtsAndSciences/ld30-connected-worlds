@@ -166,6 +166,12 @@ static Scene *currentScene = nil;
     return YES;
 }
 
+- (BOOL)isInXZRange:(float)distance x:(float)x z:(float)z
+{
+	Vector2f avatarXZ = Vector2f(self.headPosition.x, self.headPosition.z);  // ignore y
+	return avatarXZ.Distance(Vector2f(x, z)) <= distance;
+}
+
 #pragma mark - Convenience functions for creating lights and objects
 
 // Make a spotlight that automatically points wherever the user looks.

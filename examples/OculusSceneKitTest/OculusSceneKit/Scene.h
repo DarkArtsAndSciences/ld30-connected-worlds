@@ -18,6 +18,8 @@ using namespace OVR;
 
 - (void)tick:(const CVTimeStamp *)timeStamp;
 
+- (BOOL)isInXZRange:(float)distance x:(float)x z:(float)z;
+
 - (SCNLight*)makeAvatarSpotlight;
 - (SCNLight*)makeAvatarOmnilight;
 - (SCNNode*)makeWallWithMaterial:(SCNMaterial*)material

@@ -1,6 +1,16 @@
 #import "HolodeckScene.h"
 
 @implementation HolodeckScene
+{
+	SCNMaterial *goldMaterial, *glowMaterial, *silverMaterial;
+	
+	SCNSphere *ball;
+	SCNNode *ballNode;
+	float ballRadius;
+	
+	SCNText *message;
+	SCNNode *messageNode;
+}
 
 #pragma mark - Initialization
 
@@ -18,7 +28,7 @@
     SCNLight *avatarLight = [super makeAvatarSpotlight];
     avatarLight.color = [NSColor colorWithDeviceRed:1.0 green:0.98 blue:0.5 alpha:1.0];
     //avatarLight.color = [NSColor redColor];  // seeing red
-    //avatarLight.gobo.contents = [NSImage imageNamed:@"Holodeck"];  // TODO: better image
+    avatarLight.gobo.contents = [NSImage imageNamed:@"EyeLight"];
     
     [self setupHolodeck];  // walls
     [self setupObjects];   // room content
@@ -31,18 +41,14 @@
 {
     // create wall material
     NSImage *holodeckTexture = [NSImage imageNamed:@"Holodeck"];
-    
     SCNMaterial *material = [SCNMaterial material];
-    
     material.diffuse.minificationFilter  = SCNLinearFiltering;
     material.diffuse.magnificationFilter = SCNLinearFiltering;
     material.diffuse.mipFilter           = SCNLinearFiltering;
-    
-    material.diffuse.contents   = [NSColor blackColor];
+    material.diffuse.contents   = [NSColor darkGrayColor];
     material.specular.contents  = holodeckTexture;  // lines are shiny yellow when lit
     material.emission.contents  = holodeckTexture;  // lines glow
-    material.emission.intensity = 0.1;
-    
+    material.emission.intensity = 0.05;
     material.shininess = 0.75;
     
     // create walls
@@ -69,18 +75,18 @@
     
     // Materials
 	// TODO: move some standard materials into superclass convenience variables
-    NSColor *goldColor             = [NSColor yellowColor];
-    SCNMaterial *goldMaterial      = [SCNMaterial material];
+    NSColor *goldColor = [NSColor yellowColor];
+    goldMaterial = [SCNMaterial material];
     goldMaterial.diffuse.contents  = goldColor;
     goldMaterial.specular.contents = goldColor;
     
-    NSColor *glowColor             = [NSColor colorWithDeviceRed:1.0 green:0.98 blue:0.6 alpha:1.0];
-    SCNMaterial *glowMaterial      = [SCNMaterial material];
+    NSColor *glowColor = [NSColor colorWithDeviceRed:1.0 green:0.98 blue:0.6 alpha:1.0];
+    glowMaterial = [SCNMaterial material];
     glowMaterial.emission.contents = glowColor;
     glowMaterial.emission.intensity = 0.75;
     
-    NSColor *silverColor             = [NSColor colorWithDeviceRed:0.98 green:0.98 blue:1.00 alpha:1.0];
-    SCNMaterial *silverMaterial      = [SCNMaterial material];
+    NSColor *silverColor = [NSColor colorWithDeviceRed:0.98 green:0.98 blue:1.00 alpha:1.0];
+    silverMaterial = [SCNMaterial material];
     silverMaterial.diffuse.contents  = silverColor;
     silverMaterial.specular.contents = silverColor;
     
@@ -120,9 +126,9 @@
     [cylinderNode addChildNode:cylinder3Node];
     
     // Large gold ball on podium
-    int ballRadius = podiumRadius * 0.4;
-    SCNSphere *ball = [SCNSphere sphereWithRadius:ballRadius];
-    SCNNode *ballNode = [SCNNode nodeWithGeometry:ball];
+    ballRadius = podiumRadius * 0.4;
+    ball = [SCNSphere sphereWithRadius:ballRadius];
+    ballNode = [SCNNode nodeWithGeometry:ball];
     ballNode.position = SCNVector3Make(0, podiumHeight + podiumGap + ballRadius, 0);
     ball.materials = @[goldMaterial];
     [cylinderNode addChildNode:ballNode];
@@ -180,6 +186,20 @@
 									[NSValue valueWithCATransform3D:CATransform3DRotate(ringStoneNode.transform, 4 * M_PI_2, 0.f, 1.f, 0.f)],
 									nil];
     [ringStoneNode addAnimation:questionMarkAnimation forKey:@"transform"];
+	
+	[self addMessage:@"Press Space to Save"];
+}
+
+- (void)addMessage:(NSString*)string
+{
+	// Messages above ball
+	[messageNode removeFromParentNode];
+	message = [SCNText textWithString:string extrusionDepth:3];
+	message.name = string;
+	message.materials = @[silverMaterial];
+	messageNode = [SCNNode nodeWithGeometry:message];
+	messageNode.position = SCNVector3Make(-message.textSize.width/2, ballRadius*1.5, 0);
+	[ballNode addChildNode:messageNode];
 }
 
 #pragma mark - Event handlers
@@ -193,13 +213,35 @@
 	[self addEventHandlersForRightMouseDownMoveBackward];
 	
 	// add custom controls
-	[self addEventHandlerForType:NSKeyDown name:@"#1" handler:@selector(onSave)];  // Command-S
+	[self addEventHandlerForType:NSKeyDown name:@"49" handler:@selector(onSave)];  // space
 }
 
 // DEMO: custom event handler
 - (void)onSave
 {
-	NSLog(@"on save");
+	if ([self isInXZRange:self.avatarHeight x:0.0 z:-self.roomSize/4])
+	{
+		[self addMessage:@"Saved!"];
+	}
+}
+
+// DEMO: custom tick event, makes ball glow if avatar is in range
+- (void)tick:(const CVTimeStamp *)timeStamp
+{
+	[super tick:timeStamp];
+	
+	if ([self isInXZRange:self.avatarHeight x:0.0 z:-self.roomSize/4])
+	{
+		ball.materials = message.materials = @[glowMaterial];
+	}
+	else
+	{
+		ball.materials = message.materials = @[goldMaterial];
+		if ([message.name isEqual: @"Saved!"])
+		{
+			[self addMessage:@"Save Again?"];
+		}
+	}
 }
 
 @end
