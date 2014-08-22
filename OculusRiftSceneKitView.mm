@@ -246,7 +246,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     CVDisplayLinkSetOutputCallback(displayLink, renderCallback, (__bridge void *)self);
 }
 
-- (void)setScene:(Scene *)newScene
+- (void)setScene:(SCNScene *)newScene
 {
     CVDisplayLinkStop(displayLink);
     
@@ -255,9 +255,15 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     
     glUniform4f(hmdWarpParamUniform, 1.0, 0.22, 0.24, 0.0);
     
-	[Scene setCurrentScene:newScene];
     leftEyeRenderer.scene = newScene;
     rightEyeRenderer.scene = newScene;
+	if (![newScene isKindOfClass:[Scene class]])
+	{
+		CVDisplayLinkStart(displayLink);
+		return;
+	}
+	Scene *scene = (Scene*)newScene;
+	[Scene setCurrentScene:(Scene*)scene];
     
     // create cameras
     SCNNode *(^addNodeforEye)(int) = ^(int eye)
@@ -280,8 +286,8 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     };
     leftEyeRenderer.pointOfView = addNodeforEye(LEFT);
     rightEyeRenderer.pointOfView = addNodeforEye(RIGHT);
-    [newScene linkNodeToHeadRotation:leftEyeRenderer.pointOfView];
-    [newScene linkNodeToHeadRotation:rightEyeRenderer.pointOfView];
+    [scene linkNodeToHeadRotation:leftEyeRenderer.pointOfView];
+    [scene linkNodeToHeadRotation:rightEyeRenderer.pointOfView];
     
     CVDisplayLinkStart(displayLink);
 }
