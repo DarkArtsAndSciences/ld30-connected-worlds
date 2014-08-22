@@ -4,12 +4,13 @@
 
 @implementation MainWindow
 
+#pragma mark - Initialization
+
 - (id)initWithContentRect:(NSRect)contentRect
 				styleMask:(NSUInteger)aStyle
 				  backing:(NSBackingStoreType)bufferingType
 					defer:(BOOL)flag
-{
-	
+{	
 	// if debug HMD, use windowed mode
 	BOOL isFullscreen = ![[OculusRiftDevice getDevice] isDebugHmd];
 	if (isFullscreen)
@@ -31,56 +32,57 @@
 		NSRect windowRect = NSMakeRect(0.0, 0.0, screenRect.size.width, screenRect.size.height);
 		[self setFrame:windowRect display:YES];		// window size and autoredraw subviews
 		[self setLevel:NSMainMenuWindowLevel+1];	// above the menu bar
+		[self setMovable:NO];						// not movable
+		[self setHidesOnDeactivate:NO];				// do NOT autohide when not front app
+		//[self toggleFullScreen:nil];				// use own Space (10.7+)
 	}
-	[self setHidesOnDeactivate:NO];					// do NOT autohide when not front app
-	//[self setMovable:NO];							// not movable
-	//[self toggleFullScreen:nil];					// use own Space (10.7+)
 	[self makeKeyAndOrderFront:self];				// show the window
+	
     return self;
 }
 
+#pragma mark - Event handlers
+
+- (void)eventHandler:(NSEvent*)theEvent
+{
+	NSEventType eventType = [theEvent type];
+	NSDictionary *handlers = [[Scene currentScene] getHandlersForEventType:eventType];
+	NSMutableString *keyCodeString = [NSMutableString string];
+	
+	unsigned long modifierFlags = [theEvent modifierFlags];
+	if (modifierFlags & NSCommandKeyMask)	[keyCodeString appendString:@"#"];
+	if (modifierFlags & NSControlKeyMask)	[keyCodeString appendString:@"^"];
+	if (modifierFlags & NSAlternateKeyMask)	[keyCodeString appendString:@"="];
+	if (modifierFlags & NSShiftKeyMask)		[keyCodeString appendString:@"+"];
+	
+	if ((eventType == NSKeyDown) || (eventType == NSKeyUp))
+		[keyCodeString appendString:[[NSNumber numberWithInt:[theEvent keyCode]] stringValue]];
+	
+	else if ((eventType == NSLeftMouseDown) || (eventType == NSLeftMouseUp))
+		[keyCodeString appendString:@"left"];
+	else if ((eventType == NSRightMouseDown) || (eventType == NSRightMouseUp))
+		[keyCodeString appendString:@"right"];
+	else if (eventType == NSMouseMoved)
+		[keyCodeString appendString:@"drag"];
+	
+	BOOL debug = [[OculusRiftDevice getDevice] isDebugHmd];
+	if (debug) NSLog(@"handling event for type %lu-%@", (unsigned long)eventType, keyCodeString);
+	
+	SEL handler = (SEL)[[handlers objectForKey:keyCodeString] pointerValue];
+	if (handler)
+		[[Scene currentScene] performSelector:handler];
+	else
+		if (debug) NSLog(@"no handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
+}
+
+- (void)keyDown:(NSEvent *)theEvent        { [self eventHandler:theEvent]; }
+- (void)keyUp:(NSEvent *)theEvent          { [self eventHandler:theEvent]; }
+- (void)mouseUp:(NSEvent *)theEvent        { [self eventHandler:theEvent]; }
+- (void)mouseDown:(NSEvent *)theEvent      { [self eventHandler:theEvent]; }
+- (void)mouseDragged:(NSEvent *)theEvent   { [self eventHandler:theEvent]; }
+- (void)rightMouseDown:(NSEvent *)theEvent { [self eventHandler:theEvent]; }
+- (void)rightMouseUp:(NSEvent *)theEvent   { [self eventHandler:theEvent]; }
+
 - (BOOL)canBecomeKeyWindow { return YES; }  // allow borderless window to receive key events
-
-- (void)keyDown:(NSEvent *)theEvent
-{
-    //NSLog(@"key down: %d", [theEvent keyCode]);
-	if ([theEvent keyCode] == 13)  // w
-	{
-		//NSLog(@"start move forward %@", [Scene currentScene]);
-		[[Scene currentScene] startMoving];
-		//[[Scene currentScene] moveForward];
-	}
-}
-
-- (void)keyUp:(NSEvent *)theEvent
-{
-    //NSLog(@"key up: %d", [theEvent keyCode]);
-	if ([theEvent keyCode] == 13)  // w
-	{
-		//NSLog(@"stop move forward");
-		[[Scene currentScene] stopMoving];
-	}
-}
-
-- (void)mouseDown:(NSEvent *)theEvent
-{
-    //NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    //NSLog(@"mouse down: #%ld %.fx,%.fy", (long)theEvent.buttonNumber, point.x, point.y);
-    [[Scene currentScene] startMoving];
-}
-
-- (void)mouseDragged:(NSEvent *)theEvent
-{
-    //NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-	NSPoint point = [theEvent locationInWindow];
-    NSLog(@"mouse dragged: #%ld %.fx,%.fy", (long)theEvent.buttonNumber, point.x, point.y);
-}
-
-- (void)mouseUp:(NSEvent *)theEvent
-{
-    //NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    //NSLog(@"mouse up: #%ld %.fx,%.fy", (long)theEvent.buttonNumber, point.x, point.y);
-    [[Scene currentScene] stopMoving];
-}
 
 @end

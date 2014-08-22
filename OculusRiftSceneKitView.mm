@@ -244,15 +244,6 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     CGDirectDisplayID displayID = CGMainDisplayID();
     CVDisplayLinkCreateWithCGDisplay(displayID, &displayLink);
     CVDisplayLinkSetOutputCallback(displayLink, renderCallback, (__bridge void *)self);
-    
-    // create scene, including user's avatar / head node
-	NSString *defaultSceneName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Default scene"];
-	NSAssert(defaultSceneName != nil, @"No default scene name in Info.plist.");
-	
-	Class defaultSceneClass = NSClassFromString(defaultSceneName);
-	NSAssert(defaultSceneClass != nil, @"No class for default scene named %@ in Info.plist.", defaultSceneName);
-	
-	[self setScene:[defaultSceneClass scene]];
 }
 
 - (void)setScene:(Scene *)newScene

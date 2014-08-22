@@ -2,6 +2,8 @@
 #import "OVR.h"
 using namespace OVR;
 
+#import "MainWindow.h"
+
 @interface Scene : SCNScene
 
 @property CGFloat roomSize, avatarHeight, avatarSpeed;
@@ -15,9 +17,6 @@ using namespace OVR;
 - (void)linkNodeToHeadRotation:(SCNNode*)node;
 
 - (void)tick:(const CVTimeStamp *)timeStamp;
-- (void)startMoving;
-- (void)stopMoving;
-- (void)moveForward;
 
 - (SCNLight*)makeAvatarSpotlight;
 - (SCNLight*)makeAvatarOmnilight;
@@ -35,5 +34,22 @@ using namespace OVR;
                      chamfer:(float)chamfer
                    materials:(NSArray*)materials
                     position:(SCNVector3)position;
+
+- (void)addEventHandlersForStepWASD;
+- (void)addEventHandlersForHoldWASD;
+- (void)addEventHandlersForStepArrows;
+- (void)addEventHandlersForHoldArrows;
+- (void)addEventHandlersForLeftMouseDownMoveForward;
+- (void)addEventHandlersForLeftMouseDownMoveBackward;
+- (void)addEventHandlersForRightMouseDownMoveForward;
+- (void)addEventHandlersForRightMouseDownMoveBackward;
+
+- (void)addEventHandlerForType:(NSEventType)eventType
+						  name:(NSString*)eventName
+					   handler:(SEL)eventHandler;
+
+- (void)resetEventHandlers;
+
+- (NSMutableDictionary*)getHandlersForEventType:(NSEventType)eventType;
 
 @end

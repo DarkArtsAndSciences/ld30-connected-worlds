@@ -1,41 +1,32 @@
 #import "HolodeckScene.h"
 
 @implementation HolodeckScene
-{
-    CGFloat podiumRadius, podiumHeight, podiumGap;
-    SCNVector3 podiumPosition;
-}
+
+#pragma mark - Initialization
 
 - (id)init
 {
     if (!(self = [super init])) return nil;
 	
-	super.roomSize = 1200;
-	super.avatarHeight = 250;
+	self.roomSize = 1200; // max and min scene coordinates are +- roomSize/2, center is 0,0,0
+	self.avatarHeight = 250;  // distance from ground to eye camera
 	
-    [self initHolodeck];
-	
-	return self;
-}
-
-- (void)initHolodeck
-{
-    podiumHeight = super.roomSize /   5;
-    podiumRadius = super.roomSize /  25;
-    podiumGap    = super.roomSize / 100;
-    podiumPosition = SCNVector3Make(0.0, -super.roomSize/2, -super.roomSize/4);
+	// starting position: standing on the floor in the center of the room
+    self.headPosition = SCNVector3Make(0.0, self.avatarHeight - self.roomSize/2, 0.0);
     
-    super.avatarSpeed  = 1;
-    self.headPosition = SCNVector3Make(0.0, super.avatarHeight - super.roomSize/2, 0.0);
+	// avatar spotlights autofollow and autopoint where the avatar is facing
     SCNLight *avatarLight = [super makeAvatarSpotlight];
     avatarLight.color = [NSColor colorWithDeviceRed:1.0 green:0.98 blue:0.5 alpha:1.0];
     //avatarLight.color = [NSColor redColor];  // seeing red
     //avatarLight.gobo.contents = [NSImage imageNamed:@"Holodeck"];  // TODO: better image
     
-    [self setupHolodeck];
-    [self setupObjects];
+    [self setupHolodeck];  // walls
+    [self setupObjects];   // room content
+	
+	return self;
 }
 
+// Create six textured walls enclosing the room.
 - (void)setupHolodeck
 {
     // create wall material
@@ -55,6 +46,7 @@
     material.shininess = 0.75;
     
     // create walls
+	// TODO: move this into a superclass convience function, minus holodeck material
     [self.rootNode addChildNode:[super makeWallWithMaterial:material Width:super.roomSize height:super.roomSize Tx:0.0 y:-super.roomSize/2 z:0.0 Rangle:-M_PI_2 x:1.0 y:0.0 z:0.0]];
     [self.rootNode addChildNode:[super makeWallWithMaterial:material Width:super.roomSize height:super.roomSize Tx:0.0 y: super.roomSize/2 z:0.0 Rangle: M_PI_2 x:1.0 y:0.0 z:0.0]];
     [self.rootNode addChildNode:[super makeWallWithMaterial:material Width:super.roomSize height:super.roomSize Tx:-super.roomSize/2 y:0.0 z:0.0 Rangle: M_PI_2 x:0.0 y:1.0 z:0.0]];
@@ -63,12 +55,20 @@
     [self.rootNode addChildNode:[super makeWallWithMaterial:material Width:super.roomSize height:super.roomSize Tx:0.0 y:0.0 z: super.roomSize/2 Rangle:  -M_PI x:0.0 y:1.0 z:0.0]];
 }
 
+// Place some objects in the room.
 - (void)setupObjects
 {
+    CGFloat podiumHeight = super.roomSize /   5;
+    CGFloat podiumRadius = super.roomSize /  25;
+    CGFloat podiumGap    = super.roomSize / 100;
+	
+    SCNVector3 podiumPosition = SCNVector3Make(0.0, -self.roomSize/2, -self.roomSize/4);
+	
     SCNNode *objectsNode = [SCNNode node];
     [self.rootNode addChildNode:objectsNode];
     
     // Materials
+	// TODO: move some standard materials into superclass convenience variables
     NSColor *goldColor             = [NSColor yellowColor];
     SCNMaterial *goldMaterial      = [SCNMaterial material];
     goldMaterial.diffuse.contents  = goldColor;
@@ -161,7 +161,7 @@
                         nil];
     [ringNode addAnimation:animation forKey:@"transform"];
     
-    // Spinning golden question mark
+    // Spinning golden question mark above ball
     SCNText *questionMark = [SCNText textWithString:@"?" extrusionDepth:4];
     questionMark.materials = @[goldMaterial];
     questionMark.chamferRadius = 5;
@@ -180,6 +180,26 @@
 									[NSValue valueWithCATransform3D:CATransform3DRotate(ringStoneNode.transform, 4 * M_PI_2, 0.f, 1.f, 0.f)],
 									nil];
     [ringStoneNode addAnimation:questionMarkAnimation forKey:@"transform"];
+}
+
+#pragma mark - Event handlers
+
+- (void) addEventHandlers
+{
+	// enable standard control schemes
+	[self addEventHandlersForHoldWASD];
+	[self addEventHandlersForHoldArrows];
+	[self addEventHandlersForLeftMouseDownMoveForward];
+	[self addEventHandlersForRightMouseDownMoveBackward];
+	
+	// add custom controls
+	[self addEventHandlerForType:NSKeyDown name:@"#1" handler:@selector(onSave)];  // Command-S
+}
+
+// DEMO: custom event handler
+- (void)onSave
+{
+	NSLog(@"on save");
 }
 
 @end
