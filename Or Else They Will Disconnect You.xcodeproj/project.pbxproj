@@ -25,6 +25,7 @@
 		F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD6D19A861950060C3EB /* Credits.rtf */; };
 		F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD6F19A861950060C3EB /* InfoPlist.strings */; };
 		F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7119A861950060C3EB /* MainMenu.xib */; };
+		F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD8919A93A720060C3EB /* ideagen.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +40,7 @@
 
 /* Begin PBXFileReference section */
 		BC6C083C17B6E83F00A20AD6 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		BCAA76A717B5DF3200E25C2A /* OculusSceneKitTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OculusSceneKitTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCAA76A717B5DF3200E25C2A /* Or Else They Will Disconnect You.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Or Else They Will Disconnect You.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCAA76AA17B5DF3200E25C2A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BCAA76AD17B5DF3200E25C2A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		BCAA76AE17B5DF3200E25C2A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -495,6 +496,7 @@
 		F44DDD7019A861950060C3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F44DDD7219A861950060C3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F44DDD7819A861950060C3EB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F44DDD8919A93A720060C3EB /* ideagen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ideagen.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -530,7 +532,7 @@
 		BCAA76A817B5DF3200E25C2A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BCAA76A717B5DF3200E25C2A /* OculusSceneKitTest.app */,
+				BCAA76A717B5DF3200E25C2A /* Or Else They Will Disconnect You.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1265,6 +1267,7 @@
 				F44DDD7819A861950060C3EB /* Info.plist */,
 				F44DDD6F19A861950060C3EB /* InfoPlist.strings */,
 				F44DDD6D19A861950060C3EB /* Credits.rtf */,
+				F44DDD8919A93A720060C3EB /* ideagen.png */,
 			);
 			name = Assets;
 			path = assets;
@@ -1273,9 +1276,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BCAA76A617B5DF3200E25C2A /* OculusSceneKitTest */ = {
+		BCAA76A617B5DF3200E25C2A /* Or Else They Will Disconnect You */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BCAA76C417B5DF3200E25C2A /* Build configuration list for PBXNativeTarget "OculusSceneKitTest" */;
+			buildConfigurationList = BCAA76C417B5DF3200E25C2A /* Build configuration list for PBXNativeTarget "Or Else They Will Disconnect You" */;
 			buildPhases = (
 				BCAA76A317B5DF3200E25C2A /* Sources */,
 				BCAA76A417B5DF3200E25C2A /* Frameworks */,
@@ -1285,9 +1288,9 @@
 			);
 			dependencies = (
 			);
-			name = OculusSceneKitTest;
+			name = "Or Else They Will Disconnect You";
 			productName = OculusSceneKit;
-			productReference = BCAA76A717B5DF3200E25C2A /* OculusSceneKitTest.app */;
+			productReference = BCAA76A717B5DF3200E25C2A /* Or Else They Will Disconnect You.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1300,7 +1303,7 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "";
 			};
-			buildConfigurationList = BCAA76A217B5DF3200E25C2A /* Build configuration list for PBXProject "OculusSceneKitTest" */;
+			buildConfigurationList = BCAA76A217B5DF3200E25C2A /* Build configuration list for PBXProject "Or Else They Will Disconnect You" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1318,7 +1321,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				BCAA76A617B5DF3200E25C2A /* OculusSceneKitTest */,
+				BCAA76A617B5DF3200E25C2A /* Or Else They Will Disconnect You */,
 			);
 		};
 /* End PBXProject section */
@@ -1341,6 +1344,7 @@
 				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
 				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,
 				F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */,
+				F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1466,7 +1470,7 @@
 					"$(inherited)",
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Lib/Mac/Debug",
 				);
-				PRODUCT_NAME = OculusSceneKitTest;
+				PRODUCT_NAME = "Or Else They Will Disconnect You";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1488,7 +1492,7 @@
 					"$(inherited)",
 					"$(SYSTEM_APPS_DIR)/Oculus/SDK/LibOVR/Lib/Mac/Release",
 				);
-				PRODUCT_NAME = OculusSceneKitTest;
+				PRODUCT_NAME = "Or Else They Will Disconnect You";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1496,7 +1500,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BCAA76A217B5DF3200E25C2A /* Build configuration list for PBXProject "OculusSceneKitTest" */ = {
+		BCAA76A217B5DF3200E25C2A /* Build configuration list for PBXProject "Or Else They Will Disconnect You" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BCAA76C217B5DF3200E25C2A /* Debug */,
@@ -1505,7 +1509,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BCAA76C417B5DF3200E25C2A /* Build configuration list for PBXNativeTarget "OculusSceneKitTest" */ = {
+		BCAA76C417B5DF3200E25C2A /* Build configuration list for PBXNativeTarget "Or Else They Will Disconnect You" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BCAA76C517B5DF3200E25C2A /* Debug */,
