@@ -4,15 +4,36 @@ OculusRiftSceneKit
 Forked from [OculusRiftSceneKit](http://github.com/BradLarson/OculusRiftSceneKit) by [Brad Larson](http://twitter.com/bradlarson) / [Sunset Lake Software](http://www.sunsetlakesoftware.com)
 
 Updates:
-    The OculusSceneKitTest example works. The other two have not been tested.
-    Updated OculusRift SDK to 0.4.1.
-    Moved scene initialization out of app delegate and into its own class.
 
-Known Issues:
-    Build settings assume LibOVR is at /Applications/Oculus/SDK/LibOVR
-    The distortion shader is not updated for the new SDK and is missing chromatic aberration.
-    The other two examples probably need Scene.h and .m from OculusSceneKitTest.
-    No mouse/keyboard input.
+- Updated OculusRift SDK to 0.4.1. *The OculusSceneKitTest example works with the Oculus Rift DK2!*
+- Fullscreen for VR screens, standard window for 2D screens.
+- Mouse/keyboard input. Hold down the mouse button or the W key to move in the direction you're looking (turn the headset to turn). S to move backwards, A and D to move (not turn) left and right.
+- Lights can autofollow the avatar. The demo has an omni to light up the general area, and a spotlight pointed where you're looking.
+- Player interaction based on distance to object. Try walking up to the podium (it should light up) and pressing space (the text should change).
+
+Known Issues and Planned Features:
+
+- The distortion shader is not updated for the new SDK and is missing chromatic aberration.
+- The other two examples probably need Scene.h and .m from OculusSceneKitTest, and a lot of Xcode project changes.
+- Controls are missing jumping, 2D turning, and 3D movement (flying instead of walking)
+- 2D mode should be rendered *without* distortion unless specifically enabled for testing or video recording.
+- DAE files for 3D objects are partially supported.
+	
+Tutorial:
+
+1. Download the [Oculus Rift SDK for Mac OS](https://developer.oculusvr.com/?action=dl) (requires free developer account) and install it at /Applications/Oculus/SDK
+
+2. Open the Xcode project for OculusSceneKitTest.
+
+	If LibOVR is red (files not where Xcode expects them), delete it and drag your copy from the Finder into the Xcode project, then replace libovr.a (also red) in Build Phases: Link Binary with Libraries with your copy from /Libraries/LibOVR/Lib/Mac/Debug (in the Xcode project).
+
+	If you had to do that, you probably didn't install LibOVR where I told you to (/Applications/Oculus/SDK/LibOVR).  You'll need to change your Library and Header search paths to the actual location.
+
+	If you're going to be using OculusSceneKitTest as a template for multiple projects, save it with these changes so you don't have to do this again.
+
+3. To make a new scene, subclass Scene. The scene named in Info.plist/Default scene will be loaded at startup. See HolodeckScene for an example, or the tutorial linked below.
+
+---
 
 Original description by Brad Larson below:
 
