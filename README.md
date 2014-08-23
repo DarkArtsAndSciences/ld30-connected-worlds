@@ -45,7 +45,7 @@ Original description by Brad Larson below:
 
 These are a series of classes that add Oculus Rift VR headset support to Scene Kit, as well as at least one sample application to show them in action. These Objective-C classes encapsulate the stereoscopic 3-D rendering required for the Rift, as well as the head tracking it provides. This should hopefully make it pretty easy to rig up virtual reality scenes using Scene Kit's Objective-C API.
 
-<div style="float: right"><img src="http://sunsetlakesoftware.com/sites/default/files/SceneKitOCVR.jpg" /></div>
+![pre-fork screenshot](https://cloud.githubusercontent.com/assets/5468481/4019269/a31d769c-2a62-11e4-96f0-b8bca32c5bc7.jpg)
 
 ## License ##
 
