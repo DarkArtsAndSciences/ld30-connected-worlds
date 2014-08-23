@@ -35,7 +35,6 @@
 	SCNLight *directLight = [SCNLight light];
 	directLight.type = SCNLightTypeDirectional;
 	directLight.color = lightColor;
-	directLight.castsShadow = YES;
 	SCNNode *directNode = [SCNNode node];
 	directNode.light = directLight;
 	//directNode.rotation = SCNVector4Make(0, 0, 0, M_PI_2);
@@ -46,23 +45,21 @@
 	// avatar lights
     SCNLight *avatarSpotlight = [super makeAvatarSpotlight];
     avatarSpotlight.color = lightColor;
+	avatarSpotlight.castsShadow = YES;
     //avatarSpotlight.gobo.contents = [NSImage imageNamed:@"AvatarLightGobo"];
 	SCNLight *avatarOmniLight = [super makeAvatarOmnilight];
 	avatarOmniLight.color = glowColor;
-	avatarOmniLight.castsShadow = YES;
 	avatarOmniLight.shadowRadius = 0.5;
 	
 	// create floor
 	theFloor = [SCNFloor floor];
 	theFloor.materials = @[basicMaterial];
-	theFloor.reflectivity = 0.2;
-	theFloor.reflectionFalloffStart = 0;
-	theFloor.reflectionFalloffEnd = self.avatarHeight/2;
+	theFloor.reflectivity = 0;  // doesn't look right in 3D
 	floorNode = [SCNNode nodeWithGeometry:theFloor];
 	[self.rootNode addChildNode:floorNode];
 	
 	// create spheres
-	srandom(1234);
+	srandom(1234);  // both eyes use the same seed
 	for (int i=0; i<10; i++)
 	{
 		float size = random() % int(self.avatarHeight/2);
@@ -71,7 +68,7 @@
 		SCNNode *sphereNode = [SCNNode nodeWithGeometry:aSphere];
 		float x = (random() % int(self.roomSize)) - self.roomSize/2;
 		float z = (random() % int(self.roomSize)) - self.roomSize/2;
-		NSLog(@"create sphere at %.f %.f %.f", x, size, z);
+		//NSLog(@"create sphere at %.f %.f %.f", x, size, z);
 		sphereNode.position = SCNVector3Make(x, size, z);
 		[self.rootNode addChildNode:sphereNode];
 	}
