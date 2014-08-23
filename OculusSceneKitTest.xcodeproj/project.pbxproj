@@ -16,21 +16,15 @@
 		F4009BD519A42DEC0047E715 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40098B019A42D620047E715 /* libovr.a */; };
 		F44DDD5F19A860410060C3EB /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5019A860410060C3EB /* AppDelegate.mm */; };
 		F44DDD6019A860410060C3EB /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5219A860410060C3EB /* GLProgram.m */; };
-		F44DDD6119A860410060C3EB /* HolodeckScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5419A860410060C3EB /* HolodeckScene.mm */; };
+		F44DDD6119A860410060C3EB /* DefaultScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5419A860410060C3EB /* DefaultScene.mm */; };
 		F44DDD6219A860410060C3EB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5519A860410060C3EB /* main.m */; };
 		F44DDD6319A860410060C3EB /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5719A860410060C3EB /* MainWindow.mm */; };
 		F44DDD6419A860410060C3EB /* OculusRiftDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5919A860410060C3EB /* OculusRiftDevice.mm */; };
 		F44DDD6519A860410060C3EB /* OculusRiftSceneKitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5B19A860410060C3EB /* OculusRiftSceneKitView.mm */; };
 		F44DDD6619A860410060C3EB /* Scene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5E19A860410060C3EB /* Scene.mm */; };
-		F44DDD7B19A861950060C3EB /* avatar.dae in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD6C19A861950060C3EB /* avatar.dae */; };
 		F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD6D19A861950060C3EB /* Credits.rtf */; };
 		F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD6F19A861950060C3EB /* InfoPlist.strings */; };
 		F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7119A861950060C3EB /* MainMenu.xib */; };
-		F44DDD7F19A861950060C3EB /* Eye.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7319A861950060C3EB /* Eye.png */; };
-		F44DDD8019A861950060C3EB /* EyeLight.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7419A861950060C3EB /* EyeLight.png */; };
-		F44DDD8119A861950060C3EB /* EyeShapeBlack.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7519A861950060C3EB /* EyeShapeBlack.png */; };
-		F44DDD8219A861950060C3EB /* EyeShapeWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7619A861950060C3EB /* EyeShapeWhite.png */; };
-		F44DDD8319A861950060C3EB /* Holodeck.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7719A861950060C3EB /* Holodeck.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -485,8 +479,8 @@
 		F44DDD5019A860410060C3EB /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		F44DDD5119A860410060C3EB /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLProgram.h; path = source/GLProgram.h; sourceTree = "<group>"; };
 		F44DDD5219A860410060C3EB /* GLProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GLProgram.m; path = source/GLProgram.m; sourceTree = "<group>"; };
-		F44DDD5319A860410060C3EB /* HolodeckScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HolodeckScene.h; sourceTree = "<group>"; };
-		F44DDD5419A860410060C3EB /* HolodeckScene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HolodeckScene.mm; sourceTree = "<group>"; };
+		F44DDD5319A860410060C3EB /* DefaultScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultScene.h; sourceTree = "<group>"; };
+		F44DDD5419A860410060C3EB /* DefaultScene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DefaultScene.mm; sourceTree = "<group>"; };
 		F44DDD5519A860410060C3EB /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F44DDD5619A860410060C3EB /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
 		F44DDD5719A860410060C3EB /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindow.mm; sourceTree = "<group>"; };
@@ -497,15 +491,9 @@
 		F44DDD5C19A860410060C3EB /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prefix.pch; path = source/Prefix.pch; sourceTree = "<group>"; };
 		F44DDD5D19A860410060C3EB /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		F44DDD5E19A860410060C3EB /* Scene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Scene.mm; sourceTree = "<group>"; };
-		F44DDD6C19A861950060C3EB /* avatar.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = avatar.dae; sourceTree = "<group>"; };
 		F44DDD6E19A861950060C3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		F44DDD7019A861950060C3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F44DDD7219A861950060C3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		F44DDD7319A861950060C3EB /* Eye.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Eye.png; sourceTree = "<group>"; };
-		F44DDD7419A861950060C3EB /* EyeLight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EyeLight.png; sourceTree = "<group>"; };
-		F44DDD7519A861950060C3EB /* EyeShapeBlack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EyeShapeBlack.png; sourceTree = "<group>"; };
-		F44DDD7619A861950060C3EB /* EyeShapeWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EyeShapeWhite.png; sourceTree = "<group>"; };
-		F44DDD7719A861950060C3EB /* Holodeck.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Holodeck.png; sourceTree = "<group>"; };
 		F44DDD7819A861950060C3EB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1239,8 +1227,8 @@
 		F44DDD6819A860F10060C3EB /* Scene */ = {
 			isa = PBXGroup;
 			children = (
-				F44DDD5319A860410060C3EB /* HolodeckScene.h */,
-				F44DDD5419A860410060C3EB /* HolodeckScene.mm */,
+				F44DDD5319A860410060C3EB /* DefaultScene.h */,
+				F44DDD5419A860410060C3EB /* DefaultScene.mm */,
 				F44DDD5D19A860410060C3EB /* Scene.h */,
 				F44DDD5E19A860410060C3EB /* Scene.mm */,
 			);
@@ -1276,12 +1264,6 @@
 				F44DDD7119A861950060C3EB /* MainMenu.xib */,
 				F44DDD7819A861950060C3EB /* Info.plist */,
 				F44DDD6F19A861950060C3EB /* InfoPlist.strings */,
-				F44DDD7319A861950060C3EB /* Eye.png */,
-				F44DDD7419A861950060C3EB /* EyeLight.png */,
-				F44DDD7519A861950060C3EB /* EyeShapeBlack.png */,
-				F44DDD7619A861950060C3EB /* EyeShapeWhite.png */,
-				F44DDD7719A861950060C3EB /* Holodeck.png */,
-				F44DDD6C19A861950060C3EB /* avatar.dae */,
 				F44DDD6D19A861950060C3EB /* Credits.rtf */,
 			);
 			name = Assets;
@@ -1356,12 +1338,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F44DDD8019A861950060C3EB /* EyeLight.png in Resources */,
-				F44DDD8219A861950060C3EB /* EyeShapeWhite.png in Resources */,
-				F44DDD8119A861950060C3EB /* EyeShapeBlack.png in Resources */,
-				F44DDD7F19A861950060C3EB /* Eye.png in Resources */,
-				F44DDD8319A861950060C3EB /* Holodeck.png in Resources */,
-				F44DDD7B19A861950060C3EB /* avatar.dae in Resources */,
 				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
 				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,
 				F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */,
@@ -1375,7 +1351,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F44DDD6119A860410060C3EB /* HolodeckScene.mm in Sources */,
+				F44DDD6119A860410060C3EB /* DefaultScene.mm in Sources */,
 				F44DDD6419A860410060C3EB /* OculusRiftDevice.mm in Sources */,
 				F44DDD5F19A860410060C3EB /* AppDelegate.mm in Sources */,
 				F44DDD6519A860410060C3EB /* OculusRiftSceneKitView.mm in Sources */,

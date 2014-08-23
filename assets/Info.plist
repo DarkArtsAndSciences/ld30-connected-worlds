@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>com.YOURDOMAINHERE.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.darkartsandsciences.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -25,12 +25,12 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2014 YOURNAMEHERE</string>
+	<string>Copyright © 2014 Dark Arts and Sciences</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>Default scene</key>
-	<string>HolodeckScene</string>
+	<string>DefaultScene</string>
 </dict>
 </plist>

@@ -184,7 +184,9 @@ static Scene *currentScene = nil;
     SCNNode *avatarLightNode = [SCNNode node];
     avatarLightNode.light = avatarLight;
     
+	// place it halfway down the avatar, as if it's being held by hand
 	[self linkNodeToHeadRotation:avatarLightNode];
+    avatarLightNode.transform = CATransform3DTranslate(avatarLightNode.transform, 0, -self.avatarHeight/2, 0);
     
     return avatarLight; // caller can set light color, etc.
 }
@@ -197,8 +199,10 @@ static Scene *currentScene = nil;
     SCNNode *avatarLightNode = [SCNNode node];
     avatarLightNode.light = avatarLight;
     
+	// place it ABOVE the avatar for better results
 	[self linkNodeToHeadPosition:avatarLightNode];
-    
+    avatarLightNode.transform = CATransform3DTranslate(avatarLightNode.transform, 0, self.avatarHeight*2, 0);
+	
     return avatarLight; // caller can set light color, etc.
 }
 
