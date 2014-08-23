@@ -3,7 +3,7 @@ OculusRiftSceneKit
 
 Forked from [OculusRiftSceneKit](http://github.com/BradLarson/OculusRiftSceneKit) by [Brad Larson](http://twitter.com/bradlarson) / [Sunset Lake Software](http://www.sunsetlakesoftware.com)
 
-<div style="float: right"><img src="http://imgur.com/6pLx34u" /></div>
+![screenshot](https://cloud.githubusercontent.com/assets/5468481/4019243/870cf41a-2a61-11e4-9eb4-f01aed5974fb.png)
 
 Updates:
 
@@ -45,7 +45,7 @@ Original description by Brad Larson below:
 
 These are a series of classes that add Oculus Rift VR headset support to Scene Kit, as well as at least one sample application to show them in action. These Objective-C classes encapsulate the stereoscopic 3-D rendering required for the Rift, as well as the head tracking it provides. This should hopefully make it pretty easy to rig up virtual reality scenes using Scene Kit's Objective-C API.
 
-<div style="float: right"><img src="http://sunsetlakesoftware.com/sites/default/files/SceneKitOCVR.jpg" /></div>
+![pre-fork screenshot](https://cloud.githubusercontent.com/assets/5468481/4019269/a31d769c-2a62-11e4-96f0-b8bca32c5bc7.jpg)
 
 ## License ##
 
