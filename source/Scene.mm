@@ -2,6 +2,8 @@
 
 @implementation Scene
 {
+	NSString* eye;  // "left" or "right"
+	
     SCNNode *headRotationNode, *headPositionNode;
     float hrx, hry, hrz;  // head rotation angles in radians
 	
@@ -16,24 +18,48 @@
 
 #pragma mark - Singleton
 
-static Scene *currentScene = nil;
-+ (id)currentScene
+static Scene *currentLeftScene = nil;
++ (id)currentLeftScene
 {
 	@synchronized(self)
 	{
-        if (currentScene == nil)
-            currentScene = [[self alloc] init];
+        if (currentLeftScene == nil)
+            currentLeftScene = [[self alloc] init];
     }
-	return currentScene;
+	return currentLeftScene;
 }
-+ (void)setCurrentScene:(Scene*)scene
+static Scene *currentRightScene = nil;
++ (id)currentRightScene
 {
 	@synchronized(self)
 	{
-		currentScene = scene;
-		[scene resetEventHandlers];
-		[scene addEventHandlers];
+        if (currentRightScene == nil)
+            currentRightScene = [[self alloc] init];
     }
+	return currentRightScene;
+}
++ (void)setCurrentSceneLeft:(Scene*)leftScene
+					  right:(Scene*)rightScene
+{
+	@synchronized(self)
+	{
+		currentLeftScene = leftScene;
+		currentRightScene = rightScene;
+		[leftScene resetEventHandlers];
+		[rightScene resetEventHandlers];
+		[leftScene addEventHandlers];
+		[rightScene addEventHandlers];
+    }
+}
+
+#pragma mark - Left or Right
+
+- (BOOL)isLeft  { return [eye isEqual: @"left"]; }
+- (BOOL)isRight { return [eye isEqual: @"right"]; }
+
+- (void)setEye:(NSString*)theEye
+{
+	eye = theEye;
 }
 
 #pragma mark - Initialization

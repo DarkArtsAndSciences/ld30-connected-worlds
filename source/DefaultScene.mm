@@ -15,8 +15,6 @@
 {
     if (!(self = [super init])) return nil;
 	
-	NSLog(@"init default scene");
-	
 	self.roomSize = 1000; // max and min scene coordinates are +- roomSize/2, center is 0,0,0
 	self.avatarHeight = 100;  // distance from ground to eye camera
 	
@@ -64,19 +62,44 @@
 	[self.rootNode addChildNode:floorNode];
 	
 	// create spheres
+	srandom(1234);
 	for (int i=0; i<10; i++)
 	{
-		float size = arc4random() % int(self.avatarHeight/2);
+		float size = random() % int(self.avatarHeight/2);
 		SCNSphere *aSphere = [SCNSphere sphereWithRadius:size];
 		aSphere.materials = @[basicMaterial];
 		SCNNode *sphereNode = [SCNNode nodeWithGeometry:aSphere];
-		float x = (arc4random() % int(self.roomSize)) - self.roomSize/2;
-		float z = (arc4random() % int(self.roomSize)) - self.roomSize/2;
+		float x = (random() % int(self.roomSize)) - self.roomSize/2;
+		float z = (random() % int(self.roomSize)) - self.roomSize/2;
+		NSLog(@"create sphere at %.f %.f %.f", x, size, z);
 		sphereNode.position = SCNVector3Make(x, size, z);
 		[self.rootNode addChildNode:sphereNode];
 	}
 	
 	return self;
+}
+	
+- (void)setEye:(NSString*)theEye
+{
+	[super setEye:theEye];
+	
+	// some objects are halfway between worlds...
+	SCNBox *aBox = [SCNBox boxWithWidth:self.avatarHeight height:self.avatarHeight length:self.avatarHeight chamferRadius:self.avatarHeight/10];
+	aBox.materials = @[basicMaterial];
+	SCNNode *boxNode = [SCNNode nodeWithGeometry:aBox];
+	if ([theEye isEqual: @"left"])
+	{
+		boxNode.position = SCNVector3Make(self.avatarHeight/2, self.avatarHeight, -self.avatarHeight*5);
+	}
+	else if ([theEye isEqual: @"right"])
+	{
+		boxNode.position = SCNVector3Make(-self.avatarHeight/2, self.avatarHeight, -self.avatarHeight*5);
+	}
+	else
+	{
+		NSLog(@"ERROR: eye should be left or right, not %@", theEye);
+	}
+	[self.rootNode addChildNode:boxNode];
 }
 
 #pragma mark - Event handlers

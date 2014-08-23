@@ -9,8 +9,12 @@ using namespace OVR;
 @property CGFloat roomSize, avatarHeight, avatarSpeed;
 @property SCNVector3 headPosition;
 
-+ (id)currentScene;
-+ (void)setCurrentScene:(Scene*)scene;
++ (id)currentLeftScene;
++ (id)currentRightScene;
++ (void)setCurrentSceneLeft:(Scene*)leftScene
+					  right:(Scene*)rightScene;
+
+- (void)setEye:(NSString*)theEye;
 
 - (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z;
 - (void)linkNodeToHeadPosition:(SCNNode*)node;

@@ -46,7 +46,8 @@
 - (void)eventHandler:(NSEvent*)theEvent
 {
 	NSEventType eventType = [theEvent type];
-	NSDictionary *handlers = [[Scene currentScene] getHandlersForEventType:eventType];
+	NSDictionary *leftHandlers = [[Scene currentLeftScene] getHandlersForEventType:eventType];
+	NSDictionary *rightHandlers = [[Scene currentLeftScene] getHandlersForEventType:eventType];
 	NSMutableString *keyCodeString = [NSMutableString string];
 	
 	unsigned long modifierFlags = [theEvent modifierFlags];
@@ -68,11 +69,16 @@
 	BOOL debug = [[OculusRiftDevice getDevice] isDebugHmd];
 	if (debug) NSLog(@"handling event for type %lu-%@", (unsigned long)eventType, keyCodeString);
 	
-	SEL handler = (SEL)[[handlers objectForKey:keyCodeString] pointerValue];
-	if (handler)
-		[[Scene currentScene] performSelector:handler];
+	SEL leftHandler = (SEL)[[leftHandlers objectForKey:keyCodeString] pointerValue];
+	SEL rightHandler = (SEL)[[rightHandlers objectForKey:keyCodeString] pointerValue];
+	if (leftHandler)
+		[[Scene currentLeftScene] performSelector:leftHandler];
 	else
-		if (debug) NSLog(@"no handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
+		if (debug) NSLog(@"no left scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
+	if (rightHandler)
+		[[Scene currentRightScene] performSelector:rightHandler];
+	else
+		if (debug) NSLog(@"no right scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
 }
 
 - (void)keyDown:(NSEvent *)theEvent        { [self eventHandler:theEvent]; }

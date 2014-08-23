@@ -5,10 +5,13 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 	// load base scene with event handlers
-	Scene *scene = [self getDefaultScene];
+	Scene *leftScene = [self getDefaultScene];
+	Scene *rightScene = [self getDefaultScene];
+	[leftScene setEye:@"left"];
+	[rightScene setEye:@"right"];
 	
 	// connect the scene to the view
-	[self.oculusView setScene:scene];
+	[self.oculusView setScenesForLeft:leftScene right:rightScene];
 	
 	// connect the view to the window
 	[_window setContentView:self.oculusView];
@@ -58,7 +61,8 @@
 	}
 	else
 	{
-		Scene *scene = [Scene currentScene];
+		Scene *leftScene  = [Scene currentLeftScene];
+		Scene *rightScene = [Scene currentRightScene];
 		
 		//NSLog(@"DAE file contains: %@", nodes);
 		SCNNode *subroot = [SCNNode node];
@@ -73,10 +77,11 @@
 		}
 		//NSLog(@"using node %@", node);
 		float scale = 200; // TODO: calculate this based on size of scene?
-		SCNVector3 p = [[Scene currentScene] headPosition];
+		SCNVector3 p = [[Scene currentLeftScene] headPosition];
 		subroot.position = SCNVector3Make(p.x,p.y-scale,p.z);
 		subroot.transform = CATransform3DScale(subroot.transform, scale, scale, scale);
-		[scene.rootNode addChildNode:subroot];
+		[leftScene.rootNode addChildNode:subroot];
+		[rightScene.rootNode addChildNode:subroot];
 	}
 }
 

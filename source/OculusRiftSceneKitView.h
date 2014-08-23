@@ -9,7 +9,8 @@
 
 @interface OculusRiftSceneKitView : NSOpenGLView <SCNSceneRendererDelegate>
 
-- (void)setScene:(SCNScene *)newScene;
+- (void)setScenesForLeft:(SCNScene *)leftSCNScene
+				   right:(SCNScene *)rightSCNScene;
 - (CVReturn)renderTime:(const CVTimeStamp *)timeStamp;
 
 @end

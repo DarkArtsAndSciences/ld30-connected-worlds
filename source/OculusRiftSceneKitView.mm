@@ -246,7 +246,8 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     CVDisplayLinkSetOutputCallback(displayLink, renderCallback, (__bridge void *)self);
 }
 
-- (void)setScene:(SCNScene *)newScene
+- (void)setScenesForLeft:(SCNScene *)leftSCNScene
+				   right:(SCNScene *)rightSCNScene
 {
     CVDisplayLinkStop(displayLink);
     
@@ -255,15 +256,16 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     
     glUniform4f(hmdWarpParamUniform, 1.0, 0.22, 0.24, 0.0);
     
-    leftEyeRenderer.scene = newScene;
-    rightEyeRenderer.scene = newScene;
-	if (![newScene isKindOfClass:[Scene class]])
+    leftEyeRenderer.scene = leftSCNScene;
+    rightEyeRenderer.scene = rightSCNScene;
+	if (!([leftSCNScene isKindOfClass:[Scene class]] && [rightSCNScene isKindOfClass:[Scene class]]))
 	{
 		CVDisplayLinkStart(displayLink);
 		return;
 	}
-	Scene *scene = (Scene*)newScene;
-	[Scene setCurrentScene:(Scene*)scene];
+	Scene *leftScene  = (Scene*)leftSCNScene;
+	Scene *rightScene = (Scene*)rightSCNScene;
+	[Scene setCurrentSceneLeft:(Scene*)leftScene right:(Scene*)rightScene];
     
     // create cameras
     SCNNode *(^addNodeforEye)(int) = ^(int eye)
@@ -286,8 +288,8 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     };
     leftEyeRenderer.pointOfView = addNodeforEye(LEFT);
     rightEyeRenderer.pointOfView = addNodeforEye(RIGHT);
-    [scene linkNodeToHeadRotation:leftEyeRenderer.pointOfView];
-    [scene linkNodeToHeadRotation:rightEyeRenderer.pointOfView];
+    [leftScene linkNodeToHeadRotation:leftEyeRenderer.pointOfView];
+    [rightScene linkNodeToHeadRotation:rightEyeRenderer.pointOfView];
     
     CVDisplayLinkStart(displayLink);
 }
@@ -373,11 +375,13 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 {
     // use a background queue to avoid blocking the main thread
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[Scene currentScene] tick:timeStamp];
+        [[Scene currentLeftScene] tick:timeStamp];
+        [[Scene currentRightScene] tick:timeStamp];
         
         float x, y, z;
         [[OculusRiftDevice getDevice] getHeadRotationX:&x Y:&y Z:&z]; // update camera pose
-        [[Scene currentScene] setHeadRotationX:x Y:y Z:z];
+        [[Scene currentLeftScene] setHeadRotationX:x Y:y Z:z];
+        [[Scene currentRightScene] setHeadRotationX:x Y:y Z:z];
         
         [[self openGLContext] makeCurrentContext];
         [leftEyeRenderer render];
