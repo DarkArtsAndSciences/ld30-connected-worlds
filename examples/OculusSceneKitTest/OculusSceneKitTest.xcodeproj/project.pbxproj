@@ -25,7 +25,6 @@
 		F4009BD519A42DEC0047E715 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40098B019A42D620047E715 /* libovr.a */; };
 		F4009BD819A430890047E715 /* Scene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4009BD719A430890047E715 /* Scene.mm */; };
 		F40640AA19A60F5F00B4F00C /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = F40640A919A60F5F00B4F00C /* MainWindow.mm */; };
-		F44DDD3D19A6AC5F0060C3EB /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD3C19A6AC5F0060C3EB /* README.md */; };
 		F44DDD4819A769420060C3EB /* EyeLight.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD4719A769420060C3EB /* EyeLight.png */; };
 		F44DDD4A19A7E5280060C3EB /* avatar.dae in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD4919A7E5280060C3EB /* avatar.dae */; };
 		F4E0C71E19A689A5000C6F95 /* HolodeckScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0C71D19A689A5000C6F95 /* HolodeckScene.mm */; };
@@ -498,7 +497,6 @@
 		F4009BD719A430890047E715 /* Scene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Scene.mm; sourceTree = "<group>"; };
 		F40640A819A60F5F00B4F00C /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = ../../../MainWindow.h; sourceTree = "<group>"; };
 		F40640A919A60F5F00B4F00C /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindow.mm; path = ../../../MainWindow.mm; sourceTree = "<group>"; };
-		F44DDD3C19A6AC5F0060C3EB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = OculusSceneKit/README.md; sourceTree = "<group>"; };
 		F44DDD4719A769420060C3EB /* EyeLight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = EyeLight.png; path = OculusSceneKit/EyeLight.png; sourceTree = "<group>"; };
 		F44DDD4919A7E5280060C3EB /* avatar.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; name = avatar.dae; path = OculusSceneKit/avatar.dae; sourceTree = "<group>"; };
 		F4E0C71C19A689A5000C6F95 /* HolodeckScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HolodeckScene.h; sourceTree = "<group>"; };
@@ -603,7 +601,6 @@
 		F40098A719A42B860047E715 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				F44DDD3C19A6AC5F0060C3EB /* README.md */,
 				BCAA76B217B5DF3200E25C2A /* Info.plist */,
 				BCAA76BF17B5DF3200E25C2A /* MainMenu.xib */,
 				F44DDD3F19A7671F0060C3EB /* Images */,
@@ -1344,7 +1341,6 @@
 			files = (
 				BCAA76B517B5DF3200E25C2A /* InfoPlist.strings in Resources */,
 				BCAA76BB17B5DF3200E25C2A /* Credits.rtf in Resources */,
-				F44DDD3D19A6AC5F0060C3EB /* README.md in Resources */,
 				BCAA76C117B5DF3200E25C2A /* MainMenu.xib in Resources */,
 				BCD6160B17BB2875005535A1 /* Holodeck.png in Resources */,
 				F44DDD4819A769420060C3EB /* EyeLight.png in Resources */,

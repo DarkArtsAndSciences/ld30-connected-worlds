@@ -3,9 +3,11 @@ OculusRiftSceneKit
 
 Forked from [OculusRiftSceneKit](http://github.com/BradLarson/OculusRiftSceneKit) by [Brad Larson](http://twitter.com/bradlarson) / [Sunset Lake Software](http://www.sunsetlakesoftware.com)
 
+![screenshot](http://imgur.com/6pLx34u)
+
 Updates:
 
-- Updated OculusRift SDK to 0.4.1. *The OculusSceneKitTest example works with the Oculus Rift DK2!*
+- Updated OculusRift SDK to 0.4.1. **The OculusSceneKitTest example works with the Oculus Rift DK2!**
 - Fullscreen for VR screens, standard window for 2D screens.
 - Mouse/keyboard input. Hold down the mouse button or the W key to move in the direction you're looking (turn the headset to turn). S to move backwards, A and D to move (not turn) left and right.
 - Lights can autofollow the avatar. The demo has an omni to light up the general area, and a spotlight pointed where you're looking.
@@ -18,7 +20,7 @@ Known Issues and Planned Features:
 - Controls are missing jumping, 2D turning, and 3D movement (flying instead of walking)
 - 2D mode should be rendered *without* distortion unless specifically enabled for testing or video recording.
 - DAE files for 3D objects are partially supported.
-	
+
 Tutorial:
 
 1. Download the [Oculus Rift SDK for Mac OS](https://developer.oculusvr.com/?action=dl) (requires free developer account) and install it at /Applications/Oculus/SDK
@@ -27,7 +29,7 @@ Tutorial:
 
 	If LibOVR is red (files not where Xcode expects them), delete it and drag your copy from the Finder into the Xcode project, then replace libovr.a (also red) in Build Phases: Link Binary with Libraries with your copy from /Libraries/LibOVR/Lib/Mac/Debug (in the Xcode project).
 
-	If you had to do that, you probably didn't install LibOVR where I told you to (/Applications/Oculus/SDK/LibOVR).  You'll need to change your Library and Header search paths to the actual location.
+	If you had to do that, you probably didn't install LibOVR where I told you to (/Applications/Oculus/SDK/LibOVR).  You'll also need to change your Library and Header search paths to the actual location.
 
 	If you're going to be using OculusSceneKitTest as a template for multiple projects, save it with these changes so you don't have to do this again.
 
@@ -53,7 +55,7 @@ The Oculus Rift SDK and libraries are covered by their own license, which can be
 
 ## Usage ##
 
-To use this in a Scene Kit project, you'll need to add the OculusRiftDevice, OculusRiftSceneKitView, and GLProgram classes to your project. 
+To use this in a Scene Kit project, you'll need to add the OculusRiftDevice, OculusRiftSceneKitView, and GLProgram classes to your project.
 
 Configure a window that goes fullscreen with an OculusRiftSceneKitView within it. This class will handle the rendering and head tracking for you. To set up your scene, create an SCNScene containing whatever you want to display in your environment and set that to the scene property on your OculusRiftSceneKitView instance. These classes will handle the rest. You can adjust the position of the head within the scene using the headLocation property on OculusRiftSceneKitView, and the spacing of the virtual eyes using the interpupillaryDistance property.
 
@@ -63,7 +65,7 @@ Again, check out the test application in the examples/ directory to see this in 
 
 ## Acknowledgments ##
 
-I'd like to thank Mike Rotondo and Luke Iannini for their help in solving some of the perspective projection problems. Check out their much more elaborate Oculus Rift and Scene Kit project for more: 
+I'd like to thank Mike Rotondo and Luke Iannini for their help in solving some of the perspective projection problems. Check out their much more elaborate Oculus Rift and Scene Kit project for more:
 
 https://github.com/takataka/OpenWorldTest
 
