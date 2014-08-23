@@ -3,7 +3,7 @@ OculusRiftSceneKit
 
 Forked from [OculusRiftSceneKit](http://github.com/BradLarson/OculusRiftSceneKit) by [Brad Larson](http://twitter.com/bradlarson) / [Sunset Lake Software](http://www.sunsetlakesoftware.com)
 
-<div style="float: right"><img src="http://imgur.com/6pLx34u" /></div>
+![screenshot](https://cloud.githubusercontent.com/assets/5468481/4019243/870cf41a-2a61-11e4-9eb4-f01aed5974fb.png)
 
 Updates:
 
