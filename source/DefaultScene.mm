@@ -3,10 +3,11 @@
 @implementation DefaultScene
 {
 	NSColor *lightColor, *glowColor;
-	SCNMaterial *basicMaterial, *floorMaterial;
+	SCNMaterial *basicMaterial, *connectedMaterial, *disconnectedMaterial;
 	
-	SCNFloor *theFloor;
-	SCNNode *floorNode;
+	NSMutableArray *spheres;
+	
+	float influence;
 }
 
 #pragma mark - Initialization
@@ -17,6 +18,7 @@
 	
 	self.roomSize = 1000; // max and min scene coordinates are +- roomSize/2, center is 0,0,0
 	self.avatarHeight = 100;  // distance from ground to eye camera
+	influence = 250;
 	
 	// starting position: feet on the floor (y=0) in the center of the room
     self.headPosition = SCNVector3Make(0.0, self.avatarHeight, 0.0);
@@ -28,8 +30,10 @@
 	//create materials
 	basicMaterial = [SCNMaterial material];
 	basicMaterial.diffuse.contents = [NSColor grayColor];
-	floorMaterial = [SCNMaterial material];
-	floorMaterial.diffuse.contents = [NSColor greenColor];
+	connectedMaterial = [SCNMaterial material];
+	connectedMaterial.diffuse.contents = [NSColor blueColor];
+	disconnectedMaterial = [SCNMaterial material];
+	disconnectedMaterial.diffuse.contents = [NSColor greenColor];
 	
 	// create directional light
 	SCNLight *directLight = [SCNLight light];
@@ -51,26 +55,21 @@
 	avatarOmniLight.color = glowColor;
 	avatarOmniLight.shadowRadius = 0.5;
 	
-	// create floor
-	theFloor = [SCNFloor floor];
-	theFloor.materials = @[basicMaterial];
-	theFloor.reflectivity = 0;  // doesn't look right in 3D
-	floorNode = [SCNNode nodeWithGeometry:theFloor];
-	[self.rootNode addChildNode:floorNode];
-	
 	// create spheres
 	srandom(1234);  // both eyes use the same seed
+	spheres = [NSMutableArray array];
 	for (int i=0; i<10; i++)
 	{
 		float size = random() % int(self.avatarHeight/2);
 		SCNSphere *aSphere = [SCNSphere sphereWithRadius:size];
-		aSphere.materials = @[basicMaterial];
+		aSphere.materials = @[connectedMaterial];
 		SCNNode *sphereNode = [SCNNode nodeWithGeometry:aSphere];
 		float x = (random() % int(self.roomSize)) - self.roomSize/2;
 		float z = (random() % int(self.roomSize)) - self.roomSize/2;
 		//NSLog(@"create sphere at %.f %.f %.f", x, size, z);
 		sphereNode.position = SCNVector3Make(x, size, z);
 		[self.rootNode addChildNode:sphereNode];
+		[spheres addObject:sphereNode];
 	}
 	
 	return self;
@@ -119,7 +118,7 @@
 	// if the avatar is close enough
 	float x = 0;  // TODO: object location, or upgrade isInXZRange to take a node
 	float z = 0;
-	if ([self isInXZRange:self.avatarHeight x:x z:z])
+	if ([self isInXZRange:influence x:x z:z])
 	{
 		// interact with the object
 	}
@@ -131,7 +130,15 @@
 	[super tick:timeStamp];
 	
 	// if in range of any objects
+	for (int i=0; i<spheres.count; i++)
+	{
+		SCNNode *sphere = [spheres objectAtIndex:i];
 		// perform any passive interactions
+		if ([self isInXYZRange:influence node:sphere])
+		{
+			sphere.geometry.materials = @[disconnectedMaterial];
+		}
+	}
 }
 
 @end

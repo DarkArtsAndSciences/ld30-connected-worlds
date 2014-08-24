@@ -23,6 +23,7 @@ using namespace OVR;
 - (void)tick:(const CVTimeStamp *)timeStamp;
 
 - (BOOL)isInXZRange:(float)distance x:(float)x z:(float)z;
+- (BOOL)isInXYZRange:(float)distance node:(SCNNode*)node;
 
 - (SCNLight*)makeAvatarSpotlight;
 - (SCNLight*)makeAvatarOmnilight;

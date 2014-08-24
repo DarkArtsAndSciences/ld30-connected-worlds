@@ -192,10 +192,22 @@ static Scene *currentRightScene = nil;
     return YES;
 }
 
+- (Vector3f)vector3fFromSCNVector3:(SCNVector3)v { return Vector3f(v.x, v.y, v.z); }
+- (SCNVector3)scnvector3FromVector3f:(Vector3f)v { return SCNVector3Make(v.x, v.y, v.z); }
+
 - (BOOL)isInXZRange:(float)distance x:(float)x z:(float)z
 {
 	Vector2f avatarXZ = Vector2f(self.headPosition.x, self.headPosition.z);  // ignore y
 	return avatarXZ.Distance(Vector2f(x, z)) <= distance;
+}
+
+- (BOOL)isInXYZRange:(float)distance node:(SCNNode*)node
+{
+	Vector3f avatarV = [self vector3fFromSCNVector3:self.headPosition];
+	Vector3f nodeV = [self vector3fFromSCNVector3:node.position];
+	float myDistance = avatarV.Distance(nodeV);
+	BOOL isInRange = myDistance <= distance;
+	return isInRange;
 }
 
 #pragma mark - Convenience functions for creating lights and objects
