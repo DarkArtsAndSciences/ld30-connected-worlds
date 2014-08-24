@@ -6,6 +6,7 @@ using namespace OVR;
 
 @interface Scene : SCNScene
 
+@property NSString* eye;  // "left" or "right"
 @property CGFloat roomSize, avatarHeight, avatarSpeed;
 @property SCNVector3 headPosition;
 
@@ -14,7 +15,8 @@ using namespace OVR;
 + (void)setCurrentSceneLeft:(Scene*)leftScene
 					  right:(Scene*)rightScene;
 
-- (void)setEye:(NSString*)theEye;
+//- (NSString*)getEye;
+//- (void)setEye:(NSString*)theEye;
 
 - (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z;
 - (void)linkNodeToHeadPosition:(SCNNode*)node;

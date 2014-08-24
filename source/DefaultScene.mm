@@ -3,7 +3,11 @@
 @implementation DefaultScene
 {
 	NSColor *lightColor, *glowColor;
-	SCNMaterial *basicMaterial, *connectedMaterial, *disconnectedMaterial;
+	
+	SCNMaterial *basicMaterial;
+	SCNMaterial *connectedMaterial;
+	SCNMaterial *leftDisconnectedMaterial;
+	SCNMaterial *rightDisconnectedMaterial;
 	
 	NSMutableArray *spheres;
 	
@@ -30,10 +34,15 @@
 	//create materials
 	basicMaterial = [SCNMaterial material];
 	basicMaterial.diffuse.contents = [NSColor grayColor];
+	
 	connectedMaterial = [SCNMaterial material];
-	connectedMaterial.diffuse.contents = [NSColor blueColor];
-	disconnectedMaterial = [SCNMaterial material];
-	disconnectedMaterial.diffuse.contents = [NSColor greenColor];
+	connectedMaterial.diffuse.contents = [NSColor redColor];
+	
+	leftDisconnectedMaterial = [SCNMaterial material];
+	leftDisconnectedMaterial.diffuse.contents = [NSColor greenColor];
+	
+	rightDisconnectedMaterial = [SCNMaterial material];
+	rightDisconnectedMaterial.diffuse.contents = [NSColor blueColor];
 	
 	// create directional light
 	SCNLight *directLight = [SCNLight light];
@@ -74,29 +83,6 @@
 	
 	return self;
 }
-	
-- (void)setEye:(NSString*)theEye
-{
-	[super setEye:theEye];
-	
-	// some objects are halfway between worlds...
-	SCNBox *aBox = [SCNBox boxWithWidth:self.avatarHeight height:self.avatarHeight length:self.avatarHeight chamferRadius:self.avatarHeight/10];
-	aBox.materials = @[basicMaterial];
-	SCNNode *boxNode = [SCNNode nodeWithGeometry:aBox];
-	if ([theEye isEqual: @"left"])
-	{
-		boxNode.position = SCNVector3Make(self.avatarHeight/2, self.avatarHeight, -self.avatarHeight*5);
-	}
-	else if ([theEye isEqual: @"right"])
-	{
-		boxNode.position = SCNVector3Make(-self.avatarHeight/2, self.avatarHeight, -self.avatarHeight*5);
-	}
-	else
-	{
-		NSLog(@"ERROR: eye should be left or right, not %@", theEye);
-	}
-	[self.rootNode addChildNode:boxNode];
-}
 
 #pragma mark - Event handlers
 
@@ -115,12 +101,15 @@
 // event handler for active interactions with objects
 - (void)onInteract
 {
-	// if the avatar is close enough
-	float x = 0;  // TODO: object location, or upgrade isInXZRange to take a node
-	float z = 0;
-	if ([self isInXZRange:influence x:x z:z])
+	// if in range of any objects
+	for (int i=0; i<spheres.count; i++)
 	{
-		// interact with the object
+		SCNNode *sphere = [spheres objectAtIndex:i];
+		// perform any active interactions
+		if ([self isInXYZRange:influence node:sphere])
+		{
+			NSLog(@"interact with sphere #%d", i);
+		}
 	}
 }
 
@@ -136,7 +125,22 @@
 		// perform any passive interactions
 		if ([self isInXYZRange:influence node:sphere])
 		{
-			sphere.geometry.materials = @[disconnectedMaterial];
+			if ([self.eye isEqual:@"left"])
+			{
+				sphere.geometry.materials = @[leftDisconnectedMaterial];
+				NSLog(@"left sphere: %@", sphere);
+			}
+			else
+			{
+				sphere.geometry.materials = @[rightDisconnectedMaterial];
+				NSLog(@"right sphere: %@", sphere);
+			}
+		}
+		else
+		{
+			// reconnect spheres outside the influence
+			// TODO: slowly
+			sphere.geometry.materials = @[connectedMaterial];
 		}
 	}
 }

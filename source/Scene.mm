@@ -2,7 +2,6 @@
 
 @implementation Scene
 {
-	NSString* eye;  // "left" or "right"
 	
     SCNNode *headRotationNode, *headPositionNode;
     float hrx, hry, hrz;  // head rotation angles in radians
@@ -11,6 +10,7 @@
     BOOL isMovingForward, isMovingBackward, isMovingLeft, isMovingRight;
 }
 
+@synthesize eye;
 @synthesize roomSize;
 @synthesize avatarHeight;
 @synthesize avatarSpeed;
@@ -57,6 +57,10 @@ static Scene *currentRightScene = nil;
 - (BOOL)isLeft  { return [eye isEqual: @"left"]; }
 - (BOOL)isRight { return [eye isEqual: @"right"]; }
 
+- (NSString*)eye
+{
+	return eye;
+}
 - (void)setEye:(NSString*)theEye
 {
 	eye = theEye;
