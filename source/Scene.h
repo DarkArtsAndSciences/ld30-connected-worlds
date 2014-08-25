@@ -7,7 +7,7 @@ using namespace OVR;
 @interface Scene : SCNScene
 
 @property NSString* eye;  // "left" or "right"
-@property CGFloat roomSize, avatarHeight, avatarSpeed;
+@property CGFloat roomSize, avatarHeight, avatarSpeed, turnSpeed;
 @property SCNVector3 headPosition;
 
 + (id)currentLeftScene;
@@ -56,6 +56,7 @@ using namespace OVR;
 
 - (void)addEventHandlersForStepWASD;
 - (void)addEventHandlersForHoldWASD;
+- (void)addEventHandlersForStepTurnArrows;
 - (void)addEventHandlersForStepArrows;
 - (void)addEventHandlersForHoldArrows;
 - (void)addEventHandlersForLeftMouseDownMoveForward;

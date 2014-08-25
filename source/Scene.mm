@@ -14,6 +14,7 @@
 @synthesize roomSize;
 @synthesize avatarHeight;
 @synthesize avatarSpeed;
+@synthesize turnSpeed;
 @synthesize headPosition;
 
 #pragma mark - Singleton
@@ -83,6 +84,7 @@ static Scene *currentRightScene = nil;
     roomSize = 1000;
 	avatarHeight = 100;
 	avatarSpeed = 1;
+	turnSpeed = 0.025;
 	
 	[self resetEventHandlers];  // initialize handler storage
 	[self stopMoving];  // set all isMovings to NO
@@ -107,6 +109,8 @@ static Scene *currentRightScene = nil;
 
 - (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z
 {
+	//NSLog(@"set hr %.2fx %.2fy %.2fz", x, y, z);
+	
     hrx = x;
     hry = y;
     hrz = z;
@@ -115,13 +119,36 @@ static Scene *currentRightScene = nil;
     transform                  = CATransform3DRotate(transform, y, 1, 0, 0);
     headRotationNode.transform = CATransform3DRotate(transform, z, 0, 0, 1);
 }
+- (void)addHeadRotationX:(float)x Y:(float)y Z:(float)z
+{
+	//NSLog(@"add hr %.2fx %.2fy %.2fz", x, y, z);
+	
+    hrx = x;
+    hry = y;
+    hrz = z;
+    
+    CATransform3D transform    = headRotationNode.transform;
+	transform				   = CATransform3DRotate(transform, x, 0, 1, 0);
+    transform                  = CATransform3DRotate(transform, y, 1, 0, 0);
+    headRotationNode.transform = CATransform3DRotate(transform, z, 0, 0, 1);
+}
+- (void)turnDirection:(Vector3f)direction distance:(float)distance
+{
+    Vector3f t = direction * distance;
+	//NSLog(@"turn %.2f %.2f %.2f", t.x, t.y, t.z);
+	[self addHeadRotationX:t.x Y:t.y Z:t.z];
+}
+
+- (void)turnUp	  { [self turnDirection:Vector3f(0,-1,0) distance:turnSpeed]; }
+- (void)turnDown  { [self turnDirection:Vector3f(0, 1,0) distance:turnSpeed]; }
+- (void)turnLeft  { [self turnDirection:Vector3f( 1,0,0) distance:turnSpeed]; }
+- (void)turnRight { [self turnDirection:Vector3f(-1,0,0) distance:turnSpeed]; }
 
 - (void)linkNodeToHeadPosition:(SCNNode*)node { [headPositionNode addChildNode:node]; }
 - (void)linkNodeToHeadRotation:(SCNNode*)node { [headRotationNode addChildNode:node]; }
 
 
 #pragma mark - Avatar movement
-// TODO: 2D turning, 3D movement (flying instead of walking)
 // TODO: add diagonal 2D movement (add and normalize vectors)
 // MAYBE: add XY WASD movement (locked to world, not direction facing)
 
@@ -379,6 +406,8 @@ static Scene *currentRightScene = nil;
 
 #pragma mark - Standard control schemes
 
+// TODO: this is getting messy, is it possible to pass parameters to handlers?
+
 - (void)addEventHandlersForStepWASD
 {
 	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(stepLeft)]		forKey: @"0"];
@@ -403,9 +432,23 @@ static Scene *currentRightScene = nil;
 	[keyUpHandlers   setObject:[NSValue valueWithPointer:@selector(stopMovingForward)]   forKey:@"13"];
 }
 
-- (void)addEventHandlersForStepArrows
+// TODO: WASD, hold turn arrows, shift for "run" step turn
+// MAYBE: on trackpad swipe
+- (void)addEventHandlersForStepTurnArrows
 {
-	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(stepLeft)]		forKey: @"123"];
+	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(turnLeft)]		forKey: @"123"];
+	//[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(runLeft)]		forKey:@"+123"];
+	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(turnRight)]		forKey: @"124"];
+	//[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(runRight)]		forKey:@"+124"];
+	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(turnDown)]	forKey: @"125"];
+	//[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(runBackward)]	forKey:@"+125"];
+	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(turnUp)]	forKey: @"126"];
+	//[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(runForward)]		forKey:@"+126"];
+}
+
+- (void)addEventHandlersForStepArrows  // move
+{
+	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(turnLeft)]		forKey: @"123"];
 	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(runLeft)]		forKey:@"+123"];
 	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(stepRight)]		forKey: @"124"];
 	[keyDownHandlers setObject:[NSValue valueWithPointer:@selector(runRight)]		forKey:@"+124"];

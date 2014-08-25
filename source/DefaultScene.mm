@@ -1,9 +1,10 @@
 #import "DefaultScene.h"
+#import "OculusRiftDevice.h"
 
 @implementation DefaultScene
 {
 	// setEye
-	int eyeM;  // -1 for left, 1 for right. Not used?
+	int eyeM;  // -1 for left, 1 for right
 	
 	// initGlobals
 	NSString *logoFontName, *hudFontName;
@@ -39,7 +40,7 @@
 
 #pragma mark - Initialization
 
-// Called right after init, which can't be overridded with this variable, so all setup is done here.
+// Called right after init, which can't be overridden with this variable, so all setup is done here.
 - (void)setEye:(NSString*)theEye
 {
 	[super setEye:theEye];
@@ -272,9 +273,12 @@
 
 - (void)addEventHandlers
 {
+	// TODO: check for turn sensor
+	if ([[OculusRiftDevice getDevice] isDebugHmd])
+		[self addEventHandlersForStepTurnArrows];
+	
 	// enable standard control schemes
 	[self addEventHandlersForHoldWASD];
-	[self addEventHandlersForHoldArrows];
 	[self addEventHandlersForLeftMouseDownMoveForward];
 	//[self addEventHandlersForRightMouseDownMoveBackward];
 	

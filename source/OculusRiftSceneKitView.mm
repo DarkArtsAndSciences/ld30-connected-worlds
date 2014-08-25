@@ -379,10 +379,14 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
         [[Scene currentRightScene] tick:timeStamp];
         
         float x, y, z;
-        [[OculusRiftDevice getDevice] getHeadRotationX:&x Y:&y Z:&z]; // update camera pose
-        [[Scene currentLeftScene] setHeadRotationX:x Y:y Z:z];
-        [[Scene currentRightScene] setHeadRotationX:x Y:y Z:z];
-        
+		OculusRiftDevice *ord = [OculusRiftDevice getDevice];
+		if (![ord isDebugHmd])
+		{
+			[ord getHeadRotationX:&x Y:&y Z:&z]; // update camera pose
+			[[Scene currentLeftScene] setHeadRotationX:x Y:y Z:z];
+			[[Scene currentRightScene] setHeadRotationX:x Y:y Z:z];
+        }
+		
         [[self openGLContext] makeCurrentContext];
         [leftEyeRenderer render];
         [rightEyeRenderer render];
