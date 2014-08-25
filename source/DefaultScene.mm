@@ -10,6 +10,7 @@
 	NSString *logoFontName, *hudFontName;
 	NSColor *connectColor, *_leftDisconnectColor, *_rightDisconnectColor;
 	SCNMaterial *basicMaterial, *connectMaterial, *disconnectMaterial;
+	NSArray *basicMaterials, *connectMaterials, *disconnectMaterials;
 	CAKeyframeAnimation *disconnectColorAnimation, *disconnectContentsAnimation, *disconnectMaterialAnimation;
 	
 	// initGame
@@ -69,16 +70,19 @@
 	basicMaterial = [SCNMaterial material];
 	basicMaterial.diffuse.contents = [NSColor grayColor];
 	basicMaterial.doubleSided = YES;
+	basicMaterials = @[basicMaterial];
 	
 	connectMaterial = [SCNMaterial material];
 	basicMaterial.diffuse.contents = connectColor;
 	connectMaterial.doubleSided = YES;
+	connectMaterials = @[connectMaterial];
 	
 	disconnectMaterial = [SCNMaterial material];
 	basicMaterial.diffuse.contents = [NSColor grayColor];
 	disconnectMaterial.specular.contents = [self disconnectColor];
 	disconnectMaterial.shininess = 0.1;
 	disconnectMaterial.doubleSided = YES;
+	disconnectMaterials = @[disconnectMaterial];
 	
 	// animations
 	// TODO: these should be faster with more influence
@@ -148,7 +152,7 @@
 	// logo
     SCNText *logoText1 = [SCNText textWithString:@"Or Else They Will" extrusionDepth:10];
     SCNText *logoText2 = [SCNText textWithString:@"Disconnect You" extrusionDepth:10];
-    logoText1.materials = logoText2.materials = @[disconnectMaterial];
+    logoText1.materials = logoText2.materials = disconnectMaterials;
     logoText1.chamferRadius = logoText2.chamferRadius = 10;
 	logoText1.font = logoText2.font = [NSFont fontWithName:logoFontName size:72];
 	
@@ -166,7 +170,7 @@
     [levelNode addChildNode:logoNode2];
 	
 	SCNSphere *logoSphere = [SCNSphere sphereWithRadius:50];
-	logoSphere.materials = @[connectMaterial];
+	logoSphere.materials = connectMaterials;
 	logoSphereNode = [SCNNode nodeWithGeometry:logoSphere];
 	logoSphereNode.position = SCNVector3Make(0, 0, -500);
 	[levelNode addChildNode:logoSphereNode];
@@ -180,8 +184,9 @@
 	mySpeed = level;
 	myInfluence = 100 + (10 * level);
 	maxInfluence = 1000.0/(float)level;
-	int range = 1000 * level;
-	NSLog(@"\nWelcome to level %d, size %d.\nYour speed is now %.2f.\nYour influence has been reset to %.f. Please keep it below %.f.", level, range, mySpeed, myInfluence, maxInfluence);
+	int range = mySize * 10 * level;
+	int numSpheres = 10 * level * level;
+	NSLog(@"\nWelcome to level %d, size %d, %d spheres.\nYour speed is now %.2f.\nYour influence has been reset to %.f. Please keep it below %.f.", level, range, numSpheres, mySpeed, myInfluence, maxInfluence);
 	
 	[self clearLevel];
 	[self addMessage:[NSString stringWithFormat:@"Level %d", level]];
@@ -195,23 +200,39 @@
 	// use random() to make scenes match, arc4random() to mismatch
 	srandom(1234);
 	spheres = [NSMutableArray array];
-	for (int i=0; i<10*level*level; i++)
+	for (int i=0; i<numSpheres; i++)
 	{
 		float size = random() % 100;
-		float x = (random() % range) - range/2.0;
-		float y = (random() % range) - range/2.0;
-		float z = (random() % range) - range/2.0;
-		//NSLog(@"sphere: %.f %.f %.f", x, y, z);
-		
 		SCNSphere *sphere = [SCNSphere sphereWithRadius:size];
-		sphere.materials = @[connectMaterial];
+		sphere.materials = connectMaterials;
 		
 		SCNNode *sphereNode = [SCNNode nodeWithGeometry:sphere];
-		sphereNode.position = SCNVector3Make(x, y, z);
+		sphereNode.position = [self getRandomLocationInRange:range OutsideInfluence:myInfluence];
 		
 		[levelNode addChildNode:sphereNode];
 		[spheres addObject:sphereNode];
 	}
+}
+
+- (SCNVector3)getRandomLocationInRange:(int)range OutsideInfluence:(float)influence
+{
+	float x, y, z;
+	x = y = z = 0.0;
+	
+	int tries = 0;
+	int maxTries = 1000;
+	while ((tries < maxTries) && [self isInXYZRange:myInfluence x:x y:y z:z])
+	{
+		tries++;
+		x = (random() % range) - range/2.0;
+		y = (random() % range) - range/2.0;
+		z = (random() % range) - range/2.0;
+		
+		if (tries == maxTries)
+			NSLog(@"can't make sphere in range %d outside influence %f after %d tries, giving up and using %.f,%.f,%.f",
+				  range, myInfluence, tries, x, y, z);
+	}
+	return SCNVector3Make(x, y, z);
 }
 
 - (void)addDirectionalLight
@@ -259,7 +280,7 @@
 	NSLog(@"message: %@", string);
 	messageText = [SCNText textWithString:string extrusionDepth:4];
 	messageText.name = string;
-	messageText.materials = @[basicMaterial];
+	messageText.materials = basicMaterials;
 	messageText.font = [NSFont fontWithName:hudFontName size:12];
 	messageText.chamferRadius = 4;
 	float x = -messageText.textSize.width/2;
@@ -315,10 +336,13 @@
 		{
 			SCNNode *sphere = [spheres objectAtIndex:i];
 			
-			// if it's inside your influence
-			if ([self isInXYZRange:myInfluence node:sphere])
+			// if it's connected and inside your influence
+			if ([sphere.geometry.materials isEqual: connectMaterials]
+				and [self isInXYZRange:myInfluence node:sphere])
 			{
-				sphere.geometry.materials = @[disconnectMaterial];
+				NSLog(@"disconnecting sphere #%d", i);
+				
+				sphere.geometry.materials = disconnectMaterials;
 				// TODO: timestamp
 				// TODO: animate fade out
 				
@@ -330,7 +354,7 @@
 				// reconnect spheres outside the influence
 				// TODO: if enough time since disconnect timestamp
 				//if (arc4random_uniform(20) == 0)  // if you're lucky
-				//sphere.geometry.materials = @[connectMaterial];
+				//sphere.geometry.materials = connectMaterials;
 			}
 		}
 		
@@ -350,7 +374,7 @@
 		for (int i=0; i<spheres.count; i++)
 		{
 			SCNNode *sphere = [spheres objectAtIndex:i];
-			if ([sphere.geometry.materials isEqual: @[connectMaterial]])
+			if ([sphere.geometry.materials isEqual: connectMaterials])
 				connected += 1;
 		}
 		//NSLog(@"spheres connected: %lu/%lu", connected, (unsigned long)spheres.count);

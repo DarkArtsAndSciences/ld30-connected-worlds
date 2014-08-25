@@ -294,6 +294,14 @@ static Scene *currentRightScene = nil;
 	return avatarXZ.Distance(Vector2f(x, z)) <= distance;
 }
 
+- (BOOL)isInXYZRange:(float)distance x:(float)x y:(float)y z:(float)z
+{
+	Vector3f avatarXYZ = Vector3f(self.headPosition.x, self.headPosition.y, self.headPosition.z);
+	Vector3f xyz = Vector3f(x, y, z);
+	float myDistance = avatarXYZ.Distance(xyz);
+	return myDistance <= distance;
+}
+
 - (BOOL)isInXYZRange:(float)distance node:(SCNNode*)node
 {
 	Vector3f avatarV = [self vector3fFromSCNVector3:self.headPosition];
