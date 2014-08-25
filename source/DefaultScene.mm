@@ -55,7 +55,9 @@
 	// text
 	logoFontName = @"Zoetrope (BRK)";
 	hudFontName = @"Zoetrope (BRK)";
+	
 	messageNode = [SCNNode node];
+	[self linkNodeToHeadRotation:messageNode];
 	
 	// colors
 	connectColor		  = [NSColor colorWithRed:0.5 green:0 blue:0 alpha:1];
@@ -110,9 +112,9 @@
 	level = 0;
 	levelName = @"init";
 	
-	mySize = 1.0;
-	mySpeed = 0.01;
-	myInfluence = 10.0;
+	mySize = 100.0;
+	mySpeed = 1;
+	myInfluence = 150.0;
 }
 
 - (void)clearLevel
@@ -128,12 +130,19 @@
 
 - (void)setupLoadingScene
 {
-	NSLog(@"loading screen");
-	
 	[self clearLevel];
+	[self addMessage:@"Connect the Spheres"];
 	
 	// lights
+	SCNLight *ambientLight = [SCNLight light];
+	ambientLight.type = SCNLightTypeAmbient;
+	ambientLight.color = [NSColor grayColor];
+	SCNNode *ambientLightNode = [SCNNode node];
+	ambientLightNode.light = ambientLight;
+	[levelNode addChildNode:ambientLightNode];
+	
 	[self addDirectionalLight];
+	[self addDisconnectedLights];
 	
 	// logo
     SCNText *logoText1 = [SCNText textWithString:@"Or Else They Will" extrusionDepth:10];
@@ -167,28 +176,30 @@
 - (void)nextLevel
 {
 	level += 1;
-	mySpeed = 0.01 * level;
-	myInfluence = 10 * level;
+	mySpeed = level;
+	myInfluence = 100 + (10 * level);
 	maxInfluence = 1000.0/(float)level;
 	int range = 1000 * level;
 	NSLog(@"\nWelcome to level %d, size %d.\nYour speed is now %.2f.\nYour influence has been reset to %.f. Please keep it below %.f.", level, range, mySpeed, myInfluence, maxInfluence);
-	[self addMessage:[NSString stringWithFormat:@"Level %d", level]];
 	
 	[self clearLevel];
+	[self addMessage:[NSString stringWithFormat:@"Level %d", level]];
 	
 	// lights
 	[self addDirectionalLight];
 	[self addDisconnectedLights];
 	
 	// spheres
-	srandom(1234);  // both eyes use the same seed
+	// both eyes use the same random seed
+	// use random() to make scenes match, arc4random() to mismatch
+	srandom(1234);
 	spheres = [NSMutableArray array];
 	for (int i=0; i<10*level*level; i++)
 	{
-		float size = arc4random_uniform(100);
-		float x = arc4random_uniform(range) - range/2.0;
-		float y = arc4random_uniform(range) - range/2.0;
-		float z = arc4random_uniform(range) - range/2.0;
+		float size = random() % 100;
+		float x = (random() % range) - range/2.0;
+		float y = (random() % range) - range/2.0;
+		float z = (random() % range) - range/2.0;
 		//NSLog(@"sphere: %.f %.f %.f", x, y, z);
 		
 		SCNSphere *sphere = [SCNSphere sphereWithRadius:size];
@@ -220,59 +231,41 @@
 - (void)addDisconnectedLights
 {
 	// create avatar lights
-	CATransform3D spotTranslate = CATransform3DMakeTranslation(0, 50, 0);
+	// TODO: remove old lights
 	
 	spotLightCenterNode = [super makeAvatarSpotlight];
 	spotLightCenterNode.light.castsShadow = NO;
 	spotLightCenterNode.light.color = connectColor;
 	[spotLightCenterNode.light setAttribute:@0 forKey: SCNLightSpotInnerAngleKey];
-	[spotLightCenterNode.light setAttribute:@10 forKey: SCNLightSpotOuterAngleKey];
-	spotLightCenterNode.transform = CATransform3DConcat(spotLightCenterNode.transform, spotTranslate);
+	[spotLightCenterNode.light setAttribute:@1 forKey: SCNLightSpotOuterAngleKey];
 	
     spotLightNode = [super makeAvatarSpotlight];
     spotLightNode.light.color = connectColor;
-	[spotLightNode.light setAttribute:@30 forKey: SCNLightSpotInnerAngleKey];
-	[spotLightNode.light setAttribute:@90 forKey: SCNLightSpotOuterAngleKey];
-	spotLightNode.transform = CATransform3DConcat(spotLightNode.transform, spotTranslate);
-	//spotLightNode.transform = CATransform3DRotate(spotLightNode.transform, M_PI_2*0.01, 1, 0, 0);
-	
-	
-	CAKeyframeAnimation *spotAnimation = [CAKeyframeAnimation animationWithKeyPath:SCNLightSpotOuterAngleKey];
-	spotAnimation.duration = 0.5;
-	spotAnimation.repeatCount = HUGE_VALF;
-	spotAnimation.values = [NSArray arrayWithObjects:
-							[NSNumber numberWithFloat:45.0],
-							[NSNumber numberWithFloat:90.0],
-							nil];
-	//[spotLightNode.light addAnimation:spotAnimation forKey:SCNLightSpotOuterAngleKey];
+	[spotLightNode.light setAttribute:@5 forKey: SCNLightSpotInnerAngleKey];
+	[spotLightNode.light setAttribute:@15 forKey: SCNLightSpotOuterAngleKey];
 	
 	// two lights, one per scene, distance apart = influence
 	omniLightNode = [super makeAvatarOmnilight];
 	omniLightNode.light.color = [self disconnectColor]; // TODO: start as connect, animate after intro/first disconnect
     [omniLightNode.light setAttribute:@50 forKey:SCNLightAttenuationStartKey];
     [omniLightNode.light setAttribute:@1000 forKey:SCNLightAttenuationEndKey];
-	float x = 500;
-	omniLightNode.transform = CATransform3DTranslate(omniLightNode.transform, x, 0, 0);
+	omniLightNode.transform = CATransform3DTranslate(omniLightNode.transform, eyeM*myInfluence, 0, 0);
 }
 
 // Messages in front of player
 - (void)addMessage:(NSString*)string
 {
-	[messageNode removeFromParentNode];
-	
-	messageText = [SCNText textWithString:string extrusionDepth:1];
+	NSLog(@"message: %@", string);
+	messageText = [SCNText textWithString:string extrusionDepth:4];
 	messageText.name = string;
 	messageText.materials = @[basicMaterial];
-	messageText.font = [NSFont fontWithName:hudFontName size:36];
-	messageText.chamferRadius = 1;
-	
-	messageNode = [SCNNode nodeWithGeometry:messageText];
-	[self linkNodeToHeadRotation:messageNode];
-	
+	messageText.font = [NSFont fontWithName:hudFontName size:12];
+	messageText.chamferRadius = 4;
 	float x = -messageText.textSize.width/2;
 	float y = -messageText.textSize.height/2;
-	messageNode.transform = CATransform3DTranslate(messageNode.transform, x, y+0.5, -1);
-	messageNode.transform = CATransform3DRotate(messageNode.transform, 0.5, 1, 0, 0);
+	messageNode.geometry = messageText;
+	messageNode.position = SCNVector3Make(x, y+50, -100);  // TODO: this should only happen once
+	messageNode.transform = CATransform3DRotate(messageNode.transform, 0.25, 1, 0, 0);
 }
 
 #pragma mark - Event handlers
@@ -302,8 +295,13 @@
 		{
 			// start the game
 			// TODO: after changing the material and waiting a few seconds
+			//NSLog(@"close enough to sphere at %.2f, %.2f, %.2f", self.headPosition.x, self.headPosition.y, self.headPosition.z);
 			[self nextLevel];
 		}
+		/*else
+		{
+			NSLog(@"too far from sphere at %.2f, %.2f, %.2f", self.headPosition.x, self.headPosition.y, self.headPosition.z);
+		}*/
 	}
 	else
 	{
@@ -337,9 +335,12 @@
 		//		myInfluence -= 1;
 		//		healLimit -= 1;
 		
-		myInfluence += newInfluence;
-		NSLog(@"\nWarning: your influence has increased to %.f/%.f", myInfluence, maxInfluence);
-		// TODO: update lights for new influence
+		if (newInfluence)
+		{
+			myInfluence += newInfluence;
+			NSLog(@"\nWarning: your influence has increased to %.f/%.f", myInfluence, maxInfluence);
+			// TODO: update lights for new influence
+		}
 		
 		unsigned long connected = 0;
 		for (int i=0; i<spheres.count; i++)

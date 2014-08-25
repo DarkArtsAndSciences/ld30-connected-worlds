@@ -146,15 +146,38 @@ static Scene *currentRightScene = nil;
 
 - (void)tick:(const CVTimeStamp *)timeStamp
 {
-    if (isMovingForward)
-        [self moveForward];
-	else if (isMovingBackward)
-		[self moveBackward];
-	else if (isMovingLeft)
-		[self moveLeft];
-	else if (isMovingRight)
-		[self moveRight];
+	// TODO: convert timestamp to dt, distance *= dt
+	
+	BOOL canFly = YES;  // TODO: setter
+	if (canFly)
+	{
+		if (isMovingForward)
+			[self flyForward];
+		else if (isMovingBackward)
+			[self flyBackward];
+		else if (isMovingLeft)
+			[self flyLeft];
+		else if (isMovingRight)
+			[self flyRight];
+	}
+	else
+	{
+		if (isMovingForward)
+			[self moveForward];
+		else if (isMovingBackward)
+			[self moveBackward];
+		else if (isMovingLeft)
+			[self moveLeft];
+		else if (isMovingRight)
+			[self moveRight];
+	}
 }
+
+- (void)flyForward		{ [self move3Direction: Vector3f( 0, 0,-1) distance:avatarSpeed]; }
+- (void)flyBackward		{ [self move2Direction: Vector3f( 0, 0, 1) distance:avatarSpeed]; }
+- (void)flyLeft			{ [self move2Direction: Vector3f(-1, 0, 0) distance:avatarSpeed]; }
+- (void)flyRight		{ [self move2Direction: Vector3f( 1, 0, 0) distance:avatarSpeed]; }
+// TODO: and step? or store a multiplier somewhere?
 
 - (void)moveForward		{ [self move2Direction: Vector3f( 0, 0,-1) distance:avatarSpeed]; }
 - (void)moveBackward	{ [self move2Direction: Vector3f( 0, 0, 1) distance:avatarSpeed*0.75]; }
@@ -189,6 +212,34 @@ static Scene *currentRightScene = nil;
     Matrix4f rotate = Matrix4f::RotationY(facing);
     position += rotate.Transform(direction) * distance;
 
+    headPositionNode.position = SCNVector3Make(position.x, position.y, position.z);
+    
+    //NSLog(@" new position: %.2fx %.2fy %.2fz", self.headPosition.x, self.headPosition.y, self.headPosition.z);
+    // TODO: error handling, return NO if move failed
+    return YES;
+}
+
+- (BOOL)move3Direction:(Vector3f)direction
+              distance:(float)distance
+{
+    return [self move3Direction:direction distance:distance facing:hrx tilt:hry];
+}
+- (BOOL)move3Direction:(Vector3f)direction  // in avatar space
+              distance:(float)distance
+                facing:(float)facing  // x rotation (look left or right) in world space
+				  tilt:(float)tilt  // y rotation (look up or down) in world space
+{
+    //NSLog(@"head position: %.2fx %.2fy %.2fz, moving %.2f radians * %.2f meters", self.headPosition.x, self.headPosition.y, self.headPosition.z, hrx, distance);
+    
+    Vector3f position = Vector3f(headPositionNode.position.x,
+                                 headPositionNode.position.y,
+                                 headPositionNode.position.z);
+    
+    Matrix4f rotateY = Matrix4f::RotationY(facing);
+    Matrix4f rotateZ = Matrix4f::RotationZ(tilt);
+    position += rotateY.Transform(direction) * distance;
+    position += rotateZ.Transform(direction) * distance;
+	
     headPositionNode.position = SCNVector3Make(position.x, position.y, position.z);
     
     //NSLog(@" new position: %.2fx %.2fy %.2fz", self.headPosition.x, self.headPosition.y, self.headPosition.z);
