@@ -3,6 +3,10 @@
 #import "OculusRiftDevice.h"
 
 @implementation MainWindow
+{
+	BOOL isDebug;
+	BOOL isFullscreen;
+}
 
 #pragma mark - Initialization
 
@@ -10,9 +14,11 @@
 				styleMask:(NSUInteger)aStyle
 				  backing:(NSBackingStoreType)bufferingType
 					defer:(BOOL)flag
-{	
+{
+	isDebug = NO; // verbose event handling
+	
 	// if debug HMD, use windowed mode
-	BOOL isFullscreen = ![[OculusRiftDevice getDevice] isDebugHmd];
+	isFullscreen = ![[OculusRiftDevice getDevice] isDebugHmd];
 	if (isFullscreen)
 	{
 		NSLog(@"HMD detected, using fullscreen mode");
@@ -66,19 +72,18 @@
 	else if (eventType == NSMouseMoved)
 		[keyCodeString appendString:@"drag"];
 	
-	BOOL debug = [[OculusRiftDevice getDevice] isDebugHmd];
-	if (debug) NSLog(@"handling event for type %lu-%@", (unsigned long)eventType, keyCodeString);
+	if (isDebug) NSLog(@"handling event for type %lu-%@", (unsigned long)eventType, keyCodeString);
 	
 	SEL leftHandler = (SEL)[[leftHandlers objectForKey:keyCodeString] pointerValue];
 	SEL rightHandler = (SEL)[[rightHandlers objectForKey:keyCodeString] pointerValue];
 	if (leftHandler)
-		[[Scene currentLeftScene] performSelector:leftHandler];
+		[[Scene currentLeftScene] performSelector:leftHandler];  // known warning
 	else
-		if (debug) NSLog(@"no left scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
+		if (isDebug) NSLog(@"no left scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
 	if (rightHandler)
-		[[Scene currentRightScene] performSelector:rightHandler];
+		[[Scene currentRightScene] performSelector:rightHandler];  // known warning
 	else
-		if (debug) NSLog(@"no right scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
+		if (isDebug) NSLog(@"no right scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
 }
 
 - (void)keyDown:(NSEvent *)theEvent        { [self eventHandler:theEvent]; }

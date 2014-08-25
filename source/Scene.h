@@ -15,8 +15,10 @@ using namespace OVR;
 + (void)setCurrentSceneLeft:(Scene*)leftScene
 					  right:(Scene*)rightScene;
 
+- (BOOL)isLeft;
+- (BOOL)isRight;
 //- (NSString*)getEye;
-//- (void)setEye:(NSString*)theEye;
+- (void)setEye:(NSString*)theEye;
 
 - (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z;
 - (void)linkNodeToHeadPosition:(SCNNode*)node;
@@ -27,8 +29,8 @@ using namespace OVR;
 - (BOOL)isInXZRange:(float)distance x:(float)x z:(float)z;
 - (BOOL)isInXYZRange:(float)distance node:(SCNNode*)node;
 
-- (SCNLight*)makeAvatarSpotlight;
-- (SCNLight*)makeAvatarOmnilight;
+- (SCNNode*)makeAvatarSpotlight;
+- (SCNNode*)makeAvatarOmnilight;
 - (SCNNode*)makeWallWithMaterial:(SCNMaterial*)material
 						  Width:(float)width
 						 height:(float)height
@@ -44,6 +46,14 @@ using namespace OVR;
                    materials:(NSArray*)materials
                     position:(SCNVector3)position;
 
+- (void)resetEventHandlers;
+- (void)addEventHandlerForType:(NSEventType)eventType
+						  name:(NSString*)eventName
+					   handler:(SEL)eventHandler;
+- (void)removeEventHandlerForType:(NSEventType)eventType
+							 name:(NSString*)eventName;
+//- (NSMutableDictionary*)getHandlersForEventType:(NSEventType)eventType;
+
 - (void)addEventHandlersForStepWASD;
 - (void)addEventHandlersForHoldWASD;
 - (void)addEventHandlersForStepArrows;
@@ -52,12 +62,6 @@ using namespace OVR;
 - (void)addEventHandlersForLeftMouseDownMoveBackward;
 - (void)addEventHandlersForRightMouseDownMoveForward;
 - (void)addEventHandlersForRightMouseDownMoveBackward;
-
-- (void)addEventHandlerForType:(NSEventType)eventType
-						  name:(NSString*)eventName
-					   handler:(SEL)eventHandler;
-
-- (void)resetEventHandlers;
 
 - (NSMutableDictionary*)getHandlersForEventType:(NSEventType)eventType;
 

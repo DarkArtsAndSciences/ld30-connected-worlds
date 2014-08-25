@@ -217,7 +217,7 @@ static Scene *currentRightScene = nil;
 #pragma mark - Convenience functions for creating lights and objects
 
 // Make a spotlight that automatically points wherever the user looks.
-- (SCNLight*)makeAvatarSpotlight
+- (SCNNode*)makeAvatarSpotlight
 {
 	SCNLight *avatarLight = [SCNLight light];
     avatarLight.type = SCNLightTypeSpot;
@@ -226,14 +226,12 @@ static Scene *currentRightScene = nil;
     SCNNode *avatarLightNode = [SCNNode node];
     avatarLightNode.light = avatarLight;
     
-	// place it halfway down the avatar, as if it's being held by hand
 	[self linkNodeToHeadRotation:avatarLightNode];
-    avatarLightNode.transform = CATransform3DTranslate(avatarLightNode.transform, 0, -self.avatarHeight/2, 0);
     
-    return avatarLight; // caller can set light color, etc.
+    return avatarLightNode; // caller can set light color, position, etc.
 }
 // Make an omnilight that automatically follows the user.
-- (SCNLight*)makeAvatarOmnilight
+- (SCNNode*)makeAvatarOmnilight
 {
 	SCNLight *avatarLight = [SCNLight light];
     avatarLight.type = SCNLightTypeOmni;
@@ -241,11 +239,9 @@ static Scene *currentRightScene = nil;
     SCNNode *avatarLightNode = [SCNNode node];
     avatarLightNode.light = avatarLight;
     
-	// place it ABOVE the avatar for better results
 	[self linkNodeToHeadPosition:avatarLightNode];
-    avatarLightNode.transform = CATransform3DTranslate(avatarLightNode.transform, 0, self.avatarHeight*2, 0);
 	
-    return avatarLight; // caller can set light color, etc.
+    return avatarLightNode; // caller can set light color, position etc.
 }
 
 // Make and place a wall.
@@ -294,6 +290,21 @@ static Scene *currentRightScene = nil;
 	keyUpHandlers = [NSMutableDictionary dictionary];
 	mouseDownHandlers = [NSMutableDictionary dictionary];
 	mouseUpHandlers = [NSMutableDictionary dictionary];
+}
+
+- (void)addEventHandlerForType:(NSEventType)eventType
+						  name:(NSString*)eventName
+					   handler:(SEL)eventHandler
+{
+	NSMutableDictionary *handlers = [self getHandlersForEventType:eventType];
+	[handlers setObject:[NSValue valueWithPointer:eventHandler] forKey:eventName];
+}
+
+- (void)removeEventHandlerForType:(NSEventType)eventType
+							 name:(NSString*)eventName
+{
+	NSMutableDictionary *handlers = [self getHandlersForEventType:eventType];
+	[handlers removeObjectForKey:eventName];
 }
 
 - (NSMutableDictionary*)getHandlersForEventType:(NSEventType)eventType
@@ -389,15 +400,5 @@ static Scene *currentRightScene = nil;
 // TODO: QE turning
 // TODO: defaults for space, return, esc?
 // MAYBE: jump
-
-#pragma mark - Custom controls
-
-- (void)addEventHandlerForType:(NSEventType)eventType
-						  name:(NSString*)eventName
-					   handler:(SEL)eventHandler
-{
-	NSMutableDictionary *handlers = [self getHandlersForEventType:eventType];
-	[handlers setObject:[NSValue valueWithPointer:eventHandler] forKey:eventName];
-}
 
 @end
