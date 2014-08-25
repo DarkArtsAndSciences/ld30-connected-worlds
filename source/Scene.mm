@@ -309,7 +309,7 @@ static Scene *currentRightScene = nil;
 		handlers = mouseDownHandlers;
 	else
 	{
-		NSLog(@"tried to get event handlers for unrecognized event type %lu", (unsigned long)eventType);
+		//NSLog(@"tried to get event handlers for unrecognized event type %lu", (unsigned long)eventType);
 		return nil;
 	}
 	return handlers;

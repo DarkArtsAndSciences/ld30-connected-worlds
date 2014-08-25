@@ -22,7 +22,8 @@
 	
 	self.roomSize = 1000; // max and min scene coordinates are +- roomSize/2, center is 0,0,0
 	self.avatarHeight = 100;  // distance from ground to eye camera
-	influence = 250;
+	self.avatarSpeed = 1.5;
+	influence = 200;
 	
 	// starting position: feet on the floor (y=0) in the center of the room
     self.headPosition = SCNVector3Make(0.0, self.avatarHeight, 0.0);
@@ -89,16 +90,18 @@
 - (void) addEventHandlers
 {
 	// enable standard control schemes
-	[self addEventHandlersForHoldWASD];
-	[self addEventHandlersForHoldArrows];
-	[self addEventHandlersForLeftMouseDownMoveForward];
-	[self addEventHandlersForRightMouseDownMoveBackward];
+	//[self addEventHandlersForHoldWASD];
+	//[self addEventHandlersForHoldArrows];
+	//[self addEventHandlersForLeftMouseDownMoveForward];
+	//[self addEventHandlersForRightMouseDownMoveBackward];
 	
 	// add custom controls
-	[self addEventHandlerForType:NSKeyDown name:@"49" handler:@selector(onInteract)];  // space
+	//[self addEventHandlerForType:NSKeyDown name:@"49" handler:@selector(onInteract)];  // space
+	[self addEventHandlerForType:NSKeyDown name:@"49" handler:@selector(startMovingForward)];  // space
+	[self addEventHandlerForType:NSKeyUp   name:@"49" handler:@selector(stopMovingForward)];  // space
 }
 
-// event handler for active interactions with objects
+/*/ event handler for active interactions with objects
 - (void)onInteract
 {
 	// if in range of any objects
@@ -111,7 +114,7 @@
 			NSLog(@"interact with sphere #%d", i);
 		}
 	}
-}
+}*/
 
 // event handler for passive interactions with objects
 - (void)tick:(const CVTimeStamp *)timeStamp
@@ -128,21 +131,37 @@
 			if ([self.eye isEqual:@"left"])
 			{
 				sphere.geometry.materials = @[leftDisconnectedMaterial];
-				NSLog(@"left sphere: %@", sphere);
+				// TODO: timestamp
 			}
 			else
 			{
 				sphere.geometry.materials = @[rightDisconnectedMaterial];
-				NSLog(@"right sphere: %@", sphere);
 			}
 		}
 		else
 		{
 			// reconnect spheres outside the influence
-			// TODO: slowly
-			sphere.geometry.materials = @[connectedMaterial];
+			// TODO: if enough time since disconnect timestamp
+			//if (arc4random_uniform(20) == 0)  // if you're lucky
+				//sphere.geometry.materials = @[connectedMaterial];
 		}
 	}
+	
+	if ([self checkForWin])
+	{
+		NSLog(@"you win");
+	}
+}
+
+- (BOOL)checkForWin
+{
+	for (int i=0; i<spheres.count; i++)
+	{
+		SCNNode *sphere = [spheres objectAtIndex:i];
+		if ([sphere.geometry.materials isEqual: @[connectedMaterial]])
+			return NO;
+	}
+	return YES;
 }
 
 @end
