@@ -104,8 +104,20 @@ static Scene *currentRightScene = nil;
 
 #pragma mark - Avatar head position and rotation
 
-- (SCNVector3) headPosition { return headPositionNode.position; }  // position is public, node is private
-- (void)setHeadPosition:(SCNVector3) position { headPositionNode.position = position; }
+- (Vector3f)vector3fFromSCNVector3:(SCNVector3)v { return Vector3f(v.x, v.y, v.z); }
+- (SCNVector3)scnvector3FromVector3f:(Vector3f)v { return SCNVector3Make(v.x, v.y, v.z); }
+
+- (Vector4f)vector4fFromSCNVector4:(SCNVector4)v { return Vector4f(v.x, v.y, v.z, v.w); }
+- (SCNVector4)scnvector4FromVector4f:(Vector4f)v { return SCNVector4Make(v.x, v.y, v.z, v.w); }
+
+// position is public, node is private
+- (SCNVector3) headPosition { return headPositionNode.position; }
+- (Vector3f) headPositionVector3f { return [self vector3fFromSCNVector3:headPositionNode.position]; }
+
+- (void)setHeadPosition:(SCNVector3)position { headPositionNode.position = position; }
+- (void)setHeadPositionVector3f:(Vector3f)position { headPositionNode.position = [self scnvector3FromVector3f:position]; }
+
+- (Vector4f) headRotationVector4f { return [self vector4fFromSCNVector4:headRotationNode.rotation]; }
 
 - (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z
 {
@@ -261,7 +273,9 @@ static Scene *currentRightScene = nil;
     Vector3f position = Vector3f(headPositionNode.position.x,
                                  headPositionNode.position.y,
                                  headPositionNode.position.z);
-    
+	
+	// TODO: rotate direction by headRotation for non-world-locked?
+	
     Matrix4f rotateY = Matrix4f::RotationY(facing);
     Matrix4f rotateX = Matrix4f::RotationX(tilt);
 	Matrix4f rotate = rotateY * rotateX;
@@ -273,9 +287,6 @@ static Scene *currentRightScene = nil;
     // TODO: error handling, return NO if move failed
     return YES;
 }
-
-- (Vector3f)vector3fFromSCNVector3:(SCNVector3)v { return Vector3f(v.x, v.y, v.z); }
-- (SCNVector3)scnvector3FromVector3f:(Vector3f)v { return SCNVector3Make(v.x, v.y, v.z); }
 
 - (BOOL)isInXZRange:(float)distance x:(float)x z:(float)z
 {
