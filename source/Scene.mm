@@ -174,9 +174,9 @@ static Scene *currentRightScene = nil;
 }
 
 - (void)flyForward		{ [self move3Direction: Vector3f( 0, 0,-1) distance:avatarSpeed]; }
-- (void)flyBackward		{ [self move2Direction: Vector3f( 0, 0, 1) distance:avatarSpeed]; }
-- (void)flyLeft			{ [self move2Direction: Vector3f(-1, 0, 0) distance:avatarSpeed]; }
-- (void)flyRight		{ [self move2Direction: Vector3f( 1, 0, 0) distance:avatarSpeed]; }
+- (void)flyBackward		{ [self move3Direction: Vector3f( 0, 0, 1) distance:avatarSpeed]; }
+- (void)flyLeft			{ [self move3Direction: Vector3f(-1, 0, 0) distance:avatarSpeed]; }
+- (void)flyRight		{ [self move3Direction: Vector3f( 1, 0, 0) distance:avatarSpeed]; }
 // TODO: and step? or store a multiplier somewhere?
 
 - (void)moveForward		{ [self move2Direction: Vector3f( 0, 0,-1) distance:avatarSpeed]; }
@@ -236,9 +236,9 @@ static Scene *currentRightScene = nil;
                                  headPositionNode.position.z);
     
     Matrix4f rotateY = Matrix4f::RotationY(facing);
-    Matrix4f rotateZ = Matrix4f::RotationZ(tilt);
-    position += rotateY.Transform(direction) * distance;
-    position += rotateZ.Transform(direction) * distance;
+    Matrix4f rotateX = Matrix4f::RotationX(tilt);
+	Matrix4f rotate = rotateY * rotateX;
+    position += rotate.Transform(direction) * distance;
 	
     headPositionNode.position = SCNVector3Make(position.x, position.y, position.z);
     
