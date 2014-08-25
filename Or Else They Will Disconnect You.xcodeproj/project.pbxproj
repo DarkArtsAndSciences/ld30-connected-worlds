@@ -26,6 +26,9 @@
 		F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD6F19A861950060C3EB /* InfoPlist.strings */; };
 		F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD7119A861950060C3EB /* MainMenu.xib */; };
 		F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */ = {isa = PBXBuildFile; fileRef = F44DDD8919A93A720060C3EB /* ideagen.png */; };
+		F4FDD49319ABED8800BBB403 /* disconnect.wav in Resources */ = {isa = PBXBuildFile; fileRef = F4FDD48C19ABED8800BBB403 /* disconnect.wav */; };
+		F4FDD49419ABED8800BBB403 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = F4FDD48D19ABED8800BBB403 /* lose.wav */; };
+		F4FDD49819ABED8800BBB403 /* reconnect.wav in Resources */ = {isa = PBXBuildFile; fileRef = F4FDD49119ABED8800BBB403 /* reconnect.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -497,6 +500,9 @@
 		F44DDD7219A861950060C3EB /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		F44DDD7819A861950060C3EB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F44DDD8919A93A720060C3EB /* ideagen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ideagen.png; sourceTree = "<group>"; };
+		F4FDD48C19ABED8800BBB403 /* disconnect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = disconnect.wav; sourceTree = "<group>"; };
+		F4FDD48D19ABED8800BBB403 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
+		F4FDD49119ABED8800BBB403 /* reconnect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = reconnect.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1263,6 +1269,7 @@
 		F44DDD6B19A861950060C3EB /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F4FDD48A19ABED8800BBB403 /* audio */,
 				F44DDD7119A861950060C3EB /* MainMenu.xib */,
 				F44DDD7819A861950060C3EB /* Info.plist */,
 				F44DDD6F19A861950060C3EB /* InfoPlist.strings */,
@@ -1271,6 +1278,17 @@
 			);
 			name = Assets;
 			path = assets;
+			sourceTree = "<group>";
+		};
+		F4FDD48A19ABED8800BBB403 /* audio */ = {
+			isa = PBXGroup;
+			children = (
+				F4FDD48C19ABED8800BBB403 /* disconnect.wav */,
+				F4FDD48D19ABED8800BBB403 /* lose.wav */,
+				F4FDD49119ABED8800BBB403 /* reconnect.wav */,
+			);
+			name = audio;
+			path = "../../ld30-connected-worlds/assets/audio";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1341,8 +1359,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4FDD49819ABED8800BBB403 /* reconnect.wav in Resources */,
 				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
 				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,
+				F4FDD49319ABED8800BBB403 /* disconnect.wav in Resources */,
+				F4FDD49419ABED8800BBB403 /* lose.wav in Resources */,
 				F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */,
 				F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */,
 			);

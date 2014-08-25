@@ -7,14 +7,19 @@
 	int eyeM;  // -1 for left, 1 for right
 	
 	// initGlobals
-	NSString *logoFontName, *hudFontName;
+	NSSound *disconnectSFX, *reconnectSFX, *loseSFX, *winSFX;
+	
+	NSString *fontName;
+	NSFont *logoFont, *messageFont;
+	SCNNode *centerNode, *messageNode;
+	
 	NSColor *connectColor, *_leftDisconnectColor, *_rightDisconnectColor;
 	SCNMaterial *basicMaterial, *connectMaterial, *disconnectMaterial;
 	NSArray *basicMaterials, *connectMaterials, *disconnectMaterials;
 	CAKeyframeAnimation *disconnectColorAnimation, *disconnectContentsAnimation, *disconnectMaterialAnimation;
 	
 	// initGame
-	int level;
+	int level, range, numSpheres;
 	NSString *levelName;
 	float mySize, mySpeed, myInfluence;  // player state
 	
@@ -36,7 +41,6 @@
 	
 	// addMessage
 	SCNText *messageText;
-	SCNNode *messageNode;
 }
 
 #pragma mark - Initialization
@@ -54,12 +58,23 @@
 
 -(void)initGlobals
 {
-	// text
-	logoFontName = @"Zoetrope (BRK)";
-	hudFontName = @"Zoetrope (BRK)";
+	// audio
+	disconnectSFX = [NSSound soundNamed:@"disconnect.wav"];
+	reconnectSFX = [NSSound soundNamed:@"reconnect.wav"];
+	loseSFX = [NSSound soundNamed:@"lose.wav"];
+	winSFX = [NSSound soundNamed:@"win.wav"];
 	
+	// text
+	fontName = @"Zoetrope (BRK)";
+	logoFont = [NSFont fontWithName:fontName size:72];
+	messageFont = [NSFont fontWithName:fontName size:16];
+	
+	centerNode = [SCNNode node];
 	messageNode = [SCNNode node];
+	messageNode.position = SCNVector3Make(0, 50, -100);
+	messageNode.transform = CATransform3DRotate(messageNode.transform, 0.25, 1, 0, 0);
 	[self linkNodeToHeadRotation:messageNode];
+	[messageNode addChildNode:centerNode];
 	
 	// colors
 	connectColor		  = [NSColor colorWithRed:0.5 green:0 blue:0 alpha:1];
@@ -73,12 +88,12 @@
 	basicMaterials = @[basicMaterial];
 	
 	connectMaterial = [SCNMaterial material];
-	basicMaterial.diffuse.contents = connectColor;
+	connectMaterial.diffuse.contents = connectColor;
 	connectMaterial.doubleSided = YES;
 	connectMaterials = @[connectMaterial];
 	
 	disconnectMaterial = [SCNMaterial material];
-	basicMaterial.diffuse.contents = [NSColor grayColor];
+	disconnectMaterial.diffuse.contents = [NSColor grayColor];
 	disconnectMaterial.specular.contents = [self disconnectColor];
 	disconnectMaterial.shininess = 0.1;
 	disconnectMaterial.doubleSided = YES;
@@ -118,7 +133,7 @@
 	levelName = @"init";
 	
 	mySize = 100.0;
-	mySpeed = 1;
+	mySpeed = 10;
 	myInfluence = 150.0;
 }
 
@@ -154,7 +169,7 @@
     SCNText *logoText2 = [SCNText textWithString:@"Disconnect You" extrusionDepth:10];
     logoText1.materials = logoText2.materials = disconnectMaterials;
     logoText1.chamferRadius = logoText2.chamferRadius = 10;
-	logoText1.font = logoText2.font = [NSFont fontWithName:logoFontName size:72];
+	logoText1.font = logoText2.font = logoFont;
 	
     SCNNode *logoNode1 = [SCNNode nodeWithGeometry:logoText1];
     SCNNode *logoNode2 = [SCNNode nodeWithGeometry:logoText2];
@@ -181,11 +196,11 @@
 - (void)nextLevel
 {
 	level += 1;
-	mySpeed = level;
+	mySpeed = 10 - (level/10.0);
 	myInfluence = 100 + (10 * level);
 	maxInfluence = 1000.0/(float)level;
-	int range = mySize * 10 * level;
-	int numSpheres = 10 * level * level;
+	range = mySize * 10 * level;
+	numSpheres = 10 * level * level;
 	NSLog(@"\nWelcome to level %d, size %d, %d spheres.\nYour speed is now %.2f.\nYour influence has been reset to %.f. Please keep it below %.f.", level, range, numSpheres, mySpeed, myInfluence, maxInfluence);
 	
 	[self clearLevel];
@@ -207,14 +222,32 @@
 		sphere.materials = connectMaterials;
 		
 		SCNNode *sphereNode = [SCNNode nodeWithGeometry:sphere];
-		sphereNode.position = [self getRandomLocationInRange:range OutsideInfluence:myInfluence];
+		sphereNode.position = [self getRandomLocationInRangeOutsideInfluence];
 		
 		[levelNode addChildNode:sphereNode];
 		[spheres addObject:sphereNode];
 	}
 }
 
-- (SCNVector3)getRandomLocationInRange:(int)range OutsideInfluence:(float)influence
+- (void)setupBadEnding
+{
+	level = -1;
+	[self clearLevel];
+	[self addMessage:[NSString stringWithFormat:@"You split into two.\nNeither survives."]];
+	[self addDirectionalLight];
+	[self addDisconnectedLights];
+}
+
+- (void)setupGoodEnding
+{
+	level = -2;
+	[self clearLevel];
+	[self addMessage:[NSString stringWithFormat:@"Slowly, the pain stops.\nYou are one."]];
+	[self addDirectionalLight];
+	//[self addConnectedLights];
+}
+
+- (SCNVector3)getRandomLocationInRangeOutsideInfluence
 {
 	float x, y, z;
 	x = y = z = 0.0;
@@ -281,13 +314,13 @@
 	messageText = [SCNText textWithString:string extrusionDepth:4];
 	messageText.name = string;
 	messageText.materials = basicMaterials;
-	messageText.font = [NSFont fontWithName:hudFontName size:12];
+	messageText.font = messageFont;
 	messageText.chamferRadius = 4;
+	centerNode.geometry = messageText;
+	
 	float x = -messageText.textSize.width/2;
 	float y = -messageText.textSize.height/2;
-	messageNode.geometry = messageText;
-	messageNode.position = SCNVector3Make(x, y+50, -100);  // TODO: this should only happen once
-	messageNode.transform = CATransform3DRotate(messageNode.transform, 0.25, 1, 0, 0);
+	centerNode.position = SCNVector3Make(x, y, 0);
 }
 
 #pragma mark - Event handlers
@@ -328,10 +361,19 @@
 			NSLog(@"too far from sphere at %.2f, %.2f, %.2f", self.headPosition.x, self.headPosition.y, self.headPosition.z);
 		}*/
 	}
+	else if (level == -1)
+	{
+		// bad ending
+	}
+	else if (level == -2)
+	{
+		// good ending
+	}
 	else
 	{
 		// for each sphere
 		float newInfluence = 0;
+		float reconnected = 0;
 		for (int i=0; i<spheres.count; i++)
 		{
 			SCNNode *sphere = [spheres objectAtIndex:i];
@@ -347,29 +389,22 @@
 				// TODO: animate fade out
 				
 				// disconnect yourself
-				newInfluence += 1;
+				newInfluence += 1;  // TODO: size of sphere?
 			}
-			else
+			// if it's disconnected and outside your influence
+			else if ([sphere.geometry.materials isEqual: disconnectMaterials]
+					and ![self isInXYZRange:myInfluence node:sphere])
 			{
-				// reconnect spheres outside the influence
-				// TODO: if enough time since disconnect timestamp
-				//if (arc4random_uniform(20) == 0)  // if you're lucky
-				//sphere.geometry.materials = connectMaterials;
+				// if you're lucky
+				/*/ TODO: if enough time since disconnect timestamp
+				if (random() % range == 0)
+				{
+					NSLog(@"reconnected sphere #%d", i);
+					sphere.geometry.materials = connectMaterials;
+					reconnected++;
+				}*/
 			}
 		}
-		
-		// TODO: passive healing
-		// if (random chance)
-		//		myInfluence -= 1;
-		//		healLimit -= 1;
-		
-		if (newInfluence)
-		{
-			myInfluence += newInfluence;
-			NSLog(@"\nWarning: your influence has increased to %.f/%.f", myInfluence, maxInfluence);
-			// TODO: update lights for new influence
-		}
-		
 		unsigned long connected = 0;
 		for (int i=0; i<spheres.count; i++)
 		{
@@ -379,25 +414,40 @@
 		}
 		//NSLog(@"spheres connected: %lu/%lu", connected, (unsigned long)spheres.count);
 		
-		if ((connected == 0) and (level < 10))  // TODO: max level variable
+		// if any spheres changed
+		if (newInfluence)
+		{
+			myInfluence += newInfluence;
+			NSLog(@"\nWarning: your influence has increased to %.f/%.f", myInfluence, maxInfluence);
+			
+			[disconnectSFX play];
+			
+			// TODO: update lights for new influence
+		}
+		if (reconnected)
+		{
+			myInfluence -= reconnected / 2;  // regain half what you lost
+			[reconnectSFX play];
+		}
+		
+		// if you're lucky
+		if (random() % range == 0)
+		{
+			NSLog(@"An unexplained force heals you.");
+			myInfluence -= connected;
+			// TODO: heal sound
+			// TODO: healLimit -= level;
+		}
+		
+		if (connected == 0)
 			[self nextLevel];
+		
 		else if (myInfluence > maxInfluence)
-			[self badEnding];
+			[self setupBadEnding];
+		
 		else if (myInfluence < 0)
-			[self goodEnding];
+			[self setupGoodEnding];
 	}
-}
-
-- (void)badEnding
-{
-	NSLog(@"bad ending");
-	[self addMessage:[NSString stringWithFormat:@"You split into two.\nNeither survives."]];
-}
-
-- (void)goodEnding
-{
-	NSLog(@"good ending");
-	[self addMessage:[NSString stringWithFormat:@"Slowly, the pain stops.\nYou are one."]];
 }
 
 @end
