@@ -14,7 +14,7 @@
 	SCNNode *centerNode, *messageNode;
 	
 	NSColor *connectColor, *_leftDisconnectColor, *_rightDisconnectColor;
-	SCNMaterial *basicMaterial, *connectMaterial, *disconnectMaterial;
+	SCNMaterial *basicMaterial, *connectMaterial, *disconnectMaterial, *infoMaterial;
 	NSArray *basicMaterials, *connectMaterials, *disconnectMaterials;
 	CAKeyframeAnimation *disconnectColorAnimation, *disconnectContentsAnimation, *disconnectMaterialAnimation;
 	
@@ -98,6 +98,13 @@
 	disconnectMaterial.shininess = 0.1;
 	disconnectMaterial.doubleSided = YES;
 	disconnectMaterials = @[disconnectMaterial];
+	
+	infoMaterial = [SCNMaterial material];
+	infoMaterial.diffuse.contents = [NSImage imageNamed:@"ideagen"];
+	//infoMaterial.emission.contents = [NSImage imageNamed:@"ideagen"];  // glowing letters
+    infoMaterial.diffuse.minificationFilter  = SCNLinearFiltering;
+    infoMaterial.diffuse.magnificationFilter = SCNLinearFiltering;
+    infoMaterial.diffuse.mipFilter           = SCNLinearFiltering;
 	
 	// animations
 	// TODO: these should be faster with more influence
@@ -191,6 +198,12 @@
 	[levelNode addChildNode:logoSphereNode];
 	
 	// TODO: giant fake sun at -1,-1,-1, distant constellations (for orientation reference)
+	
+	SCNPlane *wall = [SCNPlane planeWithWidth:664 height:343];
+	wall.materials = @[infoMaterial];
+	SCNNode *wallNode = [SCNNode nodeWithGeometry:wall];
+	wallNode.position = SCNVector3Make(0, 0, -500);
+	[levelNode addChildNode:wallNode];
 }
 
 - (void)nextLevel
