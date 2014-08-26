@@ -10,64 +10,31 @@
 	<center><canvas id="myCanvas" width="800" height="600"></canvas></center>
 
 	<script>
-		var canvas = document.getElementById('myCanvas');
-		var windowHeight = parseInt(document.getElementById("myCanvas").getAttribute("height"));
-		var windowWidth = parseInt(document.getElementById("myCanvas").getAttribute("width"));
-		var context = canvas.getContext('2d');
-		context.save();
-
-		// border
-		context.strokeStyle = 'red';
-		context.lineWidth = 2;
-		context.strokeRect(0,0,windowWidth,windowHeight);
-
-		// logo
-		context.font = '40pt "Zoetrope (BRK)"';
-		context.fillStyle = 'red';
-		context.fillText('Or Else They Will Disconnect You', 10, 50);
-
-		// TODO: hud
-
-		// player
-		var player = new Player();
-		renderPlayer(player);
-
-		context.restore();
-
-		// create spheres
-		var spheres = [];
-		var numSpheres = 10;
-		var i;
-		for (i=0; i<numSpheres; i++)
-			spheres.push(new Sphere());
-		for (i=0; i<numSpheres; i++)
-			if (random(0,1) == 0)
-				spheres[i].connected = false;
-
-		// render spheres
-		for (i=0; i<numSpheres; i++)
-			renderSphere(spheres[i]);
-
-		// utilities
 		function random(min,max) {
 			return Math.floor(Math.random()*(max-min+1)+min);
 		}
-		function randomX() { return random(0,windowWidth); }
-		function randomY() { return random(0,windowHeight); }
 
-		function Sphere() {
-			this.x = randomX();
-			this.y = randomY();
-			this.radius = random(10,20);
+		function Sphere(i, minSize, maxSize,
+			xRange, yRange, border, // inside screen
+			influence, x, y) // TODO: outside player's influence
+		{
+			this.i = i;
+			this.radius = random(minSize,maxSize);
+			this.x = random(border+this.radius/2, xRange-border-this.radius/2);
+			this.y = random(border+this.radius/2, yRange-border-this.radius/2);
 			this.connected = true;
+			console.log("sphere #"+i+" at "+this.x+"x, "+this.y+"y");
 		}
-        function renderSphere(sphere) {
-        	if (sphere.connected) {
+		Sphere.prototype.equals = function (other) {
+			return other instanceof Sphere && other.i == this.i;
+		}
+        Sphere.prototype.renderSphere = function (context) {
+        	if (this.connected) {
 				context.save();
 
 				// solid red circle
 				context.beginPath();
-				context.arc(sphere.x, sphere.y, sphere.radius, 0, 2 * Math.PI, false);
+				context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
         		context.fillStyle = 'red';
 				context.fill();
 
@@ -81,8 +48,8 @@
 
 				// blue arc
 				context.beginPath();
-				context.arc(sphere.x, sphere.y,
-						sphere.radius+3,
+				context.arc(this.x, this.y,
+						this.radius+3,
 						offset,
 						Math.PI/2+offset, false);
 				context.strokeStyle = 'blue';
@@ -90,8 +57,8 @@
 
 				// green arc
 				context.beginPath();
-				context.arc(sphere.x, sphere.y,
-						sphere.radius+3,
+				context.arc(this.x, this.y,
+						this.radius+3,
 						-offset,
 						Math.PI/2-offset, false);
 				context.strokeStyle = 'green';
@@ -101,20 +68,20 @@
         	}
         	else
         	{
-        		var offset = sphere.radius/3;  // TODO: myInfluence
+        		var offset = this.radius/3;  // TODO: myInfluence
 
 				context.save();
 				context.globalCompositeOperation = 'screen';  // green + blue = cyan
 
 				// blue sphere
 				context.beginPath();
-				context.arc(sphere.x+offset, sphere.y, sphere.radius, 0, 2 * Math.PI, false);
+				context.arc(this.x+offset, this.y, this.radius, 0, 2 * Math.PI, false);
         		context.fillStyle = 'blue';
 				context.fill();
 
 				// green sphere
 				context.beginPath();
-				context.arc(sphere.x-offset, sphere.y, sphere.radius, 0, 2 * Math.PI, false);
+				context.arc(this.x-offset, this.y, this.radius, 0, 2 * Math.PI, false);
         		context.fillStyle = 'green';
 				context.fill();
 
@@ -123,28 +90,81 @@
         	}
         }
 
-		function Player() {
-			this.x = windowWidth/2;
-			this.y = windowHeight/2;
+		function Player(x, y) {
+			this.x = x;
+			this.y = y;
 			this.connected = true;
-			this.radius = 10;
-			this.myInfluence = 11;
+			this.radius = 20;
+			this.myInfluence = 50;
 		}
 		Player.prototype = new Sphere;
-		function renderPlayer(player) {
-			renderSphere(player);
+		Player.prototype.renderPlayer = function (context) {
+			this.renderSphere(context);  // red or bluegreen ball
 
 			context.save();
 
-			// cyan circle
+			// cyan circle at influence range
 			context.beginPath();
-			context.arc(player.x, player.y, player.myInfluence, 0, 2 * Math.PI, false);
+			context.arc(this.x, this.y, this.myInfluence, 0, 2 * Math.PI, false);
         	context.strokeStyle = 'cyan';
         	context.lineWidth = 2;
 			context.stroke();
 
 			context.restore();
 		}
+
+		function Game() {
+			// canvas
+			this.canvas = document.getElementById('myCanvas');
+			this.context = this.canvas.getContext('2d');
+			this.windowHeight = parseInt(document.getElementById("myCanvas").getAttribute("height"));
+			this.windowWidth = parseInt(document.getElementById("myCanvas").getAttribute("width"));
+			var border = 10;
+
+			// player
+			this.player = new Player(this.windowWidth/2, this.windowHeight/2);
+
+			// spheres
+			this.spheres = [];
+			this.numSpheres = 10;
+			var minSize = 3;
+			var maxSize = 15;
+			var i;
+			for (i=0; i<this.numSpheres; i++)
+				this.spheres.push(new Sphere(i, minSize, maxSize,
+						this.windowWidth, this.windowHeight, border,
+						this.player.myInfluence, this.player.x, this.player.y));
+
+			// render first frame
+			this.render();
+
+			// TODO: start tick
+		}
+		Game.prototype.render = function () {
+			this.context.save();
+
+			// border
+			this.context.strokeStyle = 'gray';
+			this.context.lineWidth = 2;
+			this.context.strokeRect(0,0,this.windowWidth,this.windowHeight);
+
+			// logo
+			this.context.font = '40pt "Zoetrope (BRK)"';
+			this.context.fillStyle = 'red';
+			this.context.fillText('Or Else They Will Disconnect You', 10, 50);
+
+			// spheres
+			for (i=0; i<this.numSpheres; i++)
+				this.spheres[i].renderSphere(this.context);
+
+			// player
+			this.player.renderPlayer(this.context);
+
+			this.context.restore();
+		}
+
+		var game = new Game();
+		console.log(game);
     </script>
 
 </body>
