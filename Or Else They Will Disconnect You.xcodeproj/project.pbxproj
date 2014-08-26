@@ -18,8 +18,6 @@
 		F420DCEB19AC0CC200233E38 /* story.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCEA19AC0CC200233E38 /* story.png */; };
 		F420DCED19AC124E00233E38 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = F420DCEC19AC124E00233E38 /* win.wav */; };
 		F420DCF019AC23D700233E38 /* zoetrope.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = F420DCEF19AC23D700233E38 /* zoetrope.ttf */; };
-		F420DCF419AC25DC00233E38 /* Or Else They Will Disconnect You.app in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF219AC25DC00233E38 /* Or Else They Will Disconnect You.app */; };
-		F420DCF519AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF319AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip */; };
 		F420DCF919AC25EA00233E38 /* logo-screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF719AC25EA00233E38 /* logo-screenshot.png */; };
 		F420DCFA19AC25EA00233E38 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF819AC25EA00233E38 /* screenshot.png */; };
 		F44DDD5F19A860410060C3EB /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5019A860410060C3EB /* AppDelegate.mm */; };
@@ -504,8 +502,6 @@
 		F420DCEA19AC0CC200233E38 /* story.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = story.png; sourceTree = "<group>"; };
 		F420DCEC19AC124E00233E38 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
 		F420DCEF19AC23D700233E38 /* zoetrope.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = zoetrope.ttf; sourceTree = "<group>"; };
-		F420DCF219AC25DC00233E38 /* Or Else They Will Disconnect You.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = "Or Else They Will Disconnect You.app"; sourceTree = "<group>"; };
-		F420DCF319AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "Or Else They Will Disconnect You.app.zip"; sourceTree = "<group>"; };
 		F420DCF719AC25EA00233E38 /* logo-screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-screenshot.png"; sourceTree = "<group>"; };
 		F420DCF819AC25EA00233E38 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot.png; sourceTree = "<group>"; };
 		F44DDD4F19A860410060C3EB /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -560,7 +556,6 @@
 				F4009BD419A42D6B0047E715 /* Libraries */,
 				BCAA76A917B5DF3200E25C2A /* Frameworks */,
 				BCAA76A817B5DF3200E25C2A /* Products */,
-				F420DCF119AC25DC00233E38 /* build */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -1261,15 +1256,6 @@
 			path = image;
 			sourceTree = "<group>";
 		};
-		F420DCF119AC25DC00233E38 /* build */ = {
-			isa = PBXGroup;
-			children = (
-				F420DCF219AC25DC00233E38 /* Or Else They Will Disconnect You.app */,
-				F420DCF319AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip */,
-			);
-			path = build;
-			sourceTree = "<group>";
-		};
 		F420DCF619AC25EA00233E38 /* meta */ = {
 			isa = PBXGroup;
 			children = (
@@ -1422,13 +1408,11 @@
 			files = (
 				F4FDD49819ABED8800BBB403 /* reconnect.wav in Resources */,
 				F4FDD49319ABED8800BBB403 /* disconnect.wav in Resources */,
-				F420DCF419AC25DC00233E38 /* Or Else They Will Disconnect You.app in Resources */,
 				F4FDD49419ABED8800BBB403 /* lose.wav in Resources */,
 				F420DCED19AC124E00233E38 /* win.wav in Resources */,
 				F420DCFA19AC25EA00233E38 /* screenshot.png in Resources */,
 				F420DCE719AC0A4500233E38 /* controls.png in Resources */,
 				F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */,
-				F420DCF519AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip in Resources */,
 				F420DCEB19AC0CC200233E38 /* story.png in Resources */,
 				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
 				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,
