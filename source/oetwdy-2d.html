@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+</head>
+
+<body bgColor="black">
+
+	<!-- TODO: replace center with CSS -->
+	<center><canvas id="myCanvas" width="800" height="600"></canvas></center>
+
+	<script>
+		var canvas = document.getElementById('myCanvas');
+		var windowHeight = parseInt(document.getElementById("myCanvas").getAttribute("height"));
+		var windowWidth = parseInt(document.getElementById("myCanvas").getAttribute("width"));
+		var context = canvas.getContext('2d');
+		context.save();
+
+		// border
+		context.strokeStyle = 'red';
+		context.lineWidth = 2;
+		context.strokeRect(0,0,windowWidth,windowHeight);
+
+		// logo
+		context.font = '40pt "Zoetrope (BRK)"';
+		context.fillStyle = 'red';
+		context.fillText('Or Else They Will Disconnect You', 10, 50);
+
+		// TODO: hud
+
+		context.restore();
+
+		// create spheres
+		var spheres = [];
+		var numSpheres = 10;
+		var i;
+		for (i=0; i<numSpheres; i++)
+			spheres.push(new Sphere());
+		for (i=0; i<numSpheres; i++)
+			if (random(0,1) == 0)
+				spheres[i].connected = false;
+
+		// render spheres
+		for (i=0; i<numSpheres; i++)
+			renderSphere(spheres[i]);
+
+		// utilities
+		function random(min,max) {
+			return Math.floor(Math.random()*(max-min+1)+min);
+		}
+		function randomX() { return random(0,windowWidth); }
+		function randomY() { return random(0,windowHeight); }
+
+		function Sphere() {
+			this.x = randomX();
+			this.y = randomY();
+			this.radius = random(10,20);
+			this.connected = true;
+		}
+        function renderSphere(sphere) {
+        	if (sphere.connected) {
+				context.save();
+
+				// solid red circle
+				context.beginPath();
+				context.arc(sphere.x, sphere.y, sphere.radius, 0, 2 * Math.PI, false);
+        		context.fillStyle = 'red';
+				context.fill();
+
+				context.globalCompositeOperation = 'screen';  // green + blue = cyan
+				context.lineWidth = 2;
+				var offset = Math.PI/4; // * myInfluence/maxInfluence
+
+				// TODO: offset2 points the arc at the player's lights
+
+				// blue arc
+				context.beginPath();
+				context.arc(sphere.x, sphere.y,
+						sphere.radius+3,
+						offset,
+						Math.PI/2+offset, false);
+				context.strokeStyle = 'blue';
+				context.stroke();
+
+				// green arc
+				context.beginPath();
+				context.arc(sphere.x, sphere.y,
+						sphere.radius+3,
+						-offset,
+						Math.PI/2-offset, false);
+				context.strokeStyle = 'green';
+				context.stroke();
+
+				context.restore();
+        	}
+        	else
+        	{
+        		var offset = sphere.radius/3;  // TODO: myInfluence
+
+				context.save();
+				context.globalCompositeOperation = 'screen';  // green + blue = cyan
+
+				// blue sphere
+				context.beginPath();
+				context.arc(sphere.x+offset, sphere.y, sphere.radius, 0, 2 * Math.PI, false);
+        		context.fillStyle = 'blue';
+				context.fill();
+
+				// green sphere
+				context.beginPath();
+				context.arc(sphere.x-offset, sphere.y, sphere.radius, 0, 2 * Math.PI, false);
+        		context.fillStyle = 'green';
+				context.fill();
+
+				context.restore();
+
+        	}
+        }
+
+    </script>
+
+</body>
+</html>
