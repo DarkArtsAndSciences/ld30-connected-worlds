@@ -14,6 +14,9 @@
 		BCD6162317BB320D005535A1 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD6162217BB320D005535A1 /* GLKit.framework */; };
 		BCD6162517BB3212005535A1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD6162417BB3212005535A1 /* IOKit.framework */; };
 		F4009BD519A42DEC0047E715 /* libovr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40098B019A42D620047E715 /* libovr.a */; };
+		F420DCE719AC0A4500233E38 /* controls.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCE419AC0A4500233E38 /* controls.png */; };
+		F420DCEB19AC0CC200233E38 /* story.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCEA19AC0CC200233E38 /* story.png */; };
+		F420DCED19AC124E00233E38 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = F420DCEC19AC124E00233E38 /* win.wav */; };
 		F44DDD5F19A860410060C3EB /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5019A860410060C3EB /* AppDelegate.mm */; };
 		F44DDD6019A860410060C3EB /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5219A860410060C3EB /* GLProgram.m */; };
 		F44DDD6119A860410060C3EB /* DefaultScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5419A860410060C3EB /* DefaultScene.mm */; };
@@ -479,6 +482,9 @@
 		F4009A6C19A42D630047E715 /* Util_LatencyTest2State.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util_LatencyTest2State.h; sourceTree = "<group>"; };
 		F4009A6D19A42D630047E715 /* Util_Render_Stereo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util_Render_Stereo.cpp; sourceTree = "<group>"; };
 		F4009A6E19A42D630047E715 /* Util_Render_Stereo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util_Render_Stereo.h; sourceTree = "<group>"; };
+		F420DCE419AC0A4500233E38 /* controls.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = controls.png; sourceTree = "<group>"; };
+		F420DCEA19AC0CC200233E38 /* story.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = story.png; sourceTree = "<group>"; };
+		F420DCEC19AC124E00233E38 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
 		F44DDD4F19A860410060C3EB /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F44DDD5019A860410060C3EB /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		F44DDD5119A860410060C3EB /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLProgram.h; path = source/GLProgram.h; sourceTree = "<group>"; };
@@ -1221,6 +1227,16 @@
 			name = Libraries;
 			sourceTree = "<group>";
 		};
+		F420DCE219AC0A4500233E38 /* image */ = {
+			isa = PBXGroup;
+			children = (
+				F420DCE419AC0A4500233E38 /* controls.png */,
+				F44DDD8919A93A720060C3EB /* ideagen.png */,
+				F420DCEA19AC0CC200233E38 /* story.png */,
+			);
+			path = image;
+			sourceTree = "<group>";
+		};
 		F44DDD4E19A860410060C3EB /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -1269,12 +1285,12 @@
 		F44DDD6B19A861950060C3EB /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F420DCE219AC0A4500233E38 /* image */,
 				F4FDD48A19ABED8800BBB403 /* audio */,
 				F44DDD7119A861950060C3EB /* MainMenu.xib */,
 				F44DDD7819A861950060C3EB /* Info.plist */,
 				F44DDD6F19A861950060C3EB /* InfoPlist.strings */,
 				F44DDD6D19A861950060C3EB /* Credits.rtf */,
-				F44DDD8919A93A720060C3EB /* ideagen.png */,
 			);
 			name = Assets;
 			path = assets;
@@ -1284,11 +1300,11 @@
 			isa = PBXGroup;
 			children = (
 				F4FDD48C19ABED8800BBB403 /* disconnect.wav */,
-				F4FDD48D19ABED8800BBB403 /* lose.wav */,
 				F4FDD49119ABED8800BBB403 /* reconnect.wav */,
+				F4FDD48D19ABED8800BBB403 /* lose.wav */,
+				F420DCEC19AC124E00233E38 /* win.wav */,
 			);
-			name = audio;
-			path = "../../ld30-connected-worlds/assets/audio";
+			path = audio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1360,12 +1376,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4FDD49819ABED8800BBB403 /* reconnect.wav in Resources */,
-				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
-				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,
 				F4FDD49319ABED8800BBB403 /* disconnect.wav in Resources */,
 				F4FDD49419ABED8800BBB403 /* lose.wav in Resources */,
-				F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */,
+				F420DCED19AC124E00233E38 /* win.wav in Resources */,
+				F420DCE719AC0A4500233E38 /* controls.png in Resources */,
 				F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */,
+				F420DCEB19AC0CC200233E38 /* story.png in Resources */,
+				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
+				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,
+				F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

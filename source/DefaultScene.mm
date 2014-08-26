@@ -14,12 +14,14 @@
 	SCNNode *centerNode, *messageNode;
 	
 	NSColor *connectColor, *_leftDisconnectColor, *_rightDisconnectColor;
-	SCNMaterial *basicMaterial, *connectMaterial, *disconnectMaterial, *infoMaterial;
+	SCNMaterial *basicMaterial, *connectMaterial, *disconnectMaterial;
 	NSArray *basicMaterials, *connectMaterials, *disconnectMaterials;
 	CAKeyframeAnimation *disconnectColorAnimation, *disconnectContentsAnimation, *disconnectMaterialAnimation;
 	
+	SCNMaterial *info1Material, *info2Material, *info3Material;
+	
 	// initGame
-	int level, range, numSpheres;
+	int level, range, numSpheres, connectedSpheres;
 	NSString *levelName;
 	float mySize, mySpeed, myInfluence;  // player state
 	
@@ -67,7 +69,7 @@
 	// text
 	fontName = @"Zoetrope (BRK)";
 	logoFont = [NSFont fontWithName:fontName size:72];
-	messageFont = [NSFont fontWithName:fontName size:16];
+	messageFont = [NSFont fontWithName:fontName size:20];
 	
 	centerNode = [SCNNode node];
 	messageNode = [SCNNode node];
@@ -99,12 +101,25 @@
 	disconnectMaterial.doubleSided = YES;
 	disconnectMaterials = @[disconnectMaterial];
 	
-	infoMaterial = [SCNMaterial material];
-	infoMaterial.diffuse.contents = [NSImage imageNamed:@"ideagen"];
+	info1Material = [SCNMaterial material];
+	info1Material.diffuse.contents = [NSImage imageNamed:@"controls"];  // TODO: for this mode
+    info1Material.diffuse.minificationFilter  = SCNLinearFiltering;
+    info1Material.diffuse.magnificationFilter = SCNLinearFiltering;
+    info1Material.diffuse.mipFilter           = SCNLinearFiltering;
+	
+	info2Material = [SCNMaterial material];
+	info2Material.diffuse.contents = [NSImage imageNamed:@"ideagen"];
+    info2Material.diffuse.minificationFilter  = SCNLinearFiltering;
+    info2Material.diffuse.magnificationFilter = SCNLinearFiltering;
+    info2Material.diffuse.mipFilter           = SCNLinearFiltering;
+	
+	info3Material = [SCNMaterial material];
+	info3Material.diffuse.contents = [NSImage imageNamed:@"story"];
+    info3Material.diffuse.minificationFilter  = SCNLinearFiltering;
+    info3Material.diffuse.magnificationFilter = SCNLinearFiltering;
+    info3Material.diffuse.mipFilter           = SCNLinearFiltering;
+	
 	//infoMaterial.emission.contents = [NSImage imageNamed:@"ideagen"];  // glowing letters
-    infoMaterial.diffuse.minificationFilter  = SCNLinearFiltering;
-    infoMaterial.diffuse.magnificationFilter = SCNLinearFiltering;
-    infoMaterial.diffuse.mipFilter           = SCNLinearFiltering;
 	
 	// animations
 	// TODO: these should be faster with more influence
@@ -139,9 +154,10 @@
 	level = 0;
 	levelName = @"init";
 	
+	mySpeed = 1;
 	mySize = 100.0;
-	mySpeed = 10;
 	myInfluence = 150.0;
+	connectedSpheres = 0;
 }
 
 - (void)clearLevel
@@ -158,7 +174,7 @@
 - (void)setupLoadingScene
 {
 	[self clearLevel];
-	[self addMessage:@"Connect the Spheres"];
+	mySpeed = 10;
 	
 	// lights
 	SCNLight *ambientLight = [SCNLight light];
@@ -170,6 +186,27 @@
 	
 	[self addDirectionalLight];
 	[self addDisconnectedLights];
+	
+	// instructions
+	int width = 664;
+	int height = 343;
+	SCNPlane *wall1 = [SCNPlane planeWithWidth:width height:height];
+	wall1.materials = @[info1Material];
+	SCNNode *wall1Node = [SCNNode nodeWithGeometry:wall1];
+	wall1Node.position = SCNVector3Make(0, 0, -250);
+	[levelNode addChildNode:wall1Node];
+	
+	SCNPlane *wall2 = [SCNPlane planeWithWidth:width height:height];
+	wall2.materials = @[info2Material];
+	SCNNode *wall2Node = [SCNNode nodeWithGeometry:wall2];
+	wall2Node.position = SCNVector3Make(0, 0, -500);
+	[levelNode addChildNode:wall2Node];
+	
+	SCNPlane *wall3 = [SCNPlane planeWithWidth:width height:height];
+	wall3.materials = @[info3Material];
+	SCNNode *wall3Node = [SCNNode nodeWithGeometry:wall3];
+	wall3Node.position = SCNVector3Make(0, 0, -750);
+	[levelNode addChildNode:wall3Node];
 	
 	// logo
     SCNText *logoText1 = [SCNText textWithString:@"Or Else They Will" extrusionDepth:10];
@@ -186,40 +223,53 @@
 	logoNode2.transform = CATransform3DTranslate(logoNode2.transform, 0, -logoText2.textSize.height/2, 0);
 	logoNode1.transform = CATransform3DTranslate(logoNode1.transform, 0,  100, 0); // y separation
 	logoNode2.transform = CATransform3DTranslate(logoNode2.transform, 0, -100, 0);
-	logoNode1.transform = CATransform3DTranslate(logoNode1.transform, 0, 0, -500);  // location
-	logoNode2.transform = CATransform3DTranslate(logoNode2.transform, 0, 0, -500);
+	logoNode1.transform = CATransform3DTranslate(logoNode1.transform, 0, 0, -1000);  // location
+	logoNode2.transform = CATransform3DTranslate(logoNode2.transform, 0, 0, -1000);
     [levelNode addChildNode:logoNode1];
     [levelNode addChildNode:logoNode2];
 	
 	SCNSphere *logoSphere = [SCNSphere sphereWithRadius:50];
 	logoSphere.materials = connectMaterials;
 	logoSphereNode = [SCNNode nodeWithGeometry:logoSphere];
-	logoSphereNode.position = SCNVector3Make(0, 0, -500);
+	logoSphereNode.position = SCNVector3Make(0, 0, -1000);
 	[levelNode addChildNode:logoSphereNode];
 	
 	// TODO: giant fake sun at -1,-1,-1, distant constellations (for orientation reference)
-	
-	SCNPlane *wall = [SCNPlane planeWithWidth:664 height:343];
-	wall.materials = @[infoMaterial];
-	SCNNode *wallNode = [SCNNode nodeWithGeometry:wall];
-	wallNode.position = SCNVector3Make(0, 0, -500);
-	[levelNode addChildNode:wallNode];
+}
+
+- (void)setAvatarSpeed:(CGFloat)avatarSpeed
+{
+	self.avatarSpeed = avatarSpeed;
+}
+- (CGFloat)avatarSpeed
+{
+	if (connectedSpheres > 0)
+		return mySpeed * connectedSpheres;
+	else
+		return mySpeed;
 }
 
 - (void)nextLevel
 {
 	level += 1;
-	mySpeed = 10 - (level/10.0);
+	mySpeed = 2 + level*0.1;
 	myInfluence = 100 + (10 * level);
 	maxInfluence = 1000.0/(float)level;
 	range = mySize * 10 * level;
 	numSpheres = 10 * level * level;
+	connectedSpheres = 0;
 	NSLog(@"\nWelcome to level %d, size %d, %d spheres.\nYour speed is now %.2f.\nYour influence has been reset to %.f. Please keep it below %.f.", level, range, numSpheres, mySpeed, myInfluence, maxInfluence);
 	
 	[self clearLevel];
 	[self addMessage:[NSString stringWithFormat:@"Level %d", level]];
 	
 	// lights
+	SCNLight *ambientLight = [SCNLight light];
+	ambientLight.type = SCNLightTypeAmbient;
+	ambientLight.color = [NSColor grayColor];
+	SCNNode *ambientLightNode = [SCNNode node];
+	ambientLightNode.light = ambientLight;
+	[levelNode addChildNode:ambientLightNode];
 	[self addDirectionalLight];
 	[self addDisconnectedLights];
 	
@@ -230,7 +280,7 @@
 	spheres = [NSMutableArray array];
 	for (int i=0; i<numSpheres; i++)
 	{
-		float size = random() % 100;
+		float size = 10 + random() % 100;
 		SCNSphere *sphere = [SCNSphere sphereWithRadius:size];
 		sphere.materials = connectMaterials;
 		
@@ -246,7 +296,8 @@
 {
 	level = -1;
 	[self clearLevel];
-	[self addMessage:[NSString stringWithFormat:@"You split into two.\nNeither survives."]];
+	[loseSFX play];
+	[self addMessage:[NSString stringWithFormat:@"You split into two pieces\none green, one blue.\n\nNeither survives."]];
 	[self addDirectionalLight];
 	[self addDisconnectedLights];
 }
@@ -255,7 +306,8 @@
 {
 	level = -2;
 	[self clearLevel];
-	[self addMessage:[NSString stringWithFormat:@"Slowly, the pain stops.\nYou are one."]];
+	[winSFX play];
+	[self addMessage:[NSString stringWithFormat:@"Your eyes stop hurting.\nYou are in one piece.\n\nYou have survived."]];
 	[self addDirectionalLight];
 	//[self addConnectedLights];
 }
@@ -443,14 +495,14 @@
 			[reconnectSFX play];
 		}
 		
-		// if you're lucky
+		/*/ if you're lucky
 		if (random() % range == 0)
 		{
 			NSLog(@"An unexplained force heals you.");
 			myInfluence -= connected;
 			// TODO: heal sound
 			// TODO: healLimit -= level;
-		}
+		}*/
 		
 		if (connected == 0)
 			[self nextLevel];
