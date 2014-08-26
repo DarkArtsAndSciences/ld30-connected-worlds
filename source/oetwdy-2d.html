@@ -28,6 +28,10 @@
 
 		// TODO: hud
 
+		// player
+		var player = new Player();
+		renderPlayer(player);
+
 		context.restore();
 
 		// create spheres
@@ -72,6 +76,8 @@
 				var offset = Math.PI/4; // * myInfluence/maxInfluence
 
 				// TODO: offset2 points the arc at the player's lights
+				// ...which are outside the player, so this should work even
+				// on the player itself
 
 				// blue arc
 				context.beginPath();
@@ -117,6 +123,28 @@
         	}
         }
 
+		function Player() {
+			this.x = windowWidth/2;
+			this.y = windowHeight/2;
+			this.connected = true;
+			this.radius = 10;
+			this.myInfluence = 11;
+		}
+		Player.prototype = new Sphere;
+		function renderPlayer(player) {
+			renderSphere(player);
+
+			context.save();
+
+			// cyan circle
+			context.beginPath();
+			context.arc(player.x, player.y, player.myInfluence, 0, 2 * Math.PI, false);
+        	context.strokeStyle = 'cyan';
+        	context.lineWidth = 2;
+			context.stroke();
+
+			context.restore();
+		}
     </script>
 
 </body>
