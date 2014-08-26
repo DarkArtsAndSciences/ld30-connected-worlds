@@ -17,6 +17,11 @@
 		F420DCE719AC0A4500233E38 /* controls.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCE419AC0A4500233E38 /* controls.png */; };
 		F420DCEB19AC0CC200233E38 /* story.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCEA19AC0CC200233E38 /* story.png */; };
 		F420DCED19AC124E00233E38 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = F420DCEC19AC124E00233E38 /* win.wav */; };
+		F420DCF019AC23D700233E38 /* zoetrope.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = F420DCEF19AC23D700233E38 /* zoetrope.ttf */; };
+		F420DCF419AC25DC00233E38 /* Or Else They Will Disconnect You.app in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF219AC25DC00233E38 /* Or Else They Will Disconnect You.app */; };
+		F420DCF519AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF319AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip */; };
+		F420DCF919AC25EA00233E38 /* logo-screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF719AC25EA00233E38 /* logo-screenshot.png */; };
+		F420DCFA19AC25EA00233E38 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF819AC25EA00233E38 /* screenshot.png */; };
 		F44DDD5F19A860410060C3EB /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5019A860410060C3EB /* AppDelegate.mm */; };
 		F44DDD6019A860410060C3EB /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5219A860410060C3EB /* GLProgram.m */; };
 		F44DDD6119A860410060C3EB /* DefaultScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5419A860410060C3EB /* DefaultScene.mm */; };
@@ -43,6 +48,19 @@
 			remoteInfo = LibOVR;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F420DCEE19AC236300233E38 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Fonts;
+			dstSubfolderSpec = 7;
+			files = (
+				F420DCF019AC23D700233E38 /* zoetrope.ttf in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BC6C083C17B6E83F00A20AD6 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -485,6 +503,11 @@
 		F420DCE419AC0A4500233E38 /* controls.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = controls.png; sourceTree = "<group>"; };
 		F420DCEA19AC0CC200233E38 /* story.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = story.png; sourceTree = "<group>"; };
 		F420DCEC19AC124E00233E38 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
+		F420DCEF19AC23D700233E38 /* zoetrope.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = zoetrope.ttf; sourceTree = "<group>"; };
+		F420DCF219AC25DC00233E38 /* Or Else They Will Disconnect You.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = "Or Else They Will Disconnect You.app"; sourceTree = "<group>"; };
+		F420DCF319AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "Or Else They Will Disconnect You.app.zip"; sourceTree = "<group>"; };
+		F420DCF719AC25EA00233E38 /* logo-screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-screenshot.png"; sourceTree = "<group>"; };
+		F420DCF819AC25EA00233E38 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot.png; sourceTree = "<group>"; };
 		F44DDD4F19A860410060C3EB /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F44DDD5019A860410060C3EB /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		F44DDD5119A860410060C3EB /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLProgram.h; path = source/GLProgram.h; sourceTree = "<group>"; };
@@ -537,6 +560,7 @@
 				F4009BD419A42D6B0047E715 /* Libraries */,
 				BCAA76A917B5DF3200E25C2A /* Frameworks */,
 				BCAA76A817B5DF3200E25C2A /* Products */,
+				F420DCF119AC25DC00233E38 /* build */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -1237,6 +1261,24 @@
 			path = image;
 			sourceTree = "<group>";
 		};
+		F420DCF119AC25DC00233E38 /* build */ = {
+			isa = PBXGroup;
+			children = (
+				F420DCF219AC25DC00233E38 /* Or Else They Will Disconnect You.app */,
+				F420DCF319AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip */,
+			);
+			path = build;
+			sourceTree = "<group>";
+		};
+		F420DCF619AC25EA00233E38 /* meta */ = {
+			isa = PBXGroup;
+			children = (
+				F420DCF719AC25EA00233E38 /* logo-screenshot.png */,
+				F420DCF819AC25EA00233E38 /* screenshot.png */,
+			);
+			path = meta;
+			sourceTree = SOURCE_ROOT;
+		};
 		F44DDD4E19A860410060C3EB /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -1285,8 +1327,10 @@
 		F44DDD6B19A861950060C3EB /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F420DCF619AC25EA00233E38 /* meta */,
 				F420DCE219AC0A4500233E38 /* image */,
 				F4FDD48A19ABED8800BBB403 /* audio */,
+				F420DCEF19AC23D700233E38 /* zoetrope.ttf */,
 				F44DDD7119A861950060C3EB /* MainMenu.xib */,
 				F44DDD7819A861950060C3EB /* Info.plist */,
 				F44DDD6F19A861950060C3EB /* InfoPlist.strings */,
@@ -1317,6 +1361,7 @@
 				BCAA76A317B5DF3200E25C2A /* Sources */,
 				BCAA76A417B5DF3200E25C2A /* Frameworks */,
 				BCAA76A517B5DF3200E25C2A /* Resources */,
+				F420DCEE19AC236300233E38 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1377,14 +1422,18 @@
 			files = (
 				F4FDD49819ABED8800BBB403 /* reconnect.wav in Resources */,
 				F4FDD49319ABED8800BBB403 /* disconnect.wav in Resources */,
+				F420DCF419AC25DC00233E38 /* Or Else They Will Disconnect You.app in Resources */,
 				F4FDD49419ABED8800BBB403 /* lose.wav in Resources */,
 				F420DCED19AC124E00233E38 /* win.wav in Resources */,
+				F420DCFA19AC25EA00233E38 /* screenshot.png in Resources */,
 				F420DCE719AC0A4500233E38 /* controls.png in Resources */,
 				F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */,
+				F420DCF519AC25DC00233E38 /* Or Else They Will Disconnect You.app.zip in Resources */,
 				F420DCEB19AC0CC200233E38 /* story.png in Resources */,
 				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
 				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,
 				F44DDD7C19A861950060C3EB /* Credits.rtf in Resources */,
+				F420DCF919AC25EA00233E38 /* logo-screenshot.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
