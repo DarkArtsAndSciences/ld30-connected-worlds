@@ -10,9 +10,25 @@
 	<center><canvas id="myCanvas" width="800" height="600"></canvas></center>
 
 	<script>
+		// http://stackoverflow.com/a/7228322
 		function random(min,max) {
 			return Math.floor(Math.random()*(max-min+1)+min);
 		}
+
+		function maybe(chance) {
+			chance = chance || 0.5;
+			return Math.random() > 0.5;
+		}
+
+		// http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+		window.requestAnimFrame = (function() {
+  			return  window.requestAnimationFrame       ||
+          			window.webkitRequestAnimationFrame ||
+          			window.mozRequestAnimationFrame    ||
+          		function( callback ){
+            		window.setTimeout(callback, 1000 / 60);
+          		};
+		})();
 
 		function Sphere(i, minSize, maxSize,
 			xRange, yRange, border, // inside screen
@@ -23,7 +39,7 @@
 			this.x = random(border+this.radius/2, xRange-border-this.radius/2);
 			this.y = random(border+this.radius/2, yRange-border-this.radius/2);
 			this.connected = true;
-			console.log("sphere #"+i+" at "+this.x+"x, "+this.y+"y");
+			//console.log("sphere #"+i+" at "+this.x+"x, "+this.y+"y");
 		}
 		Sphere.prototype.equals = function (other) {
 			return other instanceof Sphere && other.i == this.i;
@@ -91,15 +107,39 @@
         }
 
 		function Player(x, y) {
-			this.x = x;
-			this.y = y;
-			this.connected = true;
-			this.radius = 20;
-			this.myInfluence = 50;
+			size = 25;
+			this.sphere = (new Sphere(-1, size, size));
+			this.sphere.connected = true;
+			this.sphere.x = x;
+			this.sphere.y = y;
+
+			this.speed = 0.1;
+			this.myInfluence = size+1;
+			this.maxInfluence = size*4;
 		}
-		Player.prototype = new Sphere;
+		Player.prototype.caffeinate = function (dt) {
+        	var pps = this.speed * dt / 1000;  // speed in pixels per second
+			var jitter = this.myInfluence / this.maxInfluence / 20;
+
+        	// TODO: get facing, move forward
+
+        	this.sphere.x += (maybe()) ? dt*jitter : -dt*jitter;
+        	this.sphere.y += (maybe()) ? dt*jitter : -dt*jitter;
+        }
+        Player.prototype.moveForward = function (dt) {
+        	var pps = this.speed * dt / 1000;  // speed in pixels per second
+
+        	// TODO: change facing
+
+        }
+        Player.prototype.turnLeft = function (dt) {
+        	var pps = this.speed * dt / 1000;  // speed in pixels per second
+        	var angle = Math.PI/8; // 45 degrees
+
+        	// TODO: change facing
+        }
 		Player.prototype.renderPlayer = function (context) {
-			this.renderSphere(context);  // red or bluegreen ball
+			this.sphere.renderSphere(context);  // red or bluegreen ball
 
 			context.save();
 
@@ -115,11 +155,12 @@
 
 		function Game() {
 			// canvas
-			this.canvas = document.getElementById('myCanvas');
-			this.context = this.canvas.getContext('2d');
+			var canvas = document.getElementById('myCanvas');
+			var context = canvas.getContext('2d');
+
 			this.windowHeight = parseInt(document.getElementById("myCanvas").getAttribute("height"));
 			this.windowWidth = parseInt(document.getElementById("myCanvas").getAttribute("width"));
-			var border = 10;
+			this.border = 10;
 
 			// player
 			this.player = new Player(this.windowWidth/2, this.windowHeight/2);
@@ -127,44 +168,52 @@
 			// spheres
 			this.spheres = [];
 			this.numSpheres = 10;
-			var minSize = 3;
-			var maxSize = 15;
+			this.minSize = 3;
+			this.maxSize = 15;
 			var i;
 			for (i=0; i<this.numSpheres; i++)
-				this.spheres.push(new Sphere(i, minSize, maxSize,
-						this.windowWidth, this.windowHeight, border,
+				this.spheres.push(new Sphere(i, this.minSize, this.maxSize,
+						this.windowWidth, this.windowHeight, this.border,
 						this.player.myInfluence, this.player.x, this.player.y));
 
-			// render first frame
-			this.render();
-
-			// TODO: start tick
+			// start rendering
+        	this.start = (new Date()).getTime();
+			render(this, context, this.start);
 		}
-		Game.prototype.render = function () {
-			this.context.save();
+		render = function (game, context, last) {
+			var now = (new Date()).getTime();
+	        var dt = now - last; // seconds since last frame
+
+			context.save();
+
+			// background
+			context.fillStyle = 'black';
+			context.fillRect(0,0,game.windowWidth,game.windowHeight);
 
 			// border
-			this.context.strokeStyle = 'gray';
-			this.context.lineWidth = 2;
-			this.context.strokeRect(0,0,this.windowWidth,this.windowHeight);
+			context.strokeStyle = 'gray';
+			context.lineWidth = 2;
+			context.strokeRect(0,0,game.windowWidth,game.windowHeight);
 
 			// logo
-			this.context.font = '40pt "Zoetrope (BRK)"';
-			this.context.fillStyle = 'red';
-			this.context.fillText('Or Else They Will Disconnect You', 10, 50);
+			context.font = '40pt "Zoetrope (BRK)"';
+			context.fillStyle = 'red';
+			context.fillText('Or Else They Will Disconnect You', 10, 50);
 
 			// spheres
-			for (i=0; i<this.numSpheres; i++)
-				this.spheres[i].renderSphere(this.context);
+			for (i=0; i<game.numSpheres; i++)
+				game.spheres[i].renderSphere(context);
 
 			// player
-			this.player.renderPlayer(this.context);
+			game.player.caffeinate(dt);
+			game.player.renderPlayer(context);
 
-			this.context.restore();
+			context.restore();
+
+			requestAnimFrame(function() { render(game, context, now); });
 		}
 
 		var game = new Game();
-		console.log(game);
     </script>
 
 </body>
