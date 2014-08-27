@@ -107,49 +107,86 @@
         }
 
 		function Player(x, y) {
-			size = 25;
-			this.sphere = (new Sphere(-1, size, size));
+			this.size = 25;
+			this.sphere = (new Sphere(-1, this.size, this.size));
 			this.sphere.connected = true;
 			this.sphere.x = x;
 			this.sphere.y = y;
 
 			this.moveSpeed = 100;  // pixels per second
-			this.turnSpeed = Math.PI/8  // radians per second
+			this.turnSpeed = 0.001;  // radians per second
 			this.facing = -Math.PI/2;  // up
 
-			this.myInfluence = size+1;
-			this.maxInfluence = size*4;
+			this.movingForward = false;
+			this.turningLeft = false;
+			this.turningRight = false;
+			this.caffeine = false;  // jitter
+
+			this.myInfluence = this.size + 1;
+			this.maxInfluence = this.size * 4;
 		}
 		Player.prototype.caffeinate = function (dt) {
 			var jitter = this.myInfluence / this.maxInfluence / 20 * dt;
         	this.sphere.x += (maybe()) ? jitter : -jitter;
         	this.sphere.y += (maybe()) ? jitter : -jitter;
         }
-        Player.prototype.moveForward = function () {
-        	var pps = this.moveSpeed * window.game.dt / 1000;  // speed in pixels per second
+        Player.prototype.moveForwardOn = function () {
+        	this.movingForward = true;
+        }
+        Player.prototype.moveForwardOff = function () {
+        	this.movingForward = false;
+        }
+        Player.prototype.moveForward = function (dt) {
+        	var pps = this.moveSpeed * dt / 1000;  // speed in pixels per second
         	this.sphere.x += Math.cos(this.facing) * pps;
         	this.sphere.y += Math.sin(this.facing) * pps;
         	//console.log("moved sphere "+window.game.dt+" to "+this.sphere.x+","+this.sphere.y);
         }
-        Player.prototype.turnLeft = function () {
-			this.facing -= this.turnSpeed * window.game.dt;
+        Player.prototype.turnLeftOn = function () {
+        	this.turningLeft = true;
+        }
+        Player.prototype.turnLeftOff = function () {
+        	this.turningLeft = false;
+        }
+        Player.prototype.turnLeft = function (dt) {
+			this.facing -= this.turnSpeed * dt;
 			//console.log("facing "+this.facing);
         }
-        Player.prototype.turnRight = function () {
-			this.facing += this.turnSpeed * window.game.dt;
+        Player.prototype.turnRightOn = function () {
+        	this.turningRight = true;
+        }
+        Player.prototype.turnRightOff = function () {
+        	this.turningRight = false;
+        }
+        Player.prototype.turnRight = function (dt) {
+			this.facing += this.turnSpeed * dt;
 			//console.log("facing "+this.facing);
         }
+        Player.prototype.move = function (dt) {
+        	if (this.turningLeft && !this.turningRight) this.turnLeft(dt);
+        	if (!this.turningLeft && this.turningRight) this.turnRight(dt);
+        	if (this.movingForward) this.moveForward(dt);
+        	if (this.caffeine) this.caffeinate(dt);
+        }
+
 		Player.prototype.renderPlayer = function (context) {
 			this.sphere.renderSphere(context);  // red or bluegreen ball
 
 			context.save();
+        	context.strokeStyle = 'cyan';
+        	context.lineWidth = 2;
 
 			// cyan circle at influence range
 			context.beginPath();
 			context.arc(this.x, this.y, this.myInfluence, 0, 2 * Math.PI, false);
-        	context.strokeStyle = 'cyan';
-        	context.lineWidth = 2;
 			context.stroke();
+
+			// facing indicator
+			context.beginPath();
+			context.moveTo(this.sphere.x, this.sphere.y);
+        	context.lineTo(this.sphere.x + Math.cos(this.facing) * this.size,
+        				   this.sphere.y + Math.sin(this.facing) * this.size);
+        	context.stroke();
 
 			context.restore();
 		}
@@ -184,7 +221,7 @@
 
 		render = function (game, context, last) {
 			var now = (new Date()).getTime();
-	        game.dt = now - last; // seconds since last frame
+	        var dt = now - last; // seconds since last frame
 	        //console.log(now+" - "+last+" = "+dt);
 
 			context.save();
@@ -208,7 +245,7 @@
 				game.spheres[i].renderSphere(context);
 
 			// player
-			//game.player.caffeinate(game.dt);
+			game.player.move(dt);
 			game.player.renderPlayer(context);
 
 			context.restore();
@@ -221,24 +258,46 @@
 		onKeyDown = function (event) {
     		switch (event.keyCode) {
         		case 37: // left arrow
-        			this.game.player.turnLeft();
+        			this.game.player.turnLeftOn();
         			break;
 
         		case 39: // right arrow
-        			this.game.player.turnRight();
+        			this.game.player.turnRightOn();
         			break;
 
 				case 32: // space bar
         		case 38: // up arrow
         		case 40: // down arrow
-        			this.game.player.moveForward();
+        			this.game.player.moveForwardOn();
         			break;
 
-        		default:
-        			console.log("key: "+event.keyCode);
+        		//default:
+        			//console.log("key down: "+event.keyCode);
     		}
 		}
 		window.addEventListener('keydown', onKeyDown, false);
+
+		onKeyUp = function (event) {
+    		switch (event.keyCode) {
+        		case 37: // left arrow
+        			this.game.player.turnLeftOff();
+        			break;
+
+        		case 39: // right arrow
+        			this.game.player.turnRightOff();
+        			break;
+
+				case 32: // space bar
+        		case 38: // up arrow
+        		case 40: // down arrow
+        			this.game.player.moveForwardOff();
+        			break;
+
+        		//default:
+        			//console.log("key up: "+event.keyCode);
+    		}
+		}
+		window.addEventListener('keyup', onKeyUp, false);
     </script>
 
 </body>
