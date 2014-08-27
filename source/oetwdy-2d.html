@@ -113,30 +113,31 @@
 			this.sphere.x = x;
 			this.sphere.y = y;
 
-			this.speed = 0.1;
+			this.moveSpeed = 100;  // pixels per second
+			this.turnSpeed = Math.PI/8  // radians per second
+			this.facing = -Math.PI/2;  // up
+
 			this.myInfluence = size+1;
 			this.maxInfluence = size*4;
 		}
 		Player.prototype.caffeinate = function (dt) {
-        	var pps = this.speed * dt / 1000;  // speed in pixels per second
-			var jitter = this.myInfluence / this.maxInfluence / 20;
-
-        	// TODO: get facing, move forward
-
-        	this.sphere.x += (maybe()) ? dt*jitter : -dt*jitter;
-        	this.sphere.y += (maybe()) ? dt*jitter : -dt*jitter;
+			var jitter = this.myInfluence / this.maxInfluence / 20 * dt;
+        	this.sphere.x += (maybe()) ? jitter : -jitter;
+        	this.sphere.y += (maybe()) ? jitter : -jitter;
         }
-        Player.prototype.moveForward = function (dt) {
-        	var pps = this.speed * dt / 1000;  // speed in pixels per second
-
-        	// TODO: change facing
-
+        Player.prototype.moveForward = function () {
+        	var pps = this.moveSpeed * window.game.dt / 1000;  // speed in pixels per second
+        	this.sphere.x += Math.cos(this.facing) * pps;
+        	this.sphere.y += Math.sin(this.facing) * pps;
+        	//console.log("moved sphere "+window.game.dt+" to "+this.sphere.x+","+this.sphere.y);
         }
-        Player.prototype.turnLeft = function (dt) {
-        	var pps = this.speed * dt / 1000;  // speed in pixels per second
-        	var angle = Math.PI/8; // 45 degrees
-
-        	// TODO: change facing
+        Player.prototype.turnLeft = function () {
+			this.facing -= this.turnSpeed * window.game.dt;
+			//console.log("facing "+this.facing);
+        }
+        Player.prototype.turnRight = function () {
+			this.facing += this.turnSpeed * window.game.dt;
+			//console.log("facing "+this.facing);
         }
 		Player.prototype.renderPlayer = function (context) {
 			this.sphere.renderSphere(context);  // red or bluegreen ball
@@ -180,9 +181,11 @@
         	this.start = (new Date()).getTime();
 			render(this, context, this.start);
 		}
+
 		render = function (game, context, last) {
 			var now = (new Date()).getTime();
-	        var dt = now - last; // seconds since last frame
+	        game.dt = now - last; // seconds since last frame
+	        //console.log(now+" - "+last+" = "+dt);
 
 			context.save();
 
@@ -205,7 +208,7 @@
 				game.spheres[i].renderSphere(context);
 
 			// player
-			game.player.caffeinate(dt);
+			//game.player.caffeinate(game.dt);
 			game.player.renderPlayer(context);
 
 			context.restore();
@@ -213,7 +216,29 @@
 			requestAnimFrame(function() { render(game, context, now); });
 		}
 
-		var game = new Game();
+		window.game = new Game();
+
+		onKeyDown = function (event) {
+    		switch (event.keyCode) {
+        		case 37: // left arrow
+        			this.game.player.turnLeft();
+        			break;
+
+        		case 39: // right arrow
+        			this.game.player.turnRight();
+        			break;
+
+				case 32: // space bar
+        		case 38: // up arrow
+        		case 40: // down arrow
+        			this.game.player.moveForward();
+        			break;
+
+        		default:
+        			console.log("key: "+event.keyCode);
+    		}
+		}
+		window.addEventListener('keydown', onKeyDown, false);
     </script>
 
 </body>
