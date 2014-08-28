@@ -157,17 +157,28 @@
         }
 
 		Player.prototype.renderPlayer = function (context) {
-			this.sphere.renderSphere(context);  // red or bluegreen ball
 
 			context.save();
-        	context.strokeStyle = 'cyan';
         	context.lineWidth = 1;
 
 			// cyan circle at influence range
 			// TODO: should be two circles, one blue one green
 			context.beginPath();
-			context.arc(this.sphere.x, this.sphere.y, this.influence, 0, 2 * Math.PI, false);
+			context.arc(this.sphere.x - Math.sin(this.facing) * this.sphere.radius*0.25,
+						this.sphere.y + Math.cos(this.facing) * this.sphere.radius*0.25,
+						Math.max(1,this.influence), this.facing, this.facing + Math.PI, false);
+        	context.strokeStyle = 'green';
 			context.stroke();
+
+			context.beginPath();
+			context.arc(this.sphere.x + Math.sin(this.facing) * this.sphere.radius*0.25,
+						this.sphere.y - Math.cos(this.facing) * this.sphere.radius*0.25,
+						Math.max(1,this.influence), Math.PI+this.facing, 2 * Math.PI+this.facing, false);
+        	context.strokeStyle = 'blue';
+			context.stroke();
+
+			// red or bluegreen ball
+			this.sphere.renderSphere(context);
 
 			// facing indicator
 			context.beginPath();
@@ -176,6 +187,7 @@
         				   this.sphere.y + Math.sin(this.facing) * this.sphere.radius*0.9);
         	context.lineTo(this.sphere.x + Math.cos(this.facing) * this.influence*1.1,
         				   this.sphere.y + Math.sin(this.facing) * this.influence*1.1);
+        	context.strokeStyle = 'cyan';
         	context.stroke();
 
 			context.restore();
@@ -191,18 +203,18 @@
 			var canvas = document.getElementById('myCanvas');
 			var context = canvas.getContext('2d');
 
-			this.windowHeight = parseInt(canvas.getAttribute("height"));
-			this.windowWidth = parseInt(canvas.getAttribute("width"));
+			this.height = parseInt(canvas.getAttribute("height"));
+			this.width = parseInt(canvas.getAttribute("width"));
 			this.border = 250;
 
 			//this.range = 100;
-			//this.scale = Math.min(this.range/this.windowHeight, this.range/this.windowWidth);
+			//this.scale = Math.min(this.range/this.height, this.range/this.width);
 			//console.log(this.scale);
 
 			this.level = 0;
 
 			// player
-			this.player = new Player(this.windowWidth/2, this.windowHeight/2, 10);
+			this.player = new Player(this.width/2, this.height/2, 10);
 
 			// spheres
 			this.numSpheres = 10;
@@ -214,7 +226,7 @@
 			this.spheres = [];
 			for (var i=0; i<this.numSpheres; i++)
 				this.spheres.push(new Sphere(i, this.minSize, this.maxSize,
-						this.windowWidth, this.windowHeight, this.border,
+						this.width, this.height, this.border,
 						this.player.influence, this.player.x, this.player.y));
 
 			// start rendering
@@ -246,7 +258,7 @@
 			this.disconnected = 0;
 			for (var i=0; i<this.numSpheres; i++)
 				this.spheres.push(new Sphere(i, this.minSize, this.maxSize,
-						this.windowWidth, this.windowHeight, this.border,
+						this.width, this.height, this.border,
 						this.player.influence, this.player.x, this.player.y));
 		}
 		Game.prototype.lose = function () {
@@ -269,7 +281,7 @@
 
 			// background
 			context.fillStyle = 'black';
-			context.fillRect(0,0,game.windowWidth,game.windowHeight);
+			context.fillRect(0,0,game.width,game.height);
 			// TODO: starfield
 
 	        // render game
@@ -322,8 +334,9 @@
 					// TODO: update lights
 				}
 
-				// TODO: random healing
-				if (game.disconnected && maybe(1/100000 * dt * connected/game.numSpheres))
+				// random healing
+				// TODO: only while moving!
+				if (game.disconnected && maybe(1/10000 * dt * connected/game.numSpheres))
 				{
 					game.player.influence -= game.disconnected;
 					game.healSFX.play();
@@ -353,21 +366,55 @@
 			} else {
 
 				// logo
-				context.font = '40pt "Zoetrope (BRK)"';
+				var offset = (now % (game.width/2 * 100))/100;
+				context.save();
+				context.globalCompositeOperation = 'screen';  // green + blue = cyan
+				context.beginPath();
+				context.arc(game.width/2+offset, game.height/3, 100, 0, 2 * Math.PI, false);
+				context.fillStyle = 'blue';
+				context.fill();
+				context.beginPath();
+				context.arc(game.width/2-offset, game.height/3, 100, 0, 2 * Math.PI, false);
+				context.fillStyle = 'green';
+				context.fill();
+				context.restore();
+
 				context.fillStyle = 'red';
-				context.fillText('Or Else They Will Disconnect You', 20, 50);
+				context.strokeStyle = 'black';
+				context.lineWidth = 3;
+				context.font = '36pt "Zoetrope (BRK)"';
 
 				// title screen
 				if (game.level == 0) {
-					context.fillText('(press SPACE to play)', 200, 150);
+
+					renderCenteredText(context, game.width/2, game.height/3-15,
+							'Or Else They Will Disconnect You');
+					renderCenteredText(context, game.width/2, game.height/3+45,
+							'(2D Edition)');
+
+					if (now % 800 < 600)
+						renderCenteredText(context, game.width/2, game.height*3/4,
+							'(press SPACE to play)');
 
 				// lose
 				} else if (game.level == -1) {
-					context.fillText('You split into two pieces\none green, one blue.\n\nNeither survives.', 20, 250);
+
+					renderCenteredText(context, game.width/2, game.height/4,
+							'You split into two pieces,');
+					renderCenteredText(context, game.width/2, game.height/2,
+							'one green, one blue.');
+					renderCenteredText(context, game.width/2, game.height*3/4,
+							'Neither survives.');
 
 				// win
 				} else if (game.level == -2) {
-					context.fillText('Your eyes stop hurting.\nYou are in one piece.\n\nYou have survived.', 20, 250);
+
+					renderCenteredText(context, game.width/2, game.height/4,
+							'You realize there is');
+					renderCenteredText(context, game.width/2, game.height/2,
+							'only one of you,');
+					renderCenteredText(context, game.width/2, game.height*3/4,
+							'and it has survived.');
 
 				// error
 				} else {
@@ -378,12 +425,18 @@
 			// border
 			context.strokeStyle = 'gray';
 			context.lineWidth = 2;
-			context.strokeRect(0,0,game.windowWidth,game.windowHeight);
+			context.strokeRect(0,0,game.width,game.height);
 
 			context.restore();
 
 			// and do it all again next frame
 			requestAnimFrame(function() { render(game, context, now); });
+		}
+
+		function renderCenteredText(context, x, y, text) {
+			x -= context.measureText(text).width/2;
+			context.fillText(text, x, y);
+			context.strokeText(text, x, y);
 		}
 
 		// create the game
@@ -405,6 +458,8 @@
 				case 32: // space bar
 					if (this.game.level == 0) {
 						this.game.next(); break;
+					} else if (this.game.level < 0) {
+						window.game = new Game(); break;
 					}
         		//case 38: // up arrow
         		//case 40: // down arrow
