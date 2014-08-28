@@ -10,7 +10,7 @@
 	<center><canvas id="myCanvas" width="800" height="600"></canvas></center>
 
 	<script>
-		function maybe(chance) { return Math.random() > (chance || 0.5); }
+		function maybe(chance) { return Math.random() < (chance || 0.5); }
 
 		// http://stackoverflow.com/a/7228322
 		function random(min,max) {
@@ -126,7 +126,7 @@
 			this.caffeine = true;  // jitter
 
 			this.influence = size;
-			this.maxInfluence = size * 1.5;
+			this.maxInfluence = size * 10;
 		}
 
         Player.prototype.turnLeftOn = function () { this.turningLeft = true; }
@@ -149,11 +149,11 @@
         }
 
         Player.prototype.move = function (dt) {
-        	dt *= this.influence/this.maxInfluence;
         	if (this.turningLeft && !this.turningRight) this.turnLeft(dt);
         	if (!this.turningLeft && this.turningRight) this.turnRight(dt);
-        	if (this.movingForward) this.moveForward(dt/10);
-        	if (this.caffeine) this.caffeinate(dt/100);
+        	dt *= this.influence/this.maxInfluence;
+        	if (this.movingForward) this.moveForward(dt);
+        	if (this.caffeine) this.caffeinate(dt/10);
         }
 
 		Player.prototype.renderPlayer = function (context) {
@@ -182,13 +182,18 @@
 		}
 
 		function Game() {
+			// audio
+			this.disconnectSFX = new Audio('../assets/audio/disconnect.wav');
+			this.reconnectSFX = new Audio('../assets/audio/reconnect.wav');
+			this.healSFX = new Audio('../assets/audio/win.wav');
+
 			// canvas
 			var canvas = document.getElementById('myCanvas');
 			var context = canvas.getContext('2d');
 
 			this.windowHeight = parseInt(canvas.getAttribute("height"));
 			this.windowWidth = parseInt(canvas.getAttribute("width"));
-			this.border = 10;
+			this.border = 250;
 
 			//this.range = 100;
 			//this.scale = Math.min(this.range/this.windowHeight, this.range/this.windowWidth);
@@ -202,6 +207,7 @@
 			// spheres
 			this.numSpheres = 10;
 			this.connected = 0;
+			this.disconnected = 0;
 			this.minSize = 1;
 			this.maxSize = 11;
 
@@ -222,16 +228,22 @@
 			this.player.moveSpeed = 1 + this.level*0.1;
 			this.player.turnSpeed = 0.001 * this.level;
 
-			this.player.influence = 10 + (10 * this.level);
-			this.player.maxInfluence = 100/this.level;
+			this.player.sphere.radius += this.level;
+			this.player.influence = this.player.sphere.radius;
+			this.player.maxInfluence = Math.max(1000/this.level, this.player.influence*2);
+			console.log('size: '+this.player.sphere.radius
+				+', influence: '+this.player.influence+'/'+this.player.maxInfluence);
 
-			this.range = this.player.radius * 10 * this.level;
-			this.numSpheres = 10 * this.level * this.level;
-			this.minSize = 1 + this.level;
-			this.maxSize = 11 + this.level*2;
+			this.range = this.player.radius * 10 * this.level;  // not used?
 
-			this.spheres = [];  // discard last level
+			this.numSpheres = 2 + this.level*(this.level-1);
+			this.minSize = 2 + this.level;
+			this.maxSize = 20 + this.level*2;
+			this.border = 100 - Math.min(99, this.level*this.level);
+
+			this.spheres = [];  // recreate spheres
 			this.connected = 0;
+			this.disconnected = 0;
 			for (var i=0; i<this.numSpheres; i++)
 				this.spheres.push(new Sphere(i, this.minSize, this.maxSize,
 						this.windowWidth, this.windowHeight, this.border,
@@ -274,11 +286,16 @@
 
 					if (sphere.connected && inRange) {
 						sphere.connected = false;
+						game.disconnected++;
 						newInfluence += sphere.radius;
+
 					} else if (!sphere.connected && !inRange) {
 						// TODO: if enough time since disconnect timestamp
-						//sphere.connected = true;
-						//reconnected += 1;
+						if (maybe(1/100000 * dt))
+						{
+							sphere.connected = true;
+							reconnected += sphere.radius;
+						}
 					}
 				}
 				var connected = 0;
@@ -289,28 +306,36 @@
 				if (newInfluence > 0) {
 					game.player.influence += newInfluence;
 					console.log('Your influence increases to '+game.player.influence);
-					// play disconnect.wav
+
+					game.disconnectSFX.play();
+
 					// TODO: update lights
 				}
 				if (reconnected > 0) {
 					console.log('Something is connecting your spheres! '+reconnected);
 
-					//game.player.influence -= reconnected;
-					//console.log('Your influence decreases to '+game.player.influence);
+					game.player.influence -= reconnected/2;  // half what you lost
+					console.log('Your influence decreases to '+game.player.influence);
 
-					// play reconnect.wav
+					game.reconnectSFX.play();
 
 					// TODO: update lights
 				}
 
 				// TODO: random healing
+				if (game.disconnected && maybe(1/100000 * dt * connected/game.numSpheres))
+				{
+					game.player.influence -= game.disconnected;
+					game.healSFX.play();
+					// TODO: healLimit -= game.disconnected^2;
+				}
 
 				// check for level/game end conditions
 				if (connected == 0)
 					game.next();
 				else if (game.player.influence > game.player.maxInfluence)
 					game.lose();
-				else if (game.player.influence < 0)
+				else if (game.player.influence <= 0)
 					game.win();
 
 				// react to input / move player
