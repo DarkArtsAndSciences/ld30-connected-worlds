@@ -23,6 +23,7 @@
 
 			// setup game
 			this.level = 0;
+			this.spheres = [];
 			this.player = new Player();
 
 			// start render loop
@@ -30,77 +31,53 @@
 			render(this, canvas.getContext('2d'), this.start);
 		}
 		Game.prototype.next = function () {
-			// TODO: try NOT resetting vars and making new spheres, just reconnect the old, add a few (level number? ^2?) new ones, maybe a boss on %10 levels. Player speed is increasing too much. Maybe slowly reduce max influence, but cut current influence in half each level?
-
 			// increment level number
 			this.level++;
 			console.log('level '+this.level);
 
-			this.score = 0;  // number of spheres disconnected this level
-
-			// increase move/turn speed
-			//this.player.moveSpeed = 2 + this.level*0.25;
-			//this.player.turnSpeed = 0.0025 * this.level;
-
-			// increase player size
-			//this.player.sphere.radius += this.level/10;
-			//console.log('  player size: '+this.player.sphere.radius);
-
-			// reset influence
-			// TODO: influence should start at 0, make sure distance calcs include radius
-			// (hit at circumference, not center point)
-			this.player.influence = this.player.sphere.radius;
-			//this.player.maxInfluence = Math.max(1000/this.level, this.player.influence*2);
-			this.player.maxInfluence = this.player.influence*2;
-			console.log('  influence: '+this.player.influence+'/'+this.player.maxInfluence);
-
-			// increase sphere settings
-			var numSpheres = 3 + this.level*(this.level-1);
-			this.minSize = 1 + this.level;
-			this.maxSize = 2 + this.level*this.level;
-			console.log('  '+numSpheres+' spheres of size '+this.minSize+'-'+this.maxSize);
-
+			// increase playing area
 			this.border = Math.max(0, Math.floor(this.height/3) - this.level*this.level);
-			console.log('  border: '+this.border);
+			//console.log('  border: '+this.border);
 
-			// recreate spheres
-			if (this.spheres == undefined) {
-				this.spheres = [];
-				for (var i=0; i<numSpheres; i++) {
-					var sphere = new Sphere();
-					sphere.randomize(this.minSize, this.maxSize,
-							this.width, this.height, this.border,
-							this.player.influence, this.player.x, this.player.y);
-					this.spheres.push(sphere);
-				}
-			} else {
-				for (var i=0; i<this.spheres.length; i++) {
-					this.spheres[i].connected = true;
-					this.spheres[i].radius += 1;
-				}
-				var sphere = new Sphere();
-				sphere.randomize(this.minSize, this.maxSize,
-						this.width, this.height, this.border,
-						this.player.influence, this.player.x, this.player.y);
-				this.spheres.push(sphere);
+			// reconnect spheres and increase their size
+			for (var i=0; i<this.spheres.length; i++) {
+				this.spheres[i].connected = true;
+				this.spheres[i].timestamp = null;
+				this.spheres[i].radius += 1;
 			}
 
+			// add new spheres
+			for (i=0; i<this.level; i++) {
+				var sphere = new Sphere(10);
+				sphere.randomize(this.width, this.height, this.border, this.player.influence, this.player.x, this.player.y);
+				this.spheres.push(sphere);
+			}
 			this.connected = this.spheres.length;
-			this.disconnected = 0;
+			this.score = 0;  // number of spheres disconnected this level
+
+			/*/ total sphere radius
+			var total = 0;
+			for (i=0; i<this.spheres.length; i++)
+				total += this.spheres[i].radius;
+			console.log(' total size: '+total);*/
+
+			// set current and max influence
+			this.player.influence = 2*this.level;
+			this.player.maxInfluence = Math.pow(this.level+1,2);
+			console.log('  influence: ' + Math.floor(this.player.influence) + '/' + Math.floor(this.player.maxInfluence));
 		}
 
 		// A Sphere represents a PC or NPC on screen.
 		// A Sphere has a size and an x,y position on screen.
 		// A Sphere can be connected (red) or disconnected (blue and green),
 		// and its border shows the direction and intensity of (nearby?) lights.
-		function Sphere() {
-			this.radius = 1;
+		function Sphere(size) {
+			this.radius = size || 1;
 			this.connected = true;
 		}
-		Sphere.prototype.randomize = function (minSize, maxSize,
+		Sphere.prototype.randomize = function (//minSize, maxSize,
 				xRange, yRange, border, // inside screen
 				influence, x, y) { // TODO: outside player's influence
-			this.radius = random(minSize,maxSize);
 			this.x = random(border+this.radius/2, xRange-border-this.radius/2);
 			this.y = random(border+this.radius/2, yRange-border-this.radius/2);
 		}
@@ -115,9 +92,8 @@
 		// A Player has influence, which disconnects nearby Spheres.
 		// ...which increases the disconnector's influence.
 		function Player() {
-			this.sphere = new Sphere();
+			this.sphere = new Sphere(10);
 			this.sphere.center();
-			this.setSize(10);
 
 			this.moveSpeed = 0.01;
 			this.turnSpeed = 0.0025;
@@ -126,16 +102,11 @@
 			this.movingForward = true;
 			this.turningLeft = false;
 			this.turningRight = false;
+
+			this.influence = 1;
+			this.maxInfluence = 10;
 		}
-		Player.prototype.setSize = function (size) {
-			this.sphere.radius = size;
-			this.influence = size;
-			this.maxInfluence = size * 10;
-		}
-		Player.prototype.influencePercent = function () {
-			return this.influence/this.maxInfluence;
-		}
-		Player.prototype.excessInfluencePercent = function () {
+		Player.prototype.excessInfluence = function () {
 			return Math.max(0.5, this.influence/this.maxInfluence)*2 - 1;
 		}
 
@@ -166,7 +137,7 @@
         	}
         }
 		Player.prototype.caffeinate = function (dt) {
-			var speed = this.excessInfluencePercent() * dt / 10;
+			var speed = this.excessInfluence() * dt / 10;
 			// TODO: random angle and distance instead of x,y
         	this.sphere.x += (maybe()) ? 0 : (maybe()) ? speed : -speed;
         	this.sphere.y += (maybe()) ? 0 : (maybe()) ? speed : -speed;
@@ -189,6 +160,7 @@
 		render = function (game, context, last) {
 			var now = (new Date()).getTime();
 	        var dt = now - last; // seconds since last frame
+
 			context.save();
 
 			// background
@@ -198,57 +170,57 @@
 
 	        // render game
 	        if (game.level > 0) {
-				// update game state
+
 				var newInfluence = 0;
-				var reconnected = 0;
+				var lostInfluence = 0;
 				for (i=0; i<game.spheres.length; i++) {
 					var sphere = game.spheres[i];
 					var dx = sphere.x - game.player.sphere.x;
 					var dy = sphere.y - game.player.sphere.y;
-					var distance = Math.sqrt(dx*dx + dy*dy);
+					var distance = Math.sqrt(dx*dx + dy*dy) - sphere.radius;
 					var inRange = (distance < game.player.influence);
 
 					if (sphere.connected && inRange) {
 						game.connected--;
-						game.disconnected++;
 						game.score++;
 						sphere.connected = false;
-						newInfluence += sphere.radius;
+						sphere.timestamp = now;
+						newInfluence += sphere.radius - 9;
 
 					} else if (!sphere.connected && !inRange) {
-						// TODO: if enough time since disconnect timestamp
-						if (maybe(1/100000 * dt))
-						{
+						// one-second-per-level delay + luck
+						if ((sphere.timestamp + game.level < now)
+							&& maybe(1/100000 * dt)) {
 							game.connected++;
-							game.disconnected--;
 							sphere.connected = true;
-							reconnected += sphere.radius;
+							sphere.timestamp = null;
+							lostInfluence += sphere.radius - 9;
 						}
 					}
 				}
 
 				if (newInfluence > 0) {
 					game.player.influence += newInfluence;
-					console.log('Your influence increases to '+game.player.influence+'/'+game.player.maxInfluence);
-
 					game.disconnectSFX.play();
+					console.log('Gained '+newInfluence+' influence: '+game.player.influence+'/'+game.player.maxInfluence);
 				}
-				if (reconnected > 0) {
-					console.log('Something is connecting your spheres! '+reconnected);
-
-					game.player.influence -= reconnected/2;  // half what you lost
-					console.log('Your influence decreases to '+game.player.influence+'/'+game.player.maxInfluence);
-
+				if (lostInfluence > 0) {
+					game.player.influence -= lostInfluence/2;
 					game.reconnectSFX.play();
+					console.log('Lost '+lostInfluence+' influence: '+game.player.influence+'/'+game.player.maxInfluence);
 				}
 
-				// random healing
-				// only while moving
-				// increases with disconnections since level start
-				var healChance = 1/100000 * dt * game.score;
-				if (game.player.movingForward && maybe(healChance)) {
-					game.player.influence -= game.score;
-					game.healSFX.play();
+				// random healing when holding still
+				// TODO: zero velocity, not just holding space
+				// chance * score (disconnects per level, not current)
+				// amount * number of disconnected spheres
+				// TODO: warn on zero healing
+				if (!game.player.movingForward && maybe(1/10000 * dt * game.score)) {
+					var heal = game.spheres.length - game.connected;
+					if (heal > 0) {
+						game.player.influence -= heal;
+						game.healSFX.play();
+					}
 
 					console.log('Your influence decreases to '+Math.floor(game.player.influence)+'/'+game.player.maxInfluence);
 				}
@@ -258,7 +230,7 @@
 					game.next();
 				else if (game.player.influence > game.player.maxInfluence)
 					game.level = -1;
-				else if (game.player.influence < 1)  // <= 0
+				else if (game.player.influence < 1)
 					game.level = -2;
 
 				// react to input / move player
@@ -277,7 +249,7 @@
 				context.strokeStyle = 'black';
 				context.lineWidth = 2;
 				context.font = '24pt "Zoetrope (BRK)"';
-				renderCenteredText(context, game.width/2, game.height-10, game.player.influence+'/'+game.player.maxInfluence);
+				renderCenteredText(context, game.width/2, game.height-10, Math.floor(game.player.influence)+'/'+Math.floor(game.player.maxInfluence));
 
 			// render other screens
 			} else {
@@ -303,7 +275,6 @@
 
 				// title screen
 				if (game.level == 0) {
-
 					renderCenteredText(context, game.width/2, game.height/3-15,
 							'Or Else They Will Disconnect You');
 					renderCenteredText(context, game.width/2, game.height/3+45,
@@ -312,27 +283,22 @@
 					if (now % 800 < 600)
 						renderCenteredText(context, game.width/2, game.height*3/4,
 							'(press SPACE to play)');
-
 				// lose
 				} else if (game.level == -1) {
-
 					renderCenteredText(context, game.width/2, game.height/4,
 							'You split into two pieces,');
 					renderCenteredText(context, game.width/2, game.height/2,
 							'one green, one blue.');
 					renderCenteredText(context, game.width/2, game.height*3/4,
 							'Neither survives.');
-
 				// win
 				} else if (game.level == -2) {
-
 					renderCenteredText(context, game.width/2, game.height/4,
 							'You realize there is');
 					renderCenteredText(context, game.width/2, game.height/2,
 							'only one of you,');
 					renderCenteredText(context, game.width/2, game.height*3/4,
 							'and it has survived.');
-
 				// error
 				} else {
 					console.log('something is wrong with level '+game.level);
@@ -343,9 +309,9 @@
 			context.strokeStyle = 'gray';
 			context.lineWidth = 4;
 			context.strokeRect(0,0,game.width,game.height);
-			context.lineWidth = 1;
-			context.strokeRect(game.border,game.border,
-					game.width-game.border*2,game.height-game.border*2);
+			//context.lineWidth = 1;
+			//context.strokeRect(game.border,game.border,
+			//		game.width-game.border*2,game.height-game.border*2);
 
 			context.restore();
 
@@ -354,12 +320,11 @@
 		}
 
 		// these arcs point at the player's lights
-		// ...which are outside the player, so this should work even on the player itself
 		Sphere.prototype.renderLighting = function (context, player) {
 			context.save();
 			context.globalCompositeOperation = 'screen';  // green + blue = cyan
 
-			var minArc = Math.PI/8;
+			var minArc = Math.PI/12;
 			var maxArc = Math.PI - minArc;
 			var arcLength = minArc + maxArc * player.influence/player.maxInfluence;
 			var arcWidth = 2;
@@ -371,15 +336,33 @@
 								   player.greenX - this.x);
 
 			// blue arc
+			context.strokeStyle = 'blue';
 			context.beginPath();
 			context.arc(this.x, this.y, this.radius, blue-arcLength/2, arcLength/2+blue, false);
-			context.strokeStyle = 'blue';
+			context.lineWidth = 3;
+			context.stroke();
+			context.beginPath();
+			context.arc(this.x, this.y, this.radius-4, blue-arcLength/2, arcLength/2+blue, false);
+			context.lineWidth = 2;
+			context.stroke();
+			context.beginPath();
+			context.arc(this.x, this.y, this.radius-6, blue-arcLength/2, arcLength/2+blue, false);
+			context.lineWidth = 1;
 			context.stroke();
 
 			// green arc
+			context.strokeStyle = 'green';
 			context.beginPath();
 			context.arc(this.x, this.y, this.radius, green-arcLength/2, arcLength/2+green, false);
-			context.strokeStyle = 'green';
+			context.lineWidth = 3;
+			context.stroke();
+			context.beginPath();
+			context.arc(this.x, this.y, this.radius-4, green-arcLength/2, arcLength/2+green, false);
+			context.lineWidth = 2;
+			context.stroke();
+			context.beginPath();
+			context.arc(this.x, this.y, this.radius-6, green-arcLength/2, arcLength/2+green, false);
+			context.lineWidth = 1;
 			context.stroke();
 
 			context.restore();
@@ -391,11 +374,11 @@
 			context.fillStyle = 'red';
 			context.fill();
 		}
-		Sphere.prototype.renderDisconnectedSphere = function (context) {
+		Sphere.prototype.renderDisconnectedSphere = function (context, player) {
 			context.save();
 			context.globalCompositeOperation = 'screen';  // green + blue = cyan
 
-			var offset = this.radius/3;  // TODO: influence at disconnection?
+			var offset = this.radius * player.excessInfluence();
 
 			// blue sphere
 			context.beginPath();
@@ -416,32 +399,36 @@
 				this.renderConnectedSphere(context);
 				this.renderLighting(context, player);
 			} else {
-				this.renderDisconnectedSphere(context);
+				this.renderDisconnectedSphere(context, player);
 			}
 		}
 
 		Player.prototype.renderPlayer = function (context) {
-			//context.save();
-
 			// red or bluegreen ball
-			if (maybe(this.influence/this.maxInfluence))
-				this.sphere.renderDisconnectedSphere(context);
+			if (maybe(this.excessInfluence()))
+				this.sphere.renderDisconnectedSphere(context, this);
 			else
 				this.sphere.renderConnectedSphere(context);
 			this.sphere.renderLighting(context, this);
 
+			context.save();
+			context.globalCompositeOperation = 'screen';  // green + blue = cyan
+
 			// lights
 			context.beginPath();
-			context.arc(this.greenX, this.greenY, 2, this.facing, this.facing + Math.PI, false);
+			//context.arc(this.greenX,this.greenY, 2, this.facing,this.facing+Math.PI, false);
+			context.arc(this.greenX,this.greenY, 3, 0,2*Math.PI, false);
         	context.fillStyle = 'green';
 			context.fill();
 
 			context.beginPath();
-			context.arc(this.blueX, this.blueY, 2, this.facing + Math.PI, this.facing + 2*Math.PI, false);
+			//context.arc(this.blueX,this.blueY, 2, this.facing+Math.PI,this.facing+2*Math.PI, false);
+			context.arc(this.blueX,this.blueY, 3, 0,2*Math.PI, false);
         	context.fillStyle = 'blue';
 			context.fill();
 
 			// facing indicator
+			// TODO: split into blue and green
 			context.beginPath();
         	context.moveTo(this.sphere.x + Math.cos(this.facing) * this.sphere.radius*0.8,
         				   this.sphere.y + Math.sin(this.facing) * this.sphere.radius*0.8);
@@ -451,7 +438,7 @@
         	context.strokeStyle = 'cyan';
         	context.stroke();
 
-			//context.restore();
+        	context.restore();
 		}
 
 		function renderCenteredText(context, x, y, text) {
@@ -485,52 +472,29 @@
 
 		// keyboard controls:
 		//   left/right arrow to turn,
-		//   space or up/down arrow to move forward
+		//   space to move forward
 		onKeyDown = function (event) {
     		switch (event.keyCode) {
-        		case 37: // left arrow
-        			this.game.player.turnLeftOn();
-        			break;
-
-        		case 39: // right arrow
-        			this.game.player.turnRightOn();
-        			break;
-
+        		case 37: this.game.player.turnLeftOn(); break; // left arrow
+        		case 39: this.game.player.turnRightOn(); break; // right arrow
+				case 32: this.game.player.moveForwardOff(); break; // space bar
+        		//default: console.log("key down: "+event.keyCode);
+    		}
+		}
+		window.addEventListener('keydown', onKeyDown, false);
+		onKeyUp = function (event) {
+    		switch (event.keyCode) {
+        		case 37: this.game.player.turnLeftOff(); break; // left arrow
+        		case 39: this.game.player.turnRightOff(); break; // right arrow
 				case 32: // space bar
 					if (this.game.level == 0) {
 						this.game.next(); break;
 					} else if (this.game.level < 0) {
 						window.game = new Game(); break;
-					}
-        		//case 38: // up arrow
-        		//case 40: // down arrow
-        			this.game.player.moveForwardOff();
-        			break;
-
-        		//default:
-        			//console.log("key down: "+event.keyCode);
-    		}
-		}
-		window.addEventListener('keydown', onKeyDown, false);
-
-		onKeyUp = function (event) {
-    		switch (event.keyCode) {
-        		case 37: // left arrow
-        			this.game.player.turnLeftOff();
-        			break;
-
-        		case 39: // right arrow
-        			this.game.player.turnRightOff();
-        			break;
-
-				case 32: // space bar
-        		//case 38: // up arrow
-        		//case 40: // down arrow
-        			this.game.player.moveForwardOn();
-        			break;
-
-        		//default:
-        			//console.log("key up: "+event.keyCode);
+					} else {
+	        			this.game.player.moveForwardOn(); break;
+	        		}
+        		//default: console.log("key up: "+event.keyCode);
     		}
 		}
 		window.addEventListener('keyup', onKeyUp, false);
