@@ -14,8 +14,8 @@
 	SCNNode *centerNode, *messageNode;
 	
 	NSColor *connectColor, *_leftDisconnectColor, *_rightDisconnectColor;
-	SCNMaterial *basicMaterial, *connectMaterial, *disconnectMaterial;
-	NSArray *basicMaterials, *connectMaterials, *disconnectMaterials;
+	SCNMaterial *basicMaterial, *starMaterial, *connectMaterial, *disconnectMaterial;
+	NSArray *basicMaterials, *starMaterials, *connectMaterials, *disconnectMaterials;
 	CAKeyframeAnimation *disconnectColorAnimation, *disconnectContentsAnimation, *disconnectMaterialAnimation;
 	
 	SCNMaterial *info1Material, *info2Material, *info3Material;
@@ -89,6 +89,13 @@
 	basicMaterial.doubleSided = YES;
 	basicMaterials = @[basicMaterial];
 	
+	// TODO: animate twinkling
+	starMaterial = [SCNMaterial material];
+	starMaterial.diffuse.contents = [NSColor whiteColor];
+	starMaterial.emission.contents = [NSColor whiteColor];
+	starMaterial.doubleSided = YES;
+	starMaterials = @[starMaterial];
+	
 	connectMaterial = [SCNMaterial material];
 	connectMaterial.diffuse.contents = connectColor;
 	connectMaterial.doubleSided = YES;
@@ -157,6 +164,7 @@
 	mySpeed = 1;
 	mySize = 100.0;
 	myInfluence = 150.0;
+	range = 1000;
 	connectedSpheres = 0;
 }
 
@@ -235,6 +243,19 @@
 	[levelNode addChildNode:logoSphereNode];
 	
 	// TODO: giant fake sun at -1,-1,-1, distant constellations (for orientation reference)
+	srandom(1234);
+	for (int i=0; i<1000; i++)
+	{
+		float size = 1 + (random() % 100)/50.0;
+		SCNSphere *star = [SCNSphere sphereWithRadius:size*size];
+		star.materials = starMaterials;
+		// TODO: tint material per star?
+		
+		SCNNode *starNode = [SCNNode nodeWithGeometry:star];
+		starNode.position = [self getRandomLocationOutsideRange];
+		
+		[self.rootNode addChildNode:starNode];
+	}
 }
 
 - (void)setAvatarSpeed:(CGFloat)avatarSpeed
@@ -325,6 +346,27 @@
 		x = (random() % range) - range/2.0;
 		y = (random() % range) - range/2.0;
 		z = (random() % range) - range/2.0;
+		
+		if (tries == maxTries)
+			NSLog(@"can't make sphere in range %d outside influence %f after %d tries, giving up and using %.f,%.f,%.f",
+				  range, myInfluence, tries, x, y, z);
+	}
+	return SCNVector3Make(x, y, z);
+}
+
+- (SCNVector3)getRandomLocationOutsideRange
+{
+	float x, y, z;
+	x = y = z = 0.0;
+	
+	int tries = 0;
+	int maxTries = 1000;
+	while ((tries < maxTries) && [self isInXYZRange:range x:x y:y z:z])
+	{
+		tries++;
+		x = (random() % range*10) - range*5;  //random() - RAND_MAX/2.0;
+		y = (random() % range*10) - range*5;
+		z = (random() % range*10) - range*5;
 		
 		if (tries == maxTries)
 			NSLog(@"can't make sphere in range %d outside influence %f after %d tries, giving up and using %.f,%.f,%.f",
