@@ -243,13 +243,27 @@
 	[levelNode addChildNode:logoSphereNode];
 	
 	// TODO: giant fake sun at -1,-1,-1, distant constellations (for orientation reference)
+	
+	NSArray *starColors = @[[NSColor colorWithDeviceRed:1.00 green:0.22 blue:0.00 alpha:1.0], // 1000K
+							[NSColor colorWithDeviceRed:1.00 green:0.54 blue:0.07 alpha:1.0], // 2000K
+							[NSColor colorWithDeviceRed:1.00 green:0.71 blue:0.42 alpha:1.0], // 3000K
+							[NSColor colorWithDeviceRed:1.00 green:0.82 blue:0.64 alpha:1.0], // 4000K
+							[NSColor colorWithDeviceRed:1.00 green:0.89 blue:0.81 alpha:1.0], // 5000K
+							[NSColor colorWithDeviceRed:1.00 green:0.95 blue:0.94 alpha:1.0], // 6000K
+							[NSColor colorWithDeviceRed:0.96 green:0.95 blue:1.00 alpha:1.0], // 7000K
+							[NSColor colorWithDeviceRed:0.89 green:0.91 blue:1.00 alpha:1.0], // 8000K
+							[NSColor colorWithDeviceRed:0.84 green:0.88 blue:1.00 alpha:1.0], // 9000K
+							[NSColor colorWithDeviceRed:0.80 green:0.86 blue:1.00 alpha:1.0], // 10000K
+						    ];
 	srandom(1234);
 	for (int i=0; i<1000; i++)
 	{
 		float size = 1 + (random() % 100)/50.0;
 		SCNSphere *star = [SCNSphere sphereWithRadius:size*size];
-		star.materials = starMaterials;
-		// TODO: tint material per star?
+		
+		// tint material per star
+		star.firstMaterial = [starMaterial copy];
+		star.firstMaterial.multiply.contents = [starColors objectAtIndex:arc4random() % [starColors count]];
 		
 		SCNNode *starNode = [SCNNode nodeWithGeometry:star];
 		starNode.position = [self getRandomLocationOutsideRange];
