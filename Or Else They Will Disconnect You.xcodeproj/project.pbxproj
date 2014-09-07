@@ -20,6 +20,12 @@
 		F420DCF019AC23D700233E38 /* zoetrope.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = F420DCEF19AC23D700233E38 /* zoetrope.ttf */; };
 		F420DCF919AC25EA00233E38 /* logo-screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF719AC25EA00233E38 /* logo-screenshot.png */; };
 		F420DCFA19AC25EA00233E38 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = F420DCF819AC25EA00233E38 /* screenshot.png */; };
+		F44B55EC19BBC3FE00862FB1 /* Back.png in Resources */ = {isa = PBXBuildFile; fileRef = F44B55E619BBC3FE00862FB1 /* Back.png */; };
+		F44B55ED19BBC3FE00862FB1 /* Bottom.png in Resources */ = {isa = PBXBuildFile; fileRef = F44B55E719BBC3FE00862FB1 /* Bottom.png */; };
+		F44B55EE19BBC3FE00862FB1 /* Front.png in Resources */ = {isa = PBXBuildFile; fileRef = F44B55E819BBC3FE00862FB1 /* Front.png */; };
+		F44B55EF19BBC3FE00862FB1 /* Left.png in Resources */ = {isa = PBXBuildFile; fileRef = F44B55E919BBC3FE00862FB1 /* Left.png */; };
+		F44B55F019BBC3FE00862FB1 /* Right.png in Resources */ = {isa = PBXBuildFile; fileRef = F44B55EA19BBC3FE00862FB1 /* Right.png */; };
+		F44B55F119BBC3FE00862FB1 /* Top.png in Resources */ = {isa = PBXBuildFile; fileRef = F44B55EB19BBC3FE00862FB1 /* Top.png */; };
 		F44DDD5F19A860410060C3EB /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5019A860410060C3EB /* AppDelegate.mm */; };
 		F44DDD6019A860410060C3EB /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5219A860410060C3EB /* GLProgram.m */; };
 		F44DDD6119A860410060C3EB /* DefaultScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DDD5419A860410060C3EB /* DefaultScene.mm */; };
@@ -504,6 +510,12 @@
 		F420DCEF19AC23D700233E38 /* zoetrope.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = zoetrope.ttf; sourceTree = "<group>"; };
 		F420DCF719AC25EA00233E38 /* logo-screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-screenshot.png"; sourceTree = "<group>"; };
 		F420DCF819AC25EA00233E38 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot.png; sourceTree = "<group>"; };
+		F44B55E619BBC3FE00862FB1 /* Back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Back.png; sourceTree = "<group>"; };
+		F44B55E719BBC3FE00862FB1 /* Bottom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Bottom.png; sourceTree = "<group>"; };
+		F44B55E819BBC3FE00862FB1 /* Front.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Front.png; sourceTree = "<group>"; };
+		F44B55E919BBC3FE00862FB1 /* Left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Left.png; sourceTree = "<group>"; };
+		F44B55EA19BBC3FE00862FB1 /* Right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Right.png; sourceTree = "<group>"; };
+		F44B55EB19BBC3FE00862FB1 /* Top.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Top.png; sourceTree = "<group>"; };
 		F44DDD4F19A860410060C3EB /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F44DDD5019A860410060C3EB /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		F44DDD5119A860410060C3EB /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLProgram.h; path = source/GLProgram.h; sourceTree = "<group>"; };
@@ -1249,6 +1261,12 @@
 		F420DCE219AC0A4500233E38 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				F44B55E619BBC3FE00862FB1 /* Back.png */,
+				F44B55E719BBC3FE00862FB1 /* Bottom.png */,
+				F44B55E819BBC3FE00862FB1 /* Front.png */,
+				F44B55E919BBC3FE00862FB1 /* Left.png */,
+				F44B55EA19BBC3FE00862FB1 /* Right.png */,
+				F44B55EB19BBC3FE00862FB1 /* Top.png */,
 				F420DCE419AC0A4500233E38 /* controls.png */,
 				F44DDD8919A93A720060C3EB /* ideagen.png */,
 				F420DCEA19AC0CC200233E38 /* story.png */,
@@ -1411,8 +1429,14 @@
 				F4FDD49419ABED8800BBB403 /* lose.wav in Resources */,
 				F420DCED19AC124E00233E38 /* win.wav in Resources */,
 				F420DCFA19AC25EA00233E38 /* screenshot.png in Resources */,
+				F44B55EF19BBC3FE00862FB1 /* Left.png in Resources */,
+				F44B55EE19BBC3FE00862FB1 /* Front.png in Resources */,
 				F420DCE719AC0A4500233E38 /* controls.png in Resources */,
+				F44B55F019BBC3FE00862FB1 /* Right.png in Resources */,
+				F44B55F119BBC3FE00862FB1 /* Top.png in Resources */,
 				F44DDD8A19A93A720060C3EB /* ideagen.png in Resources */,
+				F44B55ED19BBC3FE00862FB1 /* Bottom.png in Resources */,
+				F44B55EC19BBC3FE00862FB1 /* Back.png in Resources */,
 				F420DCEB19AC0CC200233E38 /* story.png in Resources */,
 				F44DDD7E19A861950060C3EB /* MainMenu.xib in Resources */,
 				F44DDD7D19A861950060C3EB /* InfoPlist.strings in Resources */,

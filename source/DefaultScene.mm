@@ -184,6 +184,15 @@
 	[self clearLevel];
 	mySpeed = 10;
 	
+	// background skybox
+	// TODO: verify the images aren't nil
+	self.background.contents = @[[NSImage imageNamed:@"Right"],
+								 [NSImage imageNamed:@"Left"],
+								 [NSImage imageNamed:@"Top"],
+								 [NSImage imageNamed:@"Bottom"],
+								 [NSImage imageNamed:@"Back"],
+								 [NSImage imageNamed:@"Front"]];
+	
 	// lights
 	SCNLight *ambientLight = [SCNLight light];
 	ambientLight.type = SCNLightTypeAmbient;
@@ -242,8 +251,7 @@
 	logoSphereNode.position = SCNVector3Make(0, 0, -1000);
 	[levelNode addChildNode:logoSphereNode];
 	
-	// TODO: giant fake sun at -1,-1,-1, distant constellations (for orientation reference)
-	
+	// starfield (not interactive)
 	NSArray *starColors = @[[NSColor colorWithDeviceRed:1.00 green:0.22 blue:0.00 alpha:1.0], // 1000K
 							[NSColor colorWithDeviceRed:1.00 green:0.54 blue:0.07 alpha:1.0], // 2000K
 							[NSColor colorWithDeviceRed:1.00 green:0.71 blue:0.42 alpha:1.0], // 3000K
