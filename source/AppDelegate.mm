@@ -2,6 +2,11 @@
 
 @implementation AppDelegate
 
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)application
+{
+    return YES;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 	// load base scene with event handlers
