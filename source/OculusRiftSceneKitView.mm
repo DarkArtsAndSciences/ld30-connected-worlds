@@ -270,15 +270,23 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     // create cameras
     SCNNode *(^addNodeforEye)(int) = ^(int eye)
     {
-        // TODO: read these from the HMD?
-        CGFloat verticalFOV = 97.5;
-        CGFloat horizontalFOV = 80.8;
-        
+		OculusRiftDevice *device = [OculusRiftDevice getDevice];
         SCNCamera *camera = [SCNCamera camera];
-        camera.xFov = 120;
-        camera.yFov = verticalFOV;
-        camera.zNear = horizontalFOV;
-        camera.zFar = 2000;
+		if (device.isDebugHmd)
+		{
+			camera.xFov = 75;
+			camera.yFov = 60;
+			camera.zNear = 1;
+			camera.zFar = 10;
+		}
+		else
+		{
+			camera.xFov = RadToDegree(device.hmd->CameraFrustumHFovInRadians);
+			camera.yFov = RadToDegree(device.hmd->CameraFrustumVFovInRadians);
+			camera.zNear = device.hmd->CameraFrustumNearZInMeters;
+			camera.zFar = device.hmd->CameraFrustumFarZInMeters;
+		}
+		NSLog(@"created camera with xFov=%.1f, yFov=%.1f, zNear=%.1f, zFar=%.1f", camera.xFov, camera.yFov, camera.zNear, camera.zFar);
         
         SCNNode *node = [SCNNode node];
         node.camera = camera;
