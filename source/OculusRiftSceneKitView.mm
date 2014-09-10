@@ -277,7 +277,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 			camera.xFov = 75;
 			camera.yFov = 60;
 			camera.zNear = 1;
-			camera.zFar = 10;
+			camera.zFar = 1000;
 		}
 		else
 		{
