@@ -102,6 +102,31 @@ static Scene *currentRightScene = nil;
 	[self addEventHandlersForLeftMouseDownMoveForward];
 }
 
+
+- (SCNNode*) loadNode:(NSString*)nodename
+			  fromDae:(NSString*)filename
+{
+	// TODO: error handling
+	NSURL *fileURL = [[NSBundle mainBundle] URLForResource:filename withExtension:@"dae"];
+	if (!fileURL)
+	{
+		NSLog(@"no DAE file named %@", filename);
+		return nil;
+	}
+	
+	SCNScene *scene = [SCNScene sceneWithURL:fileURL options:nil error:nil];
+	if (!scene)
+	{
+		NSLog(@"no scene in file %@.dae at %@", filename, fileURL);
+		return nil;
+	}
+	
+	SCNNode *node = [scene.rootNode childNodeWithName:nodename recursively:YES];
+	if (!node)
+		NSLog(@"no node named %@ in file %@.dae\n%@", nodename, filename, scene);
+	return node;
+}
+
 #pragma mark - Avatar head position and rotation
 
 - (Vector3f)vector3fFromSCNVector3:(SCNVector3)v { return Vector3f(v.x, v.y, v.z); }

@@ -278,6 +278,23 @@
 		
 		[self.rootNode addChildNode:starNode];
 	}
+	
+	/* TODO: need working DAE files
+	SCNNode *bodyNode = [self loadNode:@"body" fromDae:@"body"];
+	[self linkNodeToHeadPosition:bodyNode];
+	
+	SCNNode *phoneNode = [self loadNode:@"screen" fromDae:@"screen"];
+	phoneNode.position = SCNVector3Make(-0.2, -1.0, -1.5);
+	phoneNode.transform = CATransform3DRotate(phoneNode.transform,  M_PI/8, 0, 1, 0);
+	phoneNode.transform = CATransform3DRotate(phoneNode.transform, -M_PI/4, 1, 0, 0);
+	[self linkNodeToHeadPosition:phoneNode];
+	
+	SCNNode *furnitureNode = [self loadNode:@"Room" fromDae:@"room"];
+	furnitureNode.position = SCNVector3Make(0, -1, 0);
+	furnitureNode.geometry.materials = connectMaterials;
+	[levelNode addChildNode:furnitureNode];
+	//[levelNode addChildNode:[self loadNode:@"Room" fromDae:@"room"]];
+	*/
 }
 
 - (void)setAvatarSpeed:(CGFloat)avatarSpeed

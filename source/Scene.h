@@ -20,6 +20,10 @@ using namespace OVR;
 //- (NSString*)getEye;
 - (void)setEye:(NSString*)theEye;
 
+
+- (SCNNode*) loadNode:(NSString*)nodename
+			  fromDae:(NSString*)filename;
+
 - (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z;
 - (void)linkNodeToHeadPosition:(SCNNode*)node;
 - (void)linkNodeToHeadRotation:(SCNNode*)node;

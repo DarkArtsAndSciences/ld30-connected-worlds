@@ -1283,6 +1283,13 @@
 			path = meta;
 			sourceTree = SOURCE_ROOT;
 		};
+		F4346F4219BFFEF00016178D /* 3d */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = 3d;
+			sourceTree = "<group>";
+		};
 		F44DDD4E19A860410060C3EB /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -1331,6 +1338,7 @@
 		F44DDD6B19A861950060C3EB /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F4346F4219BFFEF00016178D /* 3d */,
 				F420DCF619AC25EA00233E38 /* meta */,
 				F420DCE219AC0A4500233E38 /* image */,
 				F4FDD48A19ABED8800BBB403 /* audio */,
