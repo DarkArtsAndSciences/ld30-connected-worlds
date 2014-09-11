@@ -473,18 +473,15 @@
 
 - (void)addEventHandlers
 {
-	// TODO: check for turn sensor
-	if ([[OculusRiftDevice getDevice] isDebugHmd])
-		[self addEventHandlersForStepTurnArrows];
-	
-	// enable standard control schemes
+	// defaults
 	[self addEventHandlersForHoldWASD];
-	[self addEventHandlersForLeftMouseDownMoveForward];
-	//[self addEventHandlersForRightMouseDownMoveBackward];
+	
+	if ([[OculusRiftDevice getDevice] isDebugHmd])  // TODO: check for turn sensor
+		[self addEventHandlersForHoldTurnArrows];
 	
 	// add custom controls
-	[self addEventHandlerForType:NSKeyDown name:@"49" handler:@selector(startMovingForward)];  // space
-	[self addEventHandlerForType:NSKeyUp   name:@"49" handler:@selector(stopMovingForward)];  // space
+	[self addEventHandlerForType:NSKeyDown name:@"49" handler:@"startMovingForward"];  // space
+	[self addEventHandlerForType:NSKeyUp   name:@"49" handler:@"stopMovingForward"];  // space
 }
 
 // event handler for passive interactions with objects
@@ -523,6 +520,15 @@
 		for (int i=0; i<spheres.count; i++)
 		{
 			SCNNode *sphere = [spheres objectAtIndex:i];
+			
+			SCNRenderer *renderer = [self isLeft] ? [Scene currentLeftRenderer] : [Scene currentRightRenderer];
+			if ([renderer isNodeInsideFrustum:sphere withPointOfView:renderer.pointOfView])
+			{
+				SCNVector3 sp = sphere.position;
+				SCNVector3 rp = renderer.pointOfView.position;
+				//NSLog(@"I can see sphere #%d at %+4.f,%+4.f,%+4.f from %-5.2f,%-5.2f,%-5.2f.",
+				//	  i, sp.x, sp.y, sp.z, rp.x, rp.y, rp.z);
+			}
 			
 			// if it's connected and inside your influence
 			if ([sphere.geometry.materials isEqual: connectMaterials]

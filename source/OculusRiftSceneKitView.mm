@@ -64,10 +64,7 @@ NSString *const kOCVRLensCorrectionFragmentShaderString = SHADER_STRING
 
 @interface OculusRiftSceneKitView()
 {
-	//OculusRiftDevice *oculusRiftDevice;
 	CGFloat interpupillaryDistance;
-	
-    SCNRenderer *leftEyeRenderer, *rightEyeRenderer;
     
     GLProgram *displayProgram;
     GLint displayPositionAttribute, displayTextureCoordinateAttribute;
@@ -75,16 +72,15 @@ NSString *const kOCVRLensCorrectionFragmentShaderString = SHADER_STRING
     
     GLint lensCenterUniform, screenCenterUniform, scaleUniform, scaleInUniform, hmdWarpParamUniform;
     
+    SCNRenderer *leftEyeRenderer, *rightEyeRenderer;
+    SCNNode *leftEyeCameraNode, *rightEyeCameraNode;
     GLuint leftEyeTexture, rightEyeTexture;
     GLuint leftEyeDepthTexture, rightEyeDepthTexture;
     GLuint leftEyeFramebuffer, rightEyeFramebuffer;
     GLuint leftEyeDepthBuffer, rightEyeDepthBuffer;
-    
-    CVDisplayLinkRef displayLink;
-    
     BOOL leftSceneReady, rightSceneReady;
     
-    SCNNode *leftEyeCameraNode, *rightEyeCameraNode;
+    CVDisplayLinkRef displayLink;
     
     CGFloat redBackgroundComponent, blueBackgroundComponent, greenBackgroundComponent, alphaBackgroundComponent;
 }
@@ -265,7 +261,8 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 	}
 	Scene *leftScene  = (Scene*)leftSCNScene;
 	Scene *rightScene = (Scene*)rightSCNScene;
-	[Scene setCurrentSceneLeft:(Scene*)leftScene right:(Scene*)rightScene];
+	[Scene setCurrentSceneLeft:leftScene right:rightScene];
+	[Scene setCurrentRendererLeft:leftEyeRenderer right:rightEyeRenderer];
     
     // create cameras
     SCNNode *(^addNodeforEye)(int) = ^(int eye)

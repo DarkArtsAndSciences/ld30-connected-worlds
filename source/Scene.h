@@ -7,13 +7,20 @@ using namespace OVR;
 @interface Scene : SCNScene
 
 @property NSString* eye;  // "left" or "right"
-@property CGFloat roomSize, avatarHeight, avatarSpeed, turnSpeed;
+@property CGFloat roomSize;
+@property CGFloat avatarHeight, avatarSpeed, turnSpeed, stepM, runM, tiltM, turnM;
+@property BOOL canFly;
 @property SCNVector3 headPosition;
 
 + (id)currentLeftScene;
 + (id)currentRightScene;
 + (void)setCurrentSceneLeft:(Scene*)leftScene
 					  right:(Scene*)rightScene;
+
++ (id)currentLeftRenderer;
++ (id)currentRightRenderer;
++ (void)setCurrentRendererLeft:(SCNRenderer*)leftRenderer
+						 right:(SCNRenderer*)rightRenderer;
 
 - (BOOL)isLeft;
 - (BOOL)isRight;
@@ -54,16 +61,19 @@ using namespace OVR;
 - (void)resetEventHandlers;
 - (void)addEventHandlerForType:(NSEventType)eventType
 						  name:(NSString*)eventName
-					   handler:(SEL)eventHandler;
+					   handler:(NSString*)eventHandler;
 - (void)removeEventHandlerForType:(NSEventType)eventType
 							 name:(NSString*)eventName;
 //- (NSMutableDictionary*)getHandlersForEventType:(NSEventType)eventType;
 
+- (void)doEvent:(NSString*)event;
+
 - (void)addEventHandlersForStepWASD;
 - (void)addEventHandlersForHoldWASD;
 - (void)addEventHandlersForStepTurnArrows;
-- (void)addEventHandlersForStepArrows;
-- (void)addEventHandlersForHoldArrows;
+- (void)addEventHandlersForStepMoveArrows;
+- (void)addEventHandlersForHoldTurnArrows;
+- (void)addEventHandlersForHoldMoveArrows;
 - (void)addEventHandlersForLeftMouseDownMoveForward;
 - (void)addEventHandlersForLeftMouseDownMoveBackward;
 - (void)addEventHandlersForRightMouseDownMoveForward;

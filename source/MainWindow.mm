@@ -74,16 +74,11 @@
 	
 	if (isDebug) NSLog(@"handling event for type %lu-%@", (unsigned long)eventType, keyCodeString);
 	
-	SEL leftHandler = (SEL)[[leftHandlers objectForKey:keyCodeString] pointerValue];
-	SEL rightHandler = (SEL)[[rightHandlers objectForKey:keyCodeString] pointerValue];
-	if (leftHandler)
-		[[Scene currentLeftScene] performSelector:leftHandler];  // known warning
-	else
-		if (isDebug) NSLog(@"no left scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
-	if (rightHandler)
-		[[Scene currentRightScene] performSelector:rightHandler];  // known warning
-	else
-		if (isDebug) NSLog(@"no right scene handler for key %lu-%@", (unsigned long)eventType, keyCodeString);
+	NSString *leftEvent  = (NSString*) [leftHandlers  objectForKey:keyCodeString];
+	NSString *rightEvent = (NSString*) [rightHandlers objectForKey:keyCodeString];
+	
+	if (leftEvent)  [[Scene currentLeftScene]  doEvent:leftEvent];
+	if (rightEvent) [[Scene currentRightScene] doEvent:rightEvent];
 }
 
 - (void)keyDown:(NSEvent *)theEvent        { [self eventHandler:theEvent]; }
