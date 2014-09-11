@@ -146,11 +146,10 @@ static Scene *currentRightScene = nil;
 
 - (void)setHeadRotationX:(float)x Y:(float)y Z:(float)z
 {
-	//NSLog(@"set hr %.2fx %.2fy %.2fz", x, y, z);
-	
     hrx = x;
     hry = y;
     hrz = z;
+	//NSLog(@"set hr %.2fx %.2fy %.2fz", x, y, z);
     
     CATransform3D transform    =      CATransform3DMakeRotation(x, 0, 1, 0);
     transform                  = CATransform3DRotate(transform, y, 1, 0, 0);
@@ -158,11 +157,10 @@ static Scene *currentRightScene = nil;
 }
 - (void)addHeadRotationX:(float)x Y:(float)y Z:(float)z
 {
-	//NSLog(@"add hr %.2fx %.2fy %.2fz", x, y, z);
-	
-    hrx = x;
-    hry = y;
-    hrz = z;
+    hrx += x;
+    hry += y;
+    hrz += z;
+	//NSLog(@"add hr %.2fx %.2fy %.2fz = %.2fx %.2fy %.2fz", x, y, z, hrx, hry, hrz);
     
     CATransform3D transform    = headRotationNode.transform;
 	transform				   = CATransform3DRotate(transform, x, 0, 1, 0);
